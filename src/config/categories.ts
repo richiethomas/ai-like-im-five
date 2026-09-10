@@ -8,12 +8,26 @@
  * sidebar.
  */
 export const categories = [
-  "Engineering",
-  "Reliability",
-  "Cloud",
-  "Security",
-  "AI",
-  "Design Systems",
+  "Attention",
+  "Transformers",
+  "Embeddings",
+  "Applications",
+  "Bias",
+  "Alignment",
+  "Responsible AI",
+  "Vision",
+  "NLP",
+  "Reasoning",
+  "Training",
+  "Scaling",
+  "Fine-tuning",
+  "Prompting",
+  "Memory",
+  "Multimodal",
+  "Evaluation",
+  "Inference",
+  "Efficiency",
+  "News",
 ] as const;
 
 export type Category = (typeof categories)[number];
@@ -28,10 +42,24 @@ export const categorySlug = (category: string) =>
 
 /** One line per category, shown on its archive page and in listings. */
 export const categoryDescriptions: Record<Category, string> = {
-  Engineering: "Contracts, tooling, and the day-to-day craft of shipping software.",
-  Reliability: "Incidents, observability, and the habits that keep systems honest.",
-  Cloud: "Infrastructure, cost, and deploy pipelines that stay out of the way.",
-  Security: "Authentication, privacy, and threat work explained for product teams.",
-  AI: "Evaluations, model behavior, and applied automation that holds up in production.",
-  "Design Systems": "Tokens, components, and the systems work that keeps interfaces coherent.",
+  Attention: "How transformers learn to focus on what matters in the input.",
+  Transformers: "The architecture that powers modern large language models.",
+  Embeddings: "Turning words, images, and data into vectors machines can understand.",
+  Applications: "How AI is being used in the real world, right now.",
+  Bias: "Where AI goes wrong, and why it matters.",
+  Alignment: "Making AI systems do what we actually want them to do.",
+  "Responsible AI": "Building AI thoughtfully, with ethics and safety in mind.",
+  Vision: "Image models, computer vision, and how AI understands pictures.",
+  NLP: "Natural language processing: how AI reads and generates text.",
+  Reasoning: "Step-by-step thinking, chain-of-thought, and problem solving.",
+  Training: "How models are trained, loss functions, and optimization.",
+  Scaling: "Why bigger models are better, and what changes when you scale.",
+  "Fine-tuning": "Adapting existing models to do specific things well.",
+  Prompting: "Prompt engineering, in-context learning, and talking to AI.",
+  Memory: "Long-term memory, retrieval, and extending what models remember.",
+  Multimodal: "Models that work with text, images, audio, and more together.",
+  Evaluation: "Testing AI, benchmarks, and measuring what models can actually do.",
+  Inference: "How models generate output, token by token, under the hood.",
+  Efficiency: "Making AI faster and cheaper: quantization, distillation, and optimization.",
+  News: "Breaking developments and new papers in AI.",
 };

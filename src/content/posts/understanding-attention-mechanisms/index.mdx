@@ -1,0 +1,179 @@
+---
+title: "Understanding Attention Mechanisms"
+excerpt: "A walkthrough of how transformers use attention to weigh different parts of the input, and why this simple idea powers modern language models."
+category: "Attention"
+date: 2026-09-10
+author:
+  name: "Richie Thomas"
+  role: "AI researcher and writer"
+featured: false
+---
+
+The attention mechanism is the core idea behind transformers. At its heart, it's simple: at each position in the sequence, look at every other position and decide which ones matter most. This post walks through the math and shows why this works.
+
+## The Problem: Dealing with Long Sequences
+
+Recurrent neural networks (RNNs) process sequences one token at a time, threading information through hidden states. This works, but:
+
+1. The hidden state becomes a bottleneck—all information from the past must fit into one vector.
+2. Training is slow because you can't parallelize across time steps.
+3. Information about early tokens gets diluted as sequences get longer.
+
+Attention sidesteps this by letting each position directly communicate with all other positions.
+
+## The Mechanism: Queries, Keys, and Values
+
+At a high level, attention computes a weighted average:
+
+<Callout type="note">
+  Each position becomes three things: a **query** (what am I looking for?), keys and values from all other positions (what's available?). The query matches against all keys, and the matches become weights for averaging the values.
+</Callout>
+
+Here's the core calculation:
+
+```
+Attention(Q, K, V) = softmax(QK^T / √d_k) V
+```
+
+Where:
+- **Q**: query matrix (what this position is looking for)
+- **K**: key matrix (what each position offers to match against)
+- **V**: value matrix (the actual information to average)
+- **d_k**: dimension of the key (used to scale attention scores)
+
+## A Simple Example
+
+Imagine the sentence: "The cat sat on the mat."
+
+The token "cat" produces a query vector. Its query gets compared to the key vectors of all tokens (including itself). The softmax turns these scores into weights:
+
+- "the" (before cat): moderate weight (likely referring back to the article)
+- "cat" (itself): high weight (direct self-reference)
+- "sat" (verb): lower weight (action, but not directly about the cat)
+- "mat" (later object): very low weight (noun, but far in sequence)
+
+The output is a weighted average of all value vectors, strongest influence from nearby nouns.
+
+## Scaled Dot-Product Attention in Code
+
+Here's a minimal PyTorch implementation:
+
+<CodeGroup>
+<CodeGroupItem label="PyTorch">
+```python
+import torch
+import torch.nn.functional as F
+
+def scaled_dot_product_attention(query, key, value, mask=None):
+    """
+    Args:
+        query: (batch, seq_len, d_k)
+        key: (batch, seq_len, d_k)
+        value: (batch, seq_len, d_v)
+        mask: (batch, seq_len, seq_len) - optional
+    """
+    d_k = query.shape[-1]
+    
+    # Compute attention scores
+    scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
+    
+    # Apply mask (for causal attention in language models)
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+    
+    # Normalize into probabilities
+    attention_weights = F.softmax(scores, dim=-1)
+    
+    # Apply weights to values
+    output = torch.matmul(attention_weights, value)
+    return output, attention_weights
+```
+</CodeGroupItem>
+<CodeGroupItem label="JAX">
+```python
+import jax.numpy as jnp
+from jax import nn
+
+def scaled_dot_product_attention(query, key, value, mask=None):
+    """
+    Args:
+        query: (batch, seq_len, d_k)
+        key: (batch, seq_len, d_k)
+        value: (batch, seq_len, d_v)
+        mask: (batch, seq_len, seq_len) - optional
+    """
+    d_k = query.shape[-1]
+    
+    # Compute attention scores
+    scores = jnp.matmul(query, key.transpose(0, 2, 1)) / jnp.sqrt(d_k)
+    
+    # Apply mask
+    if mask is not None:
+        scores = jnp.where(mask, scores, -1e9)
+    
+    # Normalize and apply to values
+    attention_weights = nn.softmax(scores, axis=-1)
+    output = jnp.matmul(attention_weights, value)
+    return output, attention_weights
+```
+</CodeGroupItem>
+</CodeGroup>
+
+<Callout type="warning" title="Quadratic Memory">
+  Computing all pairwise attention scores requires O(n²) space and time, where n is sequence length. For a 4k token context, that's 16 million comparisons. Modern models use approximations (sparse attention, local attention) to reduce this.
+</Callout>
+
+## Multi-Head Attention
+
+A transformer uses many attention heads in parallel. Each head:
+
+1. Projects query, key, value to a smaller dimension
+2. Computes attention independently
+3. Concatenates all head outputs and projects back
+
+This lets the model attend to different aspects of the input simultaneously—syntactic relationships in one head, semantic relationships in another.
+
+```python
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads):
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+        
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+    
+    def forward(self, query, key, value, mask=None):
+        # Project and split into heads
+        Q = self.W_q(query).view(batch, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        K = self.W_k(key).view(batch, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        V = self.W_v(value).view(batch, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+        
+        # Apply attention
+        attn_output, _ = scaled_dot_product_attention(Q, K, V, mask)
+        
+        # Concatenate heads
+        output = attn_output.transpose(1, 2).contiguous().view(batch, seq_len, self.d_model)
+        return self.W_o(output)
+```
+
+## Why This Matters
+
+Attention solved a real problem: RNNs couldn't handle long-range dependencies well, and they were slow to train. With attention:
+
+- Every position can directly influence every other position in one step
+- You can parallelize across the sequence—all attention computations happen at once
+- The model learns which relationships matter through training
+
+This is why transformers became the foundation for GPT, BERT, and everything since.
+
+<Callout type="tip">
+  For a deeper dive, read the original paper: "Attention is All You Need" (Vaswani et al., 2017). It's dense but worth the effort—it explains self-attention, positional encoding, and the full transformer architecture.
+</Callout>
+
+---
+
+## Summary
+
+Attention is a learnable way to compute a weighted average of sequence elements. By repeating this across multiple heads and layers, transformers can model complex relationships in text, images, and other sequences. The mechanism is simple, the results have been transformative.

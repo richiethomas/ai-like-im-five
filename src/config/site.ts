@@ -1,20 +1,20 @@
 export const siteConfig = {
   /** Wordmark shown in the header and footer. Monograph uses text, never a logo image. */
-  name: "Monograph",
-  tagline: "A quiet place for long-form writing",
-  title: "Monograph - A minimal Astro blog theme",
+  name: "AI Like I'm Five",
+  tagline: "AI research explained plainly",
+  title: "AI Like I'm Five - AI papers explained plainly",
   description:
-    "A text-first Astro theme for essays, notes, and long-form writing, with a command-palette search and a light/dark reading mode.",
-  siteUrl: "https://monograph.xocoweb.workers.dev",
-  authorName: "Andrei Alba",
-  email: "hello@example.com",
+    "Explanations of AI research papers for everyone. No PhD required, no gatekeeping. Written by someone learning in public.",
+  siteUrl: "https://ailikeim5.dev",
+  authorName: "Richie Thomas",
+  email: "",
   language: "en",
   dateLocale: "en-US",
   locale: "en_US",
   socialImage: "/og-image.png",
   /** Shown in the home sidebar "About" card. */
   about:
-    "Monograph is a reading-first Astro theme. Notes on building software, published when there is something worth saying.",
+    "Explanations of AI research papers for anyone curious. No jargon walls, no pretense. Written by someone learning this in public.",
   /**
    * Both forms below ship enabled with an empty `action`, which makes them fully
    * interactive demos that submit nowhere: a small script confirms the submit
@@ -27,18 +27,16 @@ export const siteConfig = {
     method: "post",
     emailFieldName: "email",
     title: "Get new posts by email",
-    description: "One email when something new goes up. No spam, unsubscribe anytime.",
+    description: "One email when a new explanation goes up. No spam, unsubscribe anytime.",
   },
   contact: {
     enabled: true,
     action: "",
     method: "post",
-    responseTime: "Replies usually go out within two business days.",
+    responseTime: "I read everything and reply when I can.",
   },
   socials: [
-    { label: "Instagram", href: "https://instagram.com" },
-    { label: "TikTok", href: "https://www.tiktok.com" },
-    { label: "YouTube", href: "https://www.youtube.com" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/heyrichie" },
     { label: "RSS", href: "/rss.xml" },
   ],
 };

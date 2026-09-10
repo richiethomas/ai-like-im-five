@@ -23,15 +23,8 @@ const isDemo = isEnabled && action.length === 0;
         <p class="eyebrow">Contact</p>
         <h1 class="pagehead-title">Get in touch</h1>
         <p class="pagehead-description">
-          Corrections, questions, and requests all land in the same inbox. {contact.responseTime}
+          Questions, corrections, or just want to chat about AI? {contact.responseTime}
         </p>
-        {
-          siteConfig.email && (
-            <p class="mt-4 text-sm text-muted-foreground">
-              Prefer email? Write to <a href={`mailto:${siteConfig.email}`} class="text-accent underline underline-offset-2">{siteConfig.email}</a>.
-            </p>
-          )
-        }
       </header>
 
       <form

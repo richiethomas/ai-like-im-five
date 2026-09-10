@@ -43,7 +43,7 @@ export const getFeatured = (posts: Post[], limit = 5) =>
 export const getPostsByCategory = (posts: Post[], category: string) =>
   visiblePosts(posts).filter((post) => post.data.category === category);
 
-/** Categories in configured order, with post counts. Empty ones are dropped. */
+/** Categories in configured order, with post counts. */
 export const getCategoryList = (posts: Post[]) => {
   const visible = visiblePosts(posts);
 
@@ -52,8 +52,7 @@ export const getCategoryList = (posts: Post[]) => {
       name: category,
       slug: categorySlug(category),
       count: visible.filter((post) => post.data.category === category).length,
-    }))
-    .filter((entry) => entry.count > 0);
+    }));
 };
 
 export const getRelated = (posts: Post[], current: Post, limit = 3) =>
