@@ -1,0 +1,75 @@
+---
+title: "Paper #1, Part 10: Memorizing vs. Learning — Overfitting and Regularization"
+excerpt: "A network can memorize training data perfectly. But memorized answers don't generalize. Overfitting is the enemy, and regularization is how you fight it."
+category: "Fundamentals"
+date: 2023-09-09T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["overfitting", "regularization", "dropout"]
+---
+
+You build a neural network. Train it on your training set. It achieves 99% accuracy.
+
+You test it on new data. 60% accuracy.
+
+What happened? **Overfitting**.
+
+The network memorized the training data instead of learning generalizable patterns. It found quirks specific to your training set: "If pixel 47 is exactly 128 and pixel 92 is exactly 200, output 'cat'." That works on training data but fails on anything slightly different.
+
+## Training vs. Test Accuracy
+
+The gap between training accuracy and test accuracy reveals overfitting:
+
+- **Small gap (90% train, 88% test):** Good generalization. The network learned actual patterns.
+- **Large gap (99% train, 60% test):** Severe overfitting. The network memorized.
+
+The bigger your network and the smaller your dataset, the worse overfitting gets. A network with a million parameters can memorize a dataset of 1,000 images trivially.
+
+## Regularization: Fighting Overfitting
+
+**L2 Regularization (Weight Decay)**
+
+Add a penalty to the loss function based on how large the weights are:
+
+```
+total_loss = classification_loss + λ * (sum of squared weights)
+```
+
+The parameter λ controls the penalty strength. Large weights are penalized more. This pushes the network toward smaller, simpler weights. Simpler weights learn broader patterns instead of memorizing details.
+
+**Dropout**
+
+During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
+
+Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This prevents the network from learning fragile, specific patterns.
+
+At test time, you don't drop neurons. But you scale outputs by the dropout rate so expected values match.
+
+Dropout is surprisingly effective and is now standard in deep learning.
+
+**Early Stopping**
+
+Monitor validation accuracy during training. Stop when it stops improving, even if training accuracy could still increase.
+
+This prevents the network from overfitting over many iterations.
+
+## The Balance
+
+Regularization prevents overfitting, but too much regularization underfits—the network is so constrained it can't learn the task at all.
+
+The art is finding the right balance:
+- Regularization strength (λ)
+- Dropout rate
+- Network size relative to data size
+- Amount of training
+
+This is where hyperparameter tuning comes in, and it's one of the hard parts of machine learning.
+
+## What's Next
+
+We've covered the fundamentals of neural networks: architecture, activation functions, data preparation, and preventing overfitting.
+
+Now it's time to move from general neural networks to a specific, powerful architecture designed for images: **convolutional neural networks**. Part 11 introduces convolutions, the core idea behind modern computer vision.
