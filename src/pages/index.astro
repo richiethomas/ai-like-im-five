@@ -22,8 +22,15 @@ const hasMore = rest.length > feed.length;
     <div class="inner">
       <h1 class="sr-only">{siteConfig.name} — {siteConfig.tagline}</h1>
 
+      <section class="py-10 px-6 rounded-lg bg-accent/7 border border-accent/20 mb-[var(--space-section)]">
+        <h2 class="text-sm font-semibold tracking-tight text-accent mb-2">Reading 30papers.com</h2>
+        <p class="text-sm text-muted-foreground max-w-2xl">
+          This site works through the reading list Ilya Sutskever gave John Carmack, one concept at a time. We're currently on <strong>Paper #1: CS231n (Convolutional Neural Networks)</strong>. Start with Part 1 below and read in order—each post builds on the last.
+        </p>
+      </section>
+
       {latest && (
-        <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Latest post">
+        <section class="pb-[var(--space-section)]" aria-label="Latest post">
           <PostCard post={latest} variant="lead" headingLevel="h2" dateLabel="Latest" />
         </section>
       )}
