@@ -1,0 +1,77 @@
+---
+title: "Paper #1, Part 1: What Does It Mean for a Computer to 'See' a Picture?"
+excerpt: "Before we build anything, we need to ask: what is the actual problem we're solving? A computer doesn't see the way your brain does. Let's start there."
+category: "Vision"
+date: 2026-09-10
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["image classification", "computer vision basics"]
+---
+
+We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational text in deep learning — the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.
+
+But before we build anything, we need to ask the most basic question: what is the problem we're actually solving?
+
+## A Picture Is Just Numbers
+
+Your brain sees a photo and instantly knows it contains a dog. You don't think about it. The image "makes sense" to you.
+
+A computer doesn't work that way. A computer can only manipulate numbers. So before a computer can "understand" an image at all, the image has to be converted into numbers.
+
+In a digital image, this has already happened. Every image on your screen is stored as a grid. If the image is 800 pixels wide and 600 pixels tall, that's 800 × 600 cells in the grid. Each cell contains a number. That number represents a color.
+
+For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB). So an 800 × 600 image is really a 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo.
+
+When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're finding clever ways to store those millions of numbers in fewer bytes.
+
+This is where computers start. Not with "a picture of a dog." With: **a 800 × 600 × 3 array of numbers between 0 and 255.**
+
+## The Problem: Classification
+
+Now comes the task we're going to focus on: **image classification**. The goal is simple to state:
+
+Given an image (which is just a grid of numbers), assign it a label from a fixed list of choices.
+
+For example:
+- Is this a picture of a cat or a dog?
+- Is this a photograph of a car, a bike, or a truck?
+- Does this X-ray show a broken bone: yes or no?
+
+This sounds easy because your brain does it instantly. But it's genuinely hard for a computer, and understanding *why* it's hard is the entry point to everything we're building.
+
+## The Seven Things That Make It Hard
+
+Let me give you CS231n's list of challenges. These are all real obstacles that complicate the classification task:
+
+**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is.
+
+**Scale variation.** A dog in the foreground of a photo takes up most of the image. A dog in the distance is tiny. Same dog, vastly different numbers.
+
+**Deformation.** Dogs move. They stretch, crouch, tilt their head. The shape changes, the numbers change.
+
+**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete set of numbers and has to guess the rest.
+
+**Illumination conditions.** A dog in bright sunlight has completely different numbers than the same dog in shadow or under indoor lighting. The dog's actual color is the same; the light changes everything the camera records.
+
+**Background clutter.** If the dog is sitting in a park, the background is a mess of trees and grass. The computer has to figure out which numbers belong to "dog" and which are "everything else." That's surprisingly hard.
+
+**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike. They might look more different from each other than a dog looks from a similar-sized wolf. The computer needs to find the common thread underneath huge visual variation.
+
+## Why This Matters
+
+The entire field of computer vision is, in some sense, a series of clever solutions to these seven problems.
+
+A naive approach — comparing the number grids directly — doesn't work. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
+
+We need methods that are *invariant* to these variations. Robust to them. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
+
+This is what CS231n teaches us to build.
+
+## What's Next
+
+In the next post, we'll look at the simplest possible approach to image classification: nearest neighbor. It won't work well, but it'll teach us something crucial about why this problem is hard and point us toward better solutions.
+
+For now, just hold onto this: a picture is numbers. The computer's job is to look at those numbers and assign a label. Seven things get in the way. We're going to build tools to overcome each of them.
