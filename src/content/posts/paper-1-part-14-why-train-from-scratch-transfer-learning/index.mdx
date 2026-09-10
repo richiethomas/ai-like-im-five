@@ -1,0 +1,65 @@
+---
+title: "Paper #1, Part 14: Why Train From Scratch? Transfer Learning"
+excerpt: "Training a large CNN from scratch requires massive amounts of data and compute. Transfer learning reuses a network trained on one task as a head start on another."
+category: "Vision"
+date: 2023-09-13T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["transfer learning", "CNNs"]
+---
+
+Training a CNN from scratch is expensive. You need:
+- Hundreds of thousands of images
+- Weeks of GPU compute
+- Careful hyperparameter tuning
+
+If you're building a classifier for a niche task (detecting disease in medical scans), you might not have that data.
+
+**Transfer learning** solves this. Reuse a network trained on a large, public dataset (like ImageNet, which has millions of images and thousands of categories) as a starting point. Adapt it to your task.
+
+## How It Works
+
+Pre-trained networks have learned general visual features: edges, textures, shapes, objects. These features are useful for almost any vision task.
+
+Take a pre-trained network. Remove the final classification layer (which predicts ImageNet categories). Replace it with a new classification layer for your task (e.g., "disease or healthy").
+
+Now you have two choices:
+
+**Option 1: Fine-tuning**
+
+Train the entire network (including pre-trained layers) on your small dataset, but with a low learning rate. The pre-trained weights are a good starting point; small adjustments adapt them to your task.
+
+This works well when your task is similar to ImageNet (general object recognition).
+
+**Option 2: Feature extraction**
+
+Freeze the pre-trained layers (don't update their weights). Only train the new final layer.
+
+This is faster and requires less data. You're treating the pre-trained network as a feature extractor: it converts your images to high-level features, and you just need to learn a linear classifier on top.
+
+This works well when your task is very different from ImageNet or when data is scarce.
+
+## The Hiring Analogy
+
+Imagine hiring someone with 10 years of relevant experience vs. training someone from scratch. The experienced hire needs less training; they already know the domain. Transfer learning is similar.
+
+A network trained on ImageNet already understands vision. Adapting it to your task is much faster than teaching it vision from zero.
+
+## Impact
+
+Transfer learning is one of the most important techniques in modern deep learning. It makes state-of-the-art CNNs accessible to anyone, even with small datasets.
+
+Without transfer learning, you'd need enormous resources to train from scratch. With it, you can build competitive systems with modest data and compute.
+
+## What's Next
+
+We've covered:
+- The fundamentals of neural networks
+- How convolutions exploit local structure
+- How to interpret what networks learn
+- How to reuse trained networks
+
+Part 15 ties everything together: a complete walkthrough of how a CNN classifies an image from start to finish.
