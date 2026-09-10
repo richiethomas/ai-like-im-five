@@ -1,0 +1,61 @@
+---
+title: "Paper #1, Part 12: Pooling and Stacking — From Edges to Objects"
+excerpt: "Convolutions find local patterns. Pooling zooms out. Stack them together and you build a hierarchy: edges → textures → shapes → objects."
+category: "Vision"
+date: 2023-09-11T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["pooling", "CNNs", "feature hierarchies"]
+---
+
+After a convolution layer, feature maps are the same size as the input (or slightly smaller). If the input is 224×224, the output might be 222×222.
+
+Apply another convolution, get 220×220. Keep going and the maps stay large. But computation explodes and patterns are still local.
+
+**Pooling** solves this. It downsamples: takes a region (like 2×2) and outputs a single value. Common pooling: **max pooling**. Take the maximum value in each 2×2 region.
+
+```
+Input:           Max Pooling (2×2):
+1 2 3 4          2 4
+5 6 7 8    →     6 8
+9 10 11 12
+13 14 15 16
+```
+
+Output is half the size in each dimension. A 224×224 map becomes 112×112.
+
+## Why Pooling Works
+
+**Aggregation:** Pooling combines information from a small region into one value. Exact positions don't matter; only whether a feature is present.
+
+**Robustness:** If a pattern shifts by 1-2 pixels, max pooling ignores it. This robustness is valuable for recognition.
+
+**Dimensionality reduction:** Smaller feature maps = faster computation.
+
+## The Hierarchy
+
+Stacking convolution and pooling layers builds a hierarchy:
+
+```
+Input image (224×224)
+  ↓ Conv (detect edges)
+  ↓ Pool (224→112)
+  ↓ Conv (detect edge combinations, i.e., textures)
+  ↓ Pool (112→56)
+  ↓ Conv (detect texture combinations, i.e., shapes)
+  ↓ Pool (56→28)
+  ↓ Conv (detect complex shapes, i.e., object parts)
+  ↓ Pool (28→14)
+  ↓ Fully connected layers (make the final decision)
+```
+
+Early layers detect simple features. Later layers detect complex combinations. By the time you reach a fully-connected layer, you're working with high-level semantic concepts, not raw pixels.
+
+A cat classifier might have learned: "If I see these edge patterns here, and those texture combinations there, it's a cat."
+
+## What's Next
+
+This hierarchy works, but it's a black box. We don't know what the network actually learned. Part 13 covers how to visualize and interpret what convolutional networks see.
