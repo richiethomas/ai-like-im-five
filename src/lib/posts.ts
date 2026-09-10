@@ -15,6 +15,16 @@ export const authorSlug = (author: string) =>
 
 export const categoryHref = (category: string) => `/category/${categorySlug(category)}/`;
 
+export const tagSlug = (tag: string) =>
+  tag
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
+export const tagHref = (tag: string) => `/tag/${tagSlug(tag)}/`;
+
 export const postSlug = (post: Post) => post.id.replace(/\/index$/, "");
 
 export const postHref = (post: Post) => `/post/${postSlug(post)}/`;
@@ -42,6 +52,25 @@ export const getFeatured = (posts: Post[], limit = 5) =>
 
 export const getPostsByCategory = (posts: Post[], category: string) =>
   visiblePosts(posts).filter((post) => post.data.category === category);
+
+export const getPostsByTag = (posts: Post[], tag: string) =>
+  visiblePosts(posts).filter((post) => post.data.tags.includes(tag));
+
+/** All tags in use across visible posts, with counts. */
+export const getAllTags = (posts: Post[]) => {
+  const visible = visiblePosts(posts);
+  const tagCounts = new Map<string, number>();
+
+  visible.forEach((post) => {
+    post.data.tags.forEach((tag) => {
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    });
+  });
+
+  return Array.from(tagCounts.entries())
+    .map(([name, count]) => ({ name, slug: tagSlug(name), count }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+};
 
 /** Categories in configured order, with post counts. */
 export const getCategoryList = (posts: Post[]) => {

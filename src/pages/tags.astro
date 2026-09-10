@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { siteConfig } from "@/config/site";
+import { getAllTags, tagHref, visiblePosts } from "@/lib/posts";
+
+const allPosts = visiblePosts(await getCollection("posts"));
+const tagList = getAllTags(allPosts);
+---
+
+<BaseLayout
+  title="Tags"
+  description={`Topics covered on ${siteConfig.name}.`}
+>
+  <SiteHeader posts={allPosts} />
+  <main id="content" class="outer">
+    <div class="canvas">
+      <header class="pagehead">
+        <p class="eyebrow">Index</p>
+        <h1 class="pagehead-title">Tags</h1>
+        <p class="pagehead-description">
+          {tagList.length} topic tags across {allPosts.length}
+          {allPosts.length === 1 ? "post" : "posts"}.
+        </p>
+      </header>
+
+      <ul class="grid gap-7">
+        {
+          tagList.map((tag) => (
+            <li class="border-b border-border pb-7 last:border-b-0">
+              <a href={tagHref(tag.name)} class="link-title">
+                <span class="flex items-baseline justify-between gap-4">
+                  <span class="link-title__text text-xl font-semibold tracking-tight">{tag.name}</span>
+                  <span class="pill shrink-0">
+                    {tag.count} {tag.count === 1 ? "post" : "posts"}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>

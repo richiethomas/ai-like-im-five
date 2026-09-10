@@ -19,6 +19,7 @@ import {
   postHref,
   postSlug,
   readingLabel,
+  tagHref,
   visiblePosts,
   type Post,
 } from "@/lib/posts";
@@ -109,6 +110,16 @@ const structuredData = {
           <p class="meta mt-5">
             <span>Updated <time datetime={data.updatedDate.toISOString()}>{formatDate(data.updatedDate)}</time></span>
           </p>
+        )}
+
+        {data.tags.length > 0 && (
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            {data.tags.map((tag) => (
+              <a href={tagHref(tag)} class="pill">
+                {tag}
+              </a>
+            ))}
+          </div>
         )}
 
         <div class="mt-8 flex flex-wrap items-center gap-2 border-t border-border pt-6" role="group" aria-labelledby="share-heading">

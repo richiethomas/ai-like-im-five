@@ -32,6 +32,8 @@ const posts = defineCollection({
       /** Surfaces the post in the "Featured" list in the home sidebar. */
       featured: z.boolean().default(false),
       draft: z.boolean().default(false),
+      /** Freeform topic tags for cross-cutting organization (e.g. "gradient descent", "CNNs"). */
+      tags: z.array(z.string()).default([]),
     }),
 });
 
