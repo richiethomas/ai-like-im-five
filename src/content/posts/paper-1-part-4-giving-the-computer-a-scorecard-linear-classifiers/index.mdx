@@ -1,0 +1,96 @@
+---
+title: "Paper #1, Part 4: Giving the Computer a Scorecard — Linear Classifiers"
+excerpt: "We've tried memorizing examples (nearest neighbor). Now let's try something smarter: score each image and pick the highest score. It's simple, interpretable, and it teaches us how learning actually works."
+category: "Fundamentals"
+date: 2026-09-13
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["linear classifiers", "weights and biases"]
+---
+
+Nearest neighbor failed because it relies on pixel-level similarity. What if we try something different: instead of comparing images directly, we compute a *score* for each possible label, then pick the label with the highest score.
+
+This is the idea behind **linear classifiers**.
+
+## The Scorecard Metaphor
+
+Imagine you're grading a student on a test. You might have a rubric like:
+
+- Correct answer: +10 points
+- Partial credit: +5 points
+- Shows understanding: +3 points
+- Messy handwriting: -2 points
+
+You look at the student's work, tally up the points, and report a final score.
+
+A linear classifier does exactly this, but for images.
+
+Let's say we're classifying images as "cat" or "dog". We might have a rubric:
+
+- Pointy ears present: +50 points toward "cat"
+- Round face: +30 points toward "cat"
+- Long snout: +40 points toward "dog"
+- Floppy ears: +60 points toward "dog"
+
+You "look at" the image (scan through its pixel values), tally up the points for each label, and pick the label with the highest score.
+
+## How It Actually Works
+
+In practice, a linear classifier doesn't hand-code features like "pointy ears." Instead, it assigns a weight to *every single pixel* in the image.
+
+For a 32×32 image with 3 color channels (RGB), that's 3,072 pixels. The classifier has 3,072 weights for the "cat" label and 3,072 weights for the "dog" label.
+
+The score for "cat" is computed as:
+
+```
+score_cat = w1*pixel1 + w2*pixel2 + ... + w3072*pixel3072 + bias_cat
+```
+
+Where `w1, w2, ..., w3072` are the learned weights and `bias_cat` is a constant bonus/penalty for the "cat" label.
+
+(The bias is like a tiebreaker: even if the image has no distinctive features, you might favor "cat" if you've seen more cat images in training.)
+
+The same computation happens for "dog" with different weights. Whichever score is higher wins.
+
+## The Key Insight: Weights Are Learnable
+
+The trick is that the weights aren't hand-coded. The computer *learns* them from the training data.
+
+Here's the learning process at a high level (we'll dive deeper soon):
+
+1. Start with random weights
+2. Run the classifier on a training image
+3. Compute the score for each label
+4. Check if the score is wrong (the highest score wasn't the correct label)
+5. Adjust the weights slightly so the correct label scores higher next time
+6. Repeat on the next training image
+7. After seeing all training images many times, the weights have learned to recognize patterns
+
+This is fundamentally different from nearest neighbor, which doesn't learn anything. It just memorizes.
+
+## What Weights Represent
+
+After training, you can actually visualize what the weights have learned. For image classification, if you arrange the weights back into a 32×32 image, you often see something recognizable.
+
+For the "dog" weights, you might see a dog-shaped template emerge: bright pixels where dogs typically are (snouts, ears) and dark pixels where dogs typically aren't.
+
+For the "cat" weights, you'd see a cat-shaped template: pointy ears and a smaller snout.
+
+The classifier has learned feature detectors. The weights are telling you: "Look for this dog-shaped pattern" or "Look for this cat-shaped pattern."
+
+But here's the limitation: linear classifiers can only look for one pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't catch all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
+
+This is why linear classifiers work okay on simple datasets but fail on complex real-world images. They're too rigid.
+
+## The Pieces Are Coming Together
+
+But before we fix that limitation, we need to understand the learning process itself. How does the computer know which direction to adjust the weights? How much should it adjust? What's the measure of "wrongness" that guides the learning?
+
+That's loss functions and gradient descent—the next two posts.
+
+For now, just understand this: a linear classifier scores images with a weighted sum of pixels, picks the highest score, and learns those weights from training data. It's simple, interpretable, and learnable.
+
+And it's the foundation for everything that comes next.
