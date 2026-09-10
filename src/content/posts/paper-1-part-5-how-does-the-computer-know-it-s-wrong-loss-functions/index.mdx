@@ -1,0 +1,123 @@
+---
+title: "Paper #1, Part 5: How Does the Computer Know It's Wrong? Loss Functions"
+excerpt: "A classifier can guess. But how do you measure how badly it guessed? Loss functions turn 'wrongness' into a number, and that number is what drives learning."
+category: "Fundamentals"
+date: 2026-09-14
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["loss functions", "hinge loss", "softmax"]
+---
+
+From Part 4: a linear classifier computes scores for each label and picks the highest one.
+
+Now, if the highest score is the wrong label, how wrong is it? And how do you tell the computer to improve?
+
+The answer is **loss functions**.
+
+## Wrongness as a Number
+
+A naive approach: a prediction is either right or wrong. Binary. You get 1 point or 0 points. This seems logical, but it's too coarse.
+
+Imagine two scenarios:
+
+**Scenario A:** The correct label is "cat" and the scores are:
+- cat: 10
+- dog: 9
+- bird: 8
+
+The classifier picks "cat" (correct), but it was close. Dog was nearly as high. This feels uncertain.
+
+**Scenario B:** The correct label is "cat" and the scores are:
+- cat: 100
+- dog: 1
+- bird: 0.5
+
+The classifier picks "cat" (correct), and dog was far behind. This feels confident.
+
+Both get full credit if you only count right/wrong, but Scenario B is objectively better. The classifier was more sure.
+
+A loss function measures not just whether the guess was right, but *how right*. If you got it wrong, how badly? If you got it right, how confident were you?
+
+## Hinge Loss (Used in SVM)
+
+Here's one approach called **hinge loss**:
+
+If the correct label has score `S_correct` and the highest wrong label has score `S_wrong`, the loss is:
+
+```
+loss = max(0, 1 + S_wrong - S_correct)
+```
+
+Let's walk through this:
+
+**If you're confident and correct:**
+- S_correct = 10, S_wrong = -5
+- loss = max(0, 1 + (-5) - 10) = max(0, -14) = 0
+
+You pay no penalty. Good job.
+
+**If you're close and correct:**
+- S_correct = 10, S_wrong = 9
+- loss = max(0, 1 + 9 - 10) = max(0, 0) = 0
+
+You still pay 0, but just barely. You were too close for comfort.
+
+**If you got it wrong:**
+- S_correct = 5, S_wrong = 10
+- loss = max(0, 1 + 10 - 5) = max(0, 6) = 6
+
+You pay a penalty of 6. The more confidently wrong you were, the higher the penalty.
+
+The formula is saying: "I want the correct label's score to be higher than the wrong label's score, by at least a margin of 1. If it's not, penalize me."
+
+## Softmax Loss
+
+Another approach, called **softmax loss** (or cross-entropy loss), comes from probability theory.
+
+Instead of just comparing two scores, it asks: "If I treat the scores as probabilities, how likely is the correct label?"
+
+First, convert scores to probabilities using the softmax function (this is a standard trick in statistics):
+
+```
+probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
+```
+
+This converts any scores into numbers between 0 and 1 that sum to 1 (like probabilities).
+
+Then the loss is: `loss = -log(probability_correct_label)`
+
+If the correct label has probability 0.9, the loss is -log(0.9) ≈ 0.1 (small loss, good).
+
+If the correct label has probability 0.1, the loss is -log(0.1) ≈ 2.3 (large loss, bad).
+
+The logarithm means: penalize low-probability predictions harshly, reward high-probability predictions gently.
+
+## Which Loss Function Is Right?
+
+Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned weights. There's no universal "right" answer—it depends on your problem and your preference.
+
+Softmax has become more popular in deep learning because it's differentiable (smooth), which makes the learning process easier. Hinge loss is interpretable and useful in some contexts.
+
+The key insight isn't which one you choose—it's that you *need* a loss function to:
+
+1. Measure wrongness as a continuous number (not just right/wrong)
+2. Give you a signal to optimize: "Make this number smaller"
+3. Reward confident correct predictions and penalize confident wrong ones
+
+## The Learning Loop
+
+Now the picture comes together:
+
+1. Compute scores (Part 4)
+2. Measure loss (this post)
+3. Adjust weights to reduce loss (next post: gradient descent)
+4. Repeat
+
+The loss function is the signal that drives learning. It's how the computer knows which direction to adjust the weights.
+
+## What's Next
+
+We have scores. We have a measure of wrongness. Now we need the algorithm that adjusts the weights to make that wrongness smaller. That's gradient descent—the most important optimization idea in machine learning.
