@@ -1,0 +1,118 @@
+---
+title: "Paper #1, Part 15: Putting It Together — What CS231n Actually Teaches"
+excerpt: "Fifteen concepts. One goal: from raw pixels to classification. This is how it all fits together, and why CS231n became foundational reading."
+category: "Vision"
+date: 2023-09-14T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["CNNs", "computer vision basics", "synthesis"]
+---
+
+Let's walk through a complete example: classifying a cat image.
+
+## The Pipeline
+
+**Step 1: Input**
+
+Raw image: 224×224 pixels, RGB, values 0-255.
+
+First thing: normalize. Divide by 255, or standardize using ImageNet statistics. Normalized image: same shape, values now in a sensible range.
+
+**Step 2: Early Convolutions**
+
+First convolutional layer: 64 filters, each detecting simple patterns (edges, corners, colors).
+
+Slide each filter across the image. Output: 64 feature maps, 224×224 (or 222×222 depending on padding).
+
+Apply ReLU activation: set negative values to zero.
+
+Pool with 2×2 max pooling: output becomes 112×112.
+
+Result: 64 feature maps of edges and simple patterns.
+
+**Step 3: Intermediate Convolutions**
+
+Second convolution: 128 filters, applied to the 64 input maps.
+
+These filters detect combinations of edges: textures, blobs, more complex patterns.
+
+Output: 128 feature maps, 112×112.
+
+ReLU, then 2×2 pooling: 56×56.
+
+Apply dropout: 50% of neurons are randomly zeroed during training, preventing overfitting.
+
+Repeat: more convolutions, more pooling, increasing complexity and decreasing size.
+
+By layer 5: perhaps 512 feature maps, 7×7.
+
+Each map detects high-level concepts: object parts, shapes, semantic features.
+
+**Step 4: Classification**
+
+Flatten the 512×7×7 maps into a vector: 512*49 = 25,088 values.
+
+Pass through fully-connected layers:
+- Dense layer 1: 4096 neurons, ReLU
+- Dense layer 2: 4096 neurons, ReLU
+- Output layer: 1000 neurons (one per ImageNet category)
+
+Apply softmax to convert to probabilities. If the cat is clearly visible, the "cat" neuron fires strongest, and softmax returns ~0.99 for cat, ~0.01 split among others.
+
+**Step 5: Inference**
+
+The predicted class is argmax(output probabilities) = "cat".
+
+Network predicts "cat" with 99% confidence.
+
+## Why This Works
+
+**Hierarchy:** Early layers learned low-level features (edges). Middle layers combined them into medium-level features (textures). Late layers combined those into high-level features (objects).
+
+By the time a spatial region reaches the fully-connected layer, it's been transformed into a semantic representation: "this region contains a cat face."
+
+**Robustness:** Pooling and convolutions make the network robust to small shifts. A cat's whiskers don't have to be at pixel-perfect positions.
+
+**Generalization:** Regularization (dropout, weight decay) prevents the network from memorizing specific training images. It learns generalizable patterns.
+
+**Transfer learning:** If you're fine-tuning a pre-trained network, the early layers already recognize edges and textures. You only need to train the late layers to recognize your specific categories.
+
+## Why CS231n Matters
+
+CS231n teaches this entire pipeline from scratch. You don't just use a library; you understand:
+
+- Why architecture matters
+- Why data preparation matters
+- Why regularization matters
+- How backpropagation trains weights
+- What the network actually learns
+
+This understanding transfers to other domains. Computer vision techniques inspired NLP (transformers are related to convolutions). Principles of overfitting apply everywhere.
+
+CS231n is foundational because it builds intuition. Once you understand how a CNN works, adapting it to new tasks or understanding new architectures is straightforward.
+
+## The Journey
+
+Fifteen posts ago, you didn't know what image classification meant. Now you understand:
+
+- How computers represent images as numbers
+- Why nearest neighbor fails
+- How linear classifiers score images
+- How loss functions measure wrongness
+- How gradient descent optimizes weights
+- How backpropagation computes gradients efficiently
+- How neural networks with activation functions learn non-linear patterns
+- How convolutions exploit locality
+- How pooling builds hierarchies
+- How regularization prevents overfitting
+- How to visualize what networks learn
+- How to reuse trained networks
+
+This is deep learning. You've just walked from first principles to a production-ready technique.
+
+The next step: go build something. Take a pre-trained ResNet or ViT. Fine-tune it on your data. Deploy it. The theory you've learned applies directly.
+
+Welcome to computer vision.
