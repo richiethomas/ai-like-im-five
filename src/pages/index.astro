@@ -22,16 +22,8 @@ const hasMore = rest.length > feed.length;
     <div class="inner">
       <h1 class="sr-only">{siteConfig.name} — {siteConfig.tagline}</h1>
 
-      <section class="py-10 pb-[var(--space-section)] md:pt-0" aria-labelledby="series-heading">
-        <h2 id="series-heading" class="section-title">Currently reading</h2>
-        <p class="text-lg font-semibold tracking-tight">Paper #1: CS231n</p>
-        <p class="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
-          Convolutional Neural Networks for Computer Vision. Start with Part 1 below and work through in order—each post builds on the last.
-        </p>
-      </section>
-
       {latest && (
-        <section class="pb-[var(--space-section)]" aria-label="Latest post">
+        <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Latest post">
           <PostCard post={latest} variant="lead" headingLevel="h2" dateLabel="Latest" />
         </section>
       )}
