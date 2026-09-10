@@ -5,7 +5,7 @@ export const siteConfig = {
   title: "AI Like I'm Five - AI papers explained plainly",
   description:
     "Explanations of AI research papers for everyone. No PhD required, no gatekeeping. Written by someone learning in public.",
-  siteUrl: "https://ailikeim5.dev",
+  siteUrl: "https://ailikeimfive.com",
   authorName: "Richie Thomas",
   email: "",
   language: "en",
@@ -14,7 +14,7 @@ export const siteConfig = {
   socialImage: "/og-image.png",
   /** Shown in the home sidebar "About" card. */
   about:
-    "Explanations of AI research papers for anyone curious. No jargon walls, no pretense. Written by someone learning this in public.",
+    "Working through 30papers.com—the reading list Ilya Sutskever gave John Carmack—one concept at a time. Starting from first principles, no prerequisites assumed. Built in public by someone learning alongside you.",
   /**
    * Both forms below ship enabled with an empty `action`, which makes them fully
    * interactive demos that submit nowhere: a small script confirms the submit
@@ -45,6 +45,7 @@ export const siteConfig = {
 export const navigation = [
   { label: "Archive", href: "/posts/" },
   { label: "Categories", href: "/categories/" },
+  { label: "Tags", href: "/tags/" },
   { label: "About", href: "/about/" },
 ];
 
