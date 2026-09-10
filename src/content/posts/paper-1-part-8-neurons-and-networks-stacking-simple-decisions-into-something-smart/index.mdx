@@ -1,0 +1,87 @@
+---
+title: "Paper #1, Part 8: Neurons and Networks — Stacking Simple Decisions Into Something Smart"
+excerpt: "A single linear classifier is rigid. But what if you stack multiple layers, each adding non-linearity? That's a neural network, and it's how simple computation becomes sophisticated."
+category: "Fundamentals"
+date: 2023-09-07T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["neural networks", "activation functions"]
+---
+
+From Part 4: a linear classifier computes a weighted sum of pixels and picks the highest score.
+
+The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), you're stuck.
+
+The solution: **neural networks**. Stack multiple layers, add non-linearity between them, and suddenly you can learn curved boundaries and complex patterns.
+
+## The Neuron
+
+A **neuron** is the basic unit. It takes inputs, multiplies them by weights, adds a bias, and applies an **activation function**.
+
+```
+output = activation( (w1*x1 + w2*x2 + ... + bias) )
+```
+
+The activation function is non-linear. Common ones:
+
+**ReLU (Rectified Linear Unit):**
+```
+f(x) = max(0, x)
+```
+If the sum is positive, pass it through. If negative, zero it out. Dead simple and widely used.
+
+**Sigmoid:**
+```
+f(x) = 1 / (1 + e^(-x))
+```
+Squashes any input to a value between 0 and 1. Historically popular.
+
+**Tanh:**
+```
+f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```
+Squashes to between -1 and 1. Roughly a shifted sigmoid.
+
+The key: without the activation function, stacking linear layers just gives you another linear layer (linear of a linear is linear). The activation function breaks this chain and allows the network to learn non-linear patterns.
+
+## Stacking Layers
+
+Here's the magic: stack multiple layers, each with its own weights and activation:
+
+```
+Input (pixels)
+  → [Linear layer 1] → [ReLU] 
+  → [Linear layer 2] → [ReLU]
+  → [Linear layer 3] → [ReLU]
+  → [Linear layer 4 - final scores]
+```
+
+Each layer transforms the data. The first layer learns low-level patterns. The second layer learns combinations of those patterns. The third layer learns higher-level concepts.
+
+By the time you reach the final layer, you've built up enough abstraction to solve complex problems.
+
+## Why This Works
+
+With one linear layer, you can only draw straight lines to separate classes. With two layers plus activation, you can draw curves. With three layers, you can draw arbitrarily complex shapes.
+
+More layers = more expressive power. But also more parameters to learn and more risk of overfitting (we'll talk about this in Part 10).
+
+## The Universal Approximation Theorem
+
+There's a mathematical result that says: a neural network with just one hidden layer, given enough neurons, can approximate any continuous function.
+
+This is powerful. It means neural networks aren't limited by architecture—they're limited by:
+1. Having enough neurons
+2. Having enough data to learn the patterns
+3. Finding the right weights through gradient descent
+
+It doesn't say you need just one hidden layer. Multiple layers often learn more efficiently and generalize better.
+
+## What's Next
+
+We now have the building block: neurons with non-linear activations, stacked into layers.
+
+But we still need to prepare the data properly. Feeding raw pixel values (0-255) directly into a network can cause training problems. That's data preprocessing, which is Part 9.
