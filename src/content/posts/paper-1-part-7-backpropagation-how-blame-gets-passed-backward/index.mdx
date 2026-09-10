@@ -1,0 +1,117 @@
+---
+title: "Paper #1, Part 7: Backpropagation — How Blame Gets Passed Backward"
+excerpt: "Gradient descent needs gradients. But computing them directly would be impossibly slow. Backpropagation is the trick that makes it fast—and it's less mysterious than you think."
+category: "Fundamentals"
+date: 2026-09-10
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["backpropagation", "chain rule"]
+---
+
+From Part 6: gradient descent adjusts weights using gradients (slopes). But how do you compute gradients for a complex function with thousands of weights?
+
+**Backpropagation** is the algorithm that does this efficiently. It's the workhorse of deep learning, and it's based on a simple idea: the chain rule from calculus.
+
+## The Chain Rule
+
+From high school calculus: if you have a function built from nested functions, the chain rule tells you how to compute the derivative.
+
+```
+If y = f(g(x)), then dy/dx = (dy/dg) * (dg/dx)
+```
+
+Example: if `y = (x + 5)²`
+
+You can break it down:
+- `g(x) = x + 5`
+- `f(g) = g²`
+
+Then:
+- `dg/dx = 1` (the derivative of addition)
+- `df/dg = 2g` (the derivative of squaring)
+- `dy/dx = (2g) * (1) = 2(x + 5)`
+
+The chain rule lets you break complex derivatives into simple pieces.
+
+## The Assembly Line Metaphor
+
+Imagine a factory assembly line. A component moves through several stations:
+
+```
+Input → [Station A] → [Station B] → [Station C] → Output
+```
+
+At each station, workers add value (or subtract it). The final output depends on what happened at every station.
+
+Now imagine the output is wrong. Quality control finds a defect. Who's to blame?
+
+The blame isn't the output's responsibility alone. Blame propagates backward through the line:
+- "Why is the output bad? Because Station C did bad work, or because the input to Station C was bad."
+- "Why was the input to Station C bad? Because Station B did bad work."
+- "Why was Station B's output bad? Because Station A did bad work, or because the original input was bad."
+
+Each station needs to know: "How much of the final defect is my fault?"
+
+Backpropagation does exactly this for neural networks. It passes blame backward through the function.
+
+## How Backpropagation Works
+
+In a linear classifier, the function has layers:
+
+```
+Input (pixels) → [multiply by weights] → [add biases] → [compute loss]
+```
+
+Each layer is a "station" that produces an output from an input.
+
+Backpropagation works in two passes:
+
+**Forward pass:** Feed the input through the entire function, computing outputs at each station. Save the intermediate results.
+
+**Backward pass:** Starting from the output loss, compute how much the loss changed with respect to each station's output. Use the chain rule to propagate blame backward through each layer.
+
+At each station:
+- "The output loss is 2.5"
+- "My output contributed 1.2 to that loss"
+- "The loss I can blame my input for is: 2.5 * (my contribution factor)"
+
+By the time you reach the weights, you know exactly how much each weight contributed to the final loss.
+
+## Why This Is Fast
+
+If you computed gradients directly (by perturbing each weight slightly and measuring the change), you'd need to:
+
+1. Change weight #1 by 0.0001, run the full forward pass, measure the loss change → gradient for weight #1
+2. Change weight #2 by 0.0001, run the full forward pass, measure the loss change → gradient for weight #2
+3. Repeat for all 3,000 weights
+
+That's 3,000 full forward passes. Slow.
+
+Backpropagation does it in one forward pass and one backward pass, no matter how many weights you have.
+
+The chain rule means: once you've computed blame at one layer, you can quickly compute blame at the previous layer. You multiply by the chain rule factor and move on.
+
+## The Key Insight
+
+Backpropagation isn't magic. It's just:
+
+1. The chain rule from calculus (learned in high school)
+2. Applied systematically to a layered function
+3. In reverse order (backward)
+
+The deep insight: each layer only needs to know its own local behavior (how its output depends on its input). It doesn't need to understand the entire function. The chain rule automatically propagates local information backward into global gradients.
+
+This is why neural networks can have hundreds of layers. Each layer is independent and local. Backpropagation connects them all.
+
+## What's Next
+
+Now we have:
+- A way to score images (linear classifiers)
+- A way to measure wrongness (loss functions)
+- A way to find gradients (backpropagation)
+- A way to improve weights (gradient descent)
+
+The next step: what if we stack multiple layers instead of just one? What if each layer applies a non-linear function, not just a weighted sum? That's neural networks, and that's where things get interesting.
