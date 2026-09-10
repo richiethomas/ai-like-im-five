@@ -1,0 +1,70 @@
+---
+title: "Paper #1, Part 13: Peeking Inside the Black Box — What Is a CNN Looking At?"
+excerpt: "Neural networks learn patterns, but we can't see them directly. Visualization techniques let us peek inside and understand what features a network has learned."
+category: "Vision"
+date: 2023-09-12T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["interpretability", "CNNs"]
+---
+
+A trained CNN is powerful but opaque. Weights are numbers. Feature maps are high-dimensional arrays. How do you know what the network learned?
+
+**Visualization** techniques let you probe the network.
+
+## Visualizing Filters
+
+The simplest approach: display the weights of early-layer filters as images.
+
+Early filters in a trained network often look like edge detectors:
+- Horizontal line patterns (detect horizontal edges)
+- Vertical line patterns (detect vertical edges)
+- Diagonal patterns (detect diagonals)
+- Blobs and textures
+
+You can literally see what features the network is looking for.
+
+Deeper layers are harder to interpret—they operate on abstractions, not raw pixels—but you can still extract patterns.
+
+## Feature Maps
+
+Run an image through the network and display intermediate feature maps.
+
+Early maps show which regions activate the edge detectors. Middle maps show which regions have textures or shapes. Late maps show semantic features related to the task.
+
+For a cat classifier, late maps might light up around facial features, ears, and body shapes.
+
+## Activation Maximization
+
+Ask: "What image would maximally activate this neuron?"
+
+Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: a neuron that detects faces produces a face-like image when you optimize for maximum activation.
+
+This works by gradient ascent on the image: start with random noise, compute gradients with respect to the image, adjust the image to increase the neuron's activation, repeat.
+
+The resulting images sometimes look spooky (uncanny shapes), but they reveal what the neuron cares about.
+
+## Saliency Maps
+
+Given an image and a classification, which pixels mattered most?
+
+Compute the gradient of the classification score with respect to the image. Pixels with high gradients had the most influence on the decision.
+
+Visualize these gradients as a heatmap. You literally see which regions the network focused on.
+
+A well-trained classifier usually focuses on relevant regions (the animal's face, not the background).
+
+## Why This Matters
+
+Visualization builds trust. If you see that a cat classifier is focusing on cat faces and whiskers, you're more confident it learned the right features. If it's focusing on background colors, something went wrong.
+
+Visualization also guides debugging: "The network isn't detecting paws correctly, let me check the middle layers."
+
+For safety-critical applications (medical imaging, autonomous driving), interpretability is essential.
+
+## What's Next
+
+Understanding what a network learned is powerful. But training from scratch is expensive. Part 14 covers transfer learning: reusing a network trained on one task as a starting point for another.
