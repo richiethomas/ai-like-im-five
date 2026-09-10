@@ -1,0 +1,61 @@
+---
+title: "Paper #1, Part 9: Garbage In, Garbage Out — Why Data Prep Matters"
+excerpt: "Your network is only as good as your data. Before you feed pixels to a neural network, you need to prepare them. It's unglamorous but essential."
+category: "Fundamentals"
+date: 2023-09-08T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["data preprocessing", "normalization"]
+---
+
+Neural networks are powerful, but they're sensitive to the scale of their inputs.
+
+Pixel values range from 0 to 255. If you feed these directly into a network, early layers see huge values (255) and tiny values (0). Weights adjust differently for different ranges. Training becomes unstable and slow.
+
+The solution: **normalize** your inputs.
+
+## Normalization
+
+The simplest approach: divide all pixel values by 255, so they range from 0 to 1 instead of 0 to 255.
+
+```
+normalized_pixel = raw_pixel / 255
+```
+
+Now all inputs are in a consistent range. Gradients flow more smoothly. Training converges faster.
+
+A more sophisticated approach: **standardization** (z-score normalization).
+
+```
+standardized_pixel = (raw_pixel - mean) / std_dev
+```
+
+Subtract the mean of all pixels, divide by the standard deviation. This centers the data around zero with unit variance.
+
+Why? Networks learn faster when inputs have zero mean and unit variance. Weights don't need to spend parameters learning "the overall shift"—they can focus on patterns.
+
+## Why This Matters
+
+Without normalization, training is like trying to walk downhill in a severely tilted landscape. You overshoot in some directions, get stuck in others. With normalization, the landscape is more balanced. Gradient descent works much more smoothly.
+
+On CIFAR-10 (a standard benchmark), proper normalization can reduce training time by 2-3x and improve final accuracy.
+
+## Beyond Pixels
+
+Normalization isn't just for pixels. Any numerical input benefits from scaling:
+- Financial data (stock prices range from $1 to $10,000)
+- Medical data (height in cm vs. weight in kg have vastly different ranges)
+- Any mixed-scale features
+
+The rule: if your features have different scales, normalize them.
+
+## What's Next
+
+Now we have:
+- Networks with layers and activations
+- Properly normalized inputs
+
+The next challenge: a network trained on training data often overfits—memorizes rather than generalizes. Part 10 covers overfitting and how to prevent it with regularization.
