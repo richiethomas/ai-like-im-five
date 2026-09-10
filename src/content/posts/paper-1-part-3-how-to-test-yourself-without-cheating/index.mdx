@@ -1,0 +1,95 @@
+---
+title: "Paper #1, Part 3: How to Test Yourself Without Cheating"
+excerpt: "Before you can claim your classifier works, you need to measure it. But there's a right way and a very wrong way to do this. The wrong way is tempting—and almost everyone does it at least once."
+category: "Fundamentals"
+date: 2026-09-12
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["train/test split", "cross-validation", "model evaluation"]
+---
+
+Now we have a classifier—even if it's just nearest neighbor. How do you know if it actually works?
+
+The obvious answer: test it. Run it on some images and see how many it gets right. But there's a trap here, and it's one of the most common mistakes in machine learning.
+
+## The Cheating Trap
+
+Imagine you're studying for an exam. You have a textbook and practice problems. Here's the smart way to study:
+
+1. Read the textbook
+2. Do the practice problems (but don't memorize the answers)
+3. Take a practice exam under test conditions
+4. See how you did
+5. Study the topics you got wrong
+6. Repeat with a new practice exam
+
+Here's the cheating way:
+
+1. Get a copy of the exam in advance
+2. Study the exact questions and answers
+3. Memorize the answers
+4. Take the real exam and ace it
+5. Feel smart
+
+The second person doesn't actually understand the material. They've memorized the specific test. If you change one number in a question, they're lost.
+
+Machine learning has the exact same trap.
+
+## The Split
+
+Here's what NOT to do: train your classifier on some images, then test it on the same images. If you build a classifier that's so powerful it simply memorizes every training image, it will get 100% accuracy on those images. Perfect score! You're a genius!
+
+Except you've learned nothing. Your classifier would fail spectacularly on images it hasn't seen.
+
+Here's what TO do: split your data into three groups:
+
+**Training set** (typically 60-70% of your data): You show these images to your classifier while it's learning. It adjusts its internal settings (weights, hyperparameters) based on these examples.
+
+**Validation set** (typically 15-20%): You don't touch these while training. But after you've built several classifiers, you test each one on this set to see which one is best. You use the validation set to make decisions: "Should I use this feature? Should I adjust this parameter?"
+
+**Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
+
+The key rule: **Once you've used the test set to measure accuracy, you cannot go back and retrain or tweak anything.** That would be cheating. You'd be using the test set to make decisions, which means it's no longer a true test.
+
+## Why This Matters
+
+This seems pedantic, but it's the difference between a classifier that actually works and one that just memorized the training data.
+
+When you train on training data and test on training data, you're measuring something called **training accuracy**. This number is almost always better than real performance, sometimes wildly so.
+
+When you test on held-out validation/test data, you're measuring **generalization accuracy** — how well your classifier handles images it's never seen. This is what matters in the real world.
+
+The gap between training accuracy and test accuracy reveals **overfitting**: how much your model has memorized rather than learned. We'll talk more about this in Part 10, but the principle starts here.
+
+## Cross-Validation
+
+If you have a small dataset, you can't afford to hold out 20% just to measure accuracy once. In that case, machine learning uses a technique called **k-fold cross-validation**.
+
+Imagine you have 1000 images. Instead of a single train/test split:
+
+1. Divide the 1000 images into 5 equal groups (folds) of 200 images each
+2. Train on folds 1-4, test on fold 5 → record accuracy
+3. Train on folds 1-3 and 5, test on fold 4 → record accuracy
+4. Repeat until every fold has been the test set once
+5. Average the five accuracy numbers
+
+This way, every image gets tested exactly once and every image is used for training four times. You get a more stable estimate of real performance without needing a huge dataset.
+
+The metaphor: instead of one final exam, you take five quizzes on different material. Your actual grade is the average.
+
+## The Rule You'll See Everywhere
+
+In CS231n and every serious machine learning project, you'll see this written somewhere:
+
+"The test set should never be used to make any decisions."
+
+This sounds obvious until you've been staring at a low test accuracy for hours and you're tempted to "just tweak one parameter and see." Don't. That's cheating. If you do that, you need a *new* held-out test set that hasn't seen your tweaks.
+
+The only time you look at test accuracy is at the very end, when you're reporting your final results.
+
+## What's Next
+
+Now that we know how to honestly measure a classifier, we can build actual classifiers. In the next post, we'll build the simplest possible classifier beyond nearest neighbor: a linear classifier. It's going to score each image with a weighted sum of its pixel values, and those weights are going to learn from the training data in a way nearest neighbor never could.
