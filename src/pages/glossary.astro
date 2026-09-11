@@ -1,0 +1,100 @@
+---
+import { getCollection } from "astro:content";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { visiblePosts } from "@/lib/posts";
+
+const allPosts = visiblePosts(await getCollection("posts"));
+
+// Every term the series has introduced, in plain language. Posts deep-link
+// to entries via /glossary/#slug. Keep entries alphabetized.
+const terms = [
+  {
+    slug: "grid",
+    term: "Grid (of numbers)",
+    definition:
+      "How this series describes an image's data: rows and columns of values, one group per pixel. Programmers call this an array, but it's the same idea as a spreadsheet full of numbers.",
+  },
+  {
+    slug: "image-classification",
+    term: "Image classification",
+    definition:
+      "The task of assigning a picture one label from a fixed list of choices, like deciding whether a photo shows a cat or a dog. The central problem of the first half of this series.",
+  },
+  {
+    slug: "label",
+    term: "Label",
+    definition:
+      "The answer a classifier produces, chosen from a fixed list: \"dog\", \"cat\", \"truck\". During training, labels are the correct answers a human attached to example images.",
+  },
+  {
+    slug: "lossless-lossy",
+    term: "Lossless vs. lossy compression",
+    definition:
+      "Two ways of shrinking a file. Lossless formats (like PNG) preserve every number exactly. Lossy formats (like JPEG) throw away detail you likely won't notice in exchange for much smaller files.",
+  },
+  {
+    slug: "occlusion",
+    term: "Occlusion",
+    definition:
+      "When part of the subject is hidden behind something else, like a dog photographed through a picket fence. The computer must produce the right label from an incomplete picture.",
+  },
+  {
+    slug: "pixel",
+    term: "Pixel",
+    definition:
+      "One tiny square of an image, the smallest unit a screen displays. An 800 × 600 image is a grid of 480,000 pixels. Each pixel's color is stored as three numbers (see RGB).",
+  },
+  {
+    slug: "ppm",
+    term: "PPM (plain)",
+    definition:
+      "A simple image format that stores its pixel numbers as ordinary readable text. We use it in the try-it-yourself experiments because you can open the same file as a picture or as numbers.",
+  },
+  {
+    slug: "rgb",
+    term: "RGB",
+    definition:
+      "The system for writing a color as three numbers: how much red, green, and blue it contains, each from 0 (none) to 255 (maximum). Mixing different amounts of the three produces every color on screen.",
+  },
+  {
+    slug: "robust",
+    term: "Robust",
+    definition:
+      "A method is robust to some variation (lighting, angle, size) when its answer stays correct even though that variation changes the numbers. Building robust methods is the point of the whole course.",
+  },
+];
+---
+
+<BaseLayout
+  title="Glossary"
+  description="Plain-language definitions of every technical term used in this blog's series."
+>
+  <SiteHeader posts={allPosts} />
+  <main id="content" class="outer">
+    <div class="canvas">
+      <header class="pagehead">
+        <p class="eyebrow">Reference</p>
+        <h1 class="pagehead-title">Glossary</h1>
+        <p class="pagehead-description">
+          Every technical term this blog uses, defined in plain language. Posts link here the first time a term appears. New entries are added as the series introduces them.
+        </p>
+      </header>
+
+      <div class="prose">
+        {
+          terms.map((t) => (
+            <section id={t.slug}>
+              <h2>
+                <a href={`#${t.slug}`}>{t.term}</a>
+              </h2>
+              <p>{t.definition}</p>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
