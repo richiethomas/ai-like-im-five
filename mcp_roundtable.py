@@ -82,13 +82,15 @@ class RoundtableOrchestrator:
         # Start author
         try:
             log.debug("Starting author server...")
+            env = os.environ.copy()
             self.author_process = subprocess.Popen(
                 ["/opt/homebrew/opt/python@3.12/bin/python3.12", "mcp_author.py"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                bufsize=1
+                bufsize=1,
+                env=env
             )
             log.info(f"Author server started (PID: {self.author_process.pid})")
             print(f"✓ Author ready (PID: {self.author_process.pid})")

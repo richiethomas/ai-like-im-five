@@ -261,6 +261,7 @@ class DeepSeekReviewer(ReviewerMCPServer):
             "type": "json_schema",
             "json_schema": {
                 "name": "findings",
+                "strict": False,
                 "schema": {
                     "type": "object",
                     "properties": {
@@ -270,16 +271,14 @@ class DeepSeekReviewer(ReviewerMCPServer):
                                 "type": "object",
                                 "properties": {
                                     "claim": {"type": "string"},
-                                    "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
+                                    "dimension": {"type": "string"},
                                     "issue": {"type": "string"},
-                                    "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                                    "severity": {"type": "integer"},
                                     "fix": {"type": "string"}
-                                },
-                                "required": ["claim", "dimension", "issue", "severity"]
+                                }
                             }
                         }
-                    },
-                    "required": ["findings"]
+                    }
                 }
             }
         }
@@ -394,7 +393,7 @@ class GeminiReviewer(ReviewerMCPServer):
                             "claim": {"type": "string"},
                             "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
                             "issue": {"type": "string"},
-                            "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                            "severity": {"type": "integer"},
                             "fix": {"type": "string"}
                         },
                         "required": ["claim", "dimension", "issue", "severity"]
