@@ -150,3 +150,37 @@ def test_vote_prompt_mentions_stance_and_fix():
     assert "AUTHOR'S STANCE: NEGOTIATE" in prompt
     assert "AUTHOR'S PROPOSED FIX: the fix" in prompt
     assert ARTICLE.body in prompt
+
+
+# --- regressions from the first full e2e run --------------------------------
+
+def test_string_encoded_stances_array_decoded():
+    """Claude tool-use sometimes JSON-string-encodes the nested array; rounds
+    1-4 of the first e2e run lost every stance to this."""
+    import json as _json
+    payload = _json.dumps([{"claim_id": "c001", "stance": "CONCEDE",
+                            "rationale": "r", "proposed_fix": "f"}])
+    stances = _parse_stances({"stances": payload})
+    assert [(s.claim_id, s.stance) for s in stances] == [("c001", "CONCEDE")]
+
+
+def test_double_wrapped_string_stances_decoded():
+    """The shape actually observed live: the string value contains the ENTIRE
+    wrapper object again — {"stances": "{\"stances\": [...]}"}."""
+    import json as _json
+    inner = {"stances": [{"claim_id": "c001", "stance": "DEFEND", "rationale": "r"},
+                         {"claim_id": "c002", "stance": "NEGOTIATE",
+                          "rationale": "r", "proposed_fix": "pf"}]}
+    stances = _parse_stances({"stances": _json.dumps(inner)})
+    assert [(s.claim_id, s.stance) for s in stances] == [
+        ("c001", "DEFEND"), ("c002", "NEGOTIATE")]
+
+
+def test_string_encoded_votes_decoded():
+    import json as _json
+    from reviewer.votes import _parse_votes
+    data = {"votes": _json.dumps([{"claim_id": "c001", "choice": "ACCEPT"}]),
+            "endorsements": _json.dumps([{"claim_id": "c002", "endorse": True}])}
+    votes = _parse_votes(data, "r1", {"c001"}, {"c002"})
+    assert {(v.claim_id, v.kind, v.choice) for v in votes} == {
+        ("c001", "resolution", "ACCEPT"), ("c002", "endorsement", "ACCEPT")}

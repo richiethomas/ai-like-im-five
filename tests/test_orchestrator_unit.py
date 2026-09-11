@@ -135,3 +135,26 @@ def test_checkpoint_written_per_round_and_on_crash(tmp_path):
     assert state["engine"]["round"] == 3
     assert state["engine"]["claims"][0]["rounds"] == 2  # two counted rounds survived
     assert len(state["engine"]["events"]) > 0
+
+
+def test_defaulted_stances_still_reach_vote_wave():
+    """Regression: when the author returns NOTHING parseable, the engine
+    defaults every stance to DEFEND — and the vote wave must still run on
+    those defaults. The first e2e run silently skipped voting for 4 rounds
+    because pairs were built from the author's (empty) list."""
+    class SilentAuthor:
+        name = "claude-sonnet-5"
+
+        def structured(self, prompt, schema, max_tokens, label=""):
+            return {"stances": []}  # parses to nothing, twice (re-ask too)
+
+    c = claim("c001")
+    eng = DebateEngine([c], REVIEWERS)
+    ledger = CostLedger(budget_usd=100)
+    debate_loop(ARTICLE, eng, SilentAuthor(),
+                [FakeReviewer("r1", "ACCEPT"), FakeReviewer("r2", "ACCEPT")],
+                ledger)
+    # Defaulted DEFEND + both reviewers accept -> dismissed in round 1
+    assert c.status == ClaimStatus.DISMISSED.value
+    assert c.rounds == 1
+    assert not any(e.type == "round_not_counted" for e in eng.events)

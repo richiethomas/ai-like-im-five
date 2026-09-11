@@ -36,6 +36,27 @@ from .costs import CostLedger
 # Lenient JSON parsing (truncation salvage)
 # ---------------------------------------------------------------------------
 
+def decode_maybe_string(value):
+    """Some models (notably Claude tool-use) JSON-string-encode nested arrays.
+    Returns the decoded value, or [] if the string isn't valid JSON."""
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return []
+    return value
+
+
+def extract_list(data: dict, key: str) -> list:
+    """Get data[key] as a list, tolerating the shapes Claude tool-use actually
+    emits: a plain list, a JSON-string-encoded list, or a string containing
+    the ENTIRE wrapper object again ({key: "{\"key\": [...]}"})."""
+    value = decode_maybe_string(data.get(key, []))
+    if isinstance(value, dict):
+        value = decode_maybe_string(value.get(key, []))
+    return value if isinstance(value, list) else []
+
+
 def strip_fences(text: str) -> str:
     text = text.strip()
     if text.startswith("```"):

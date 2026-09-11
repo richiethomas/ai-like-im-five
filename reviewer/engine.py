@@ -81,6 +81,12 @@ class DebateEngine:
         """Open claims whose current stance is DEFEND/NEGOTIATE (need votes)."""
         return [c for c in self.open_claims() if c.id in self._pending_stance]
 
+    def pending_stances(self) -> dict[str, Stance]:
+        """The stance under debate per contested claim — INCLUDING engine-
+        defaulted DEFENDs. The vote wave must be built from this, not from
+        the author's returned list, or defaulted stances never get voted on."""
+        return dict(self._pending_stance)
+
     def conceded_this_round(self) -> list[Claim]:
         """Claims that reached AGREED in the current round (for endorsement polling)."""
         out = []

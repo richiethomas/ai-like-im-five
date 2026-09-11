@@ -10,7 +10,7 @@ inside the engine.
 from __future__ import annotations
 
 from .article import Article
-from .providers import Provider
+from .providers import Provider, extract_list
 from .schemas import (
     STANCE_RESPONSE_SCHEMA,
     Claim,
@@ -75,7 +75,7 @@ Exactly one stance per claim_id listed above."""
 
 def _parse_stances(data: dict) -> list[Stance]:
     out = []
-    for raw in data.get("stances", []):
+    for raw in extract_list(data, "stances"):
         if not isinstance(raw, dict):
             continue
         cid = raw.get("claim_id")

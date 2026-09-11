@@ -12,7 +12,7 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .article import Article
-from .providers import Provider
+from .providers import Provider, extract_list
 from .schemas import (
     VOTE_RESPONSE_SCHEMA,
     Claim,
@@ -88,7 +88,7 @@ Judge on the merits — accept good defenses, reject hand-waving. Give a reason 
 def _parse_votes(data: dict, reviewer: str, contested_ids: set[str],
                  endorse_ids: set[str]) -> list[Vote]:
     votes: list[Vote] = []
-    for raw in data.get("votes", []):
+    for raw in extract_list(data, "votes"):
         if not isinstance(raw, dict):
             continue
         cid = str(raw.get("claim_id", "")).strip()
@@ -99,7 +99,7 @@ def _parse_votes(data: dict, reviewer: str, contested_ids: set[str],
                               kind=VoteKind.RESOLUTION.value, choice=choice,
                               reason=(str(raw["reason"]).strip()
                                       if raw.get("reason") else None)))
-    for raw in data.get("endorsements", []) or []:
+    for raw in extract_list(data, "endorsements"):
         if not isinstance(raw, dict):
             continue
         cid = str(raw.get("claim_id", "")).strip()

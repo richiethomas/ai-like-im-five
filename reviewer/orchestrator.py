@@ -82,9 +82,10 @@ def debate_loop(article: Article, engine: DebateEngine, author: Provider,
         contested = engine.contested_claims()
         conceded = engine.conceded_this_round()
         if contested or conceded:
-            stance_by_id = {s.claim_id: s for s in stances}
-            pairs = [(c, stance_by_id[c.id]) for c in contested
-                     if c.id in stance_by_id]
+            # Source of truth is the engine's pending stances (includes
+            # engine-defaulted DEFENDs), never the author's returned list.
+            pending = engine.pending_stances()
+            pairs = [(c, pending[c.id]) for c in contested]
             votes = request_votes(article, pairs, conceded, reviewers)
             engine.apply_votes(votes)
 
@@ -141,12 +142,37 @@ def run_review(article_path: str | Path,
     ckpt = lambda tag: checkpoint(out_dir, tag, article, engine, ledger, raw_scans)  # noqa: E731
     ckpt("scan")
 
+    result = RunResult(article=article, engine=engine, ledger=ledger,
+                       out_dir=out_dir, dropped=dropped)
+
     # --- debate ---
     try:
         debate_loop(article, engine, author, reviewers, ledger,
                     checkpoint_fn=ckpt)
     finally:
+        # Even on a crash: final checkpoint + (partial) report and transcript.
         ckpt("final")
+        try:
+            write_artifacts(result)
+        except Exception:  # noqa: BLE001 — never mask the original error
+            pass
 
-    return RunResult(article=article, engine=engine, ledger=ledger,
-                     out_dir=out_dir, dropped=dropped)
+    return result
+
+
+def write_artifacts(result: RunResult) -> tuple[Path, Path]:
+    """Render report.json + transcript.md into the run directory."""
+    from .report import build_report
+    from .transcript import render_transcript
+
+    result.out_dir.mkdir(parents=True, exist_ok=True)
+    report = build_report(result.engine, result.ledger, result.article.title,
+                          result.article.path, result.dropped)
+    report_path = result.out_dir / "report.json"
+    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2))
+
+    transcript = render_transcript(result.engine.events, result.engine.claims,
+                                   result.article.title)
+    transcript_path = result.out_dir / "transcript.md"
+    transcript_path.write_text(transcript)
+    return report_path, transcript_path
