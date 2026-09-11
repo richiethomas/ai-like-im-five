@@ -47,7 +47,9 @@ distance = |100 - 101| + |150 - 151| + |200 - 199|
          = 3
 ```
 
-This is simple and fast. For a full image, you'd add up the difference in every single pixel value across all 1.44 million numbers. It's called "L1" because mathematicians have a thing for notation.
+This is simple and fast. For a full image, you'd add up the difference in every single pixel value across all 1.44 million numbers.
+
+The name comes from Manhattan's street grid: a taxi there can't cut diagonally through buildings, so a trip is four blocks over plus three blocks up, the sum of the two legs. This formula measures distance the same way, one leg per pixel. "L1" is the mathematicians' catalog label for it: the 1 means each difference is used as-is, and squaring them instead gives you the L2 below.
 
 ### L2 Distance (Euclidean Distance)
 
@@ -60,7 +62,7 @@ distance = sqrt((100 - 101)² + (150 - 151)² + (200 - 199)²)
          ≈ 1.73
 ```
 
-This is the distance you learned in high school geometry: the straight-line distance between two points. It punishes large differences more than small ones (because of the squaring).
+This is the distance you learned in high school geometry: the straight-line distance between two points, named after Euclid, the Greek mathematician whose textbook defined ordinary geometry about 2,300 years ago. It punishes large differences more than small ones (because of the squaring).
 
 On the CIFAR-10 dataset (a standard benchmark of 60,000 small images), L1 achieved about 38% accuracy and L2 achieved about 35% on a test set. That's barely better than random guessing (which would be 10% on 10 categories).
 
