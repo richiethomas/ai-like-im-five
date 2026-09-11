@@ -40,3 +40,12 @@ test-results
 *.sln
 *.sw?
 .venv/
+
+# Review system: secrets, venvs, caches, run artifacts
+.env
+.venv-fact-check/
+__pycache__/
+*.pyc
+.pytest_cache/
+tests/fixtures/cache/
+review-runs/
