@@ -58,8 +58,9 @@ class ConsensusItem:
     claim: str
     issue: str
     severity: int
-    suggested_fix: Optional[str]
-    models_agreed: list[str]
+    dimension: str = "CORRECTNESS"
+    suggested_fix: Optional[str] = None
+    models_agreed: list[str] = None
 
 @dataclass
 class BlockerItem:
@@ -401,11 +402,13 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
                 avg_severity = sum(severities) / len(severities) if severities else 5
 
                 if len(set(int(s) for s in severities)) == 1:  # All same severity
+                    first_finding = models_addressing[list(models_addressing.keys())[0]][0]
                     consensus_items.append(ConsensusItem(
                         claim=claim,
-                        issue=models_addressing[list(models_addressing.keys())[0]][0].issue,
+                        issue=first_finding.issue,
                         severity=int(avg_severity),
-                        suggested_fix=models_addressing[list(models_addressing.keys())[0]][0].suggested_fix,
+                        dimension=first_finding.dimension,
+                        suggested_fix=first_finding.suggested_fix,
                         models_agreed=list(models_addressing.keys())
                     ))
                 else:
@@ -426,6 +429,18 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
         # Filter consensus items by severity > 2 (our threshold)
         action_items = [item for item in consensus if item.severity > 2]
 
+        # Aggregate findings by dimension for audit trail
+        findings_by_dimension = defaultdict(list)
+        for claim, models_dict in self.findings_by_claim.items():
+            for model, findings in models_dict.items():
+                for finding in findings:
+                    findings_by_dimension[finding.dimension].append({
+                        "claim": finding.claim,
+                        "issue": finding.issue,
+                        "severity": finding.severity,
+                        "model": model
+                    })
+
         report = {
             "article": title,
             "excerpt": excerpt,
@@ -434,6 +449,7 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
                 {
                     "claim": item.claim,
                     "issue": item.issue,
+                    "dimension": item.dimension,
                     "severity": item.severity,
                     "suggested_fix": item.suggested_fix,
                     "consensus_models": item.models_agreed
@@ -448,6 +464,11 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
                 }
                 for item in blockers
             ],
+            "audit_trail": {
+                "findings_by_dimension": dict(findings_by_dimension),
+                "dimensions_checked": sorted(set(findings_by_dimension.keys())),
+                "total_findings_reviewed": sum(len(findings) for findings in findings_by_dimension.values())
+            },
             "cost_estimate": sum(self.cost_tracker.values())
         }
 
