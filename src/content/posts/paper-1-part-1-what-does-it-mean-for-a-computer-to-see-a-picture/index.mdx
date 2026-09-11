@@ -25,7 +25,7 @@ Every image on your screen is stored as a grid of [pixels](https://simple.wikipe
 
 So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range, and the neural networks we'll meet later often rescale the values to sit between 0 and 1.)
 
-When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're exploiting repetition in those numbers to make a much smaller file. Lossless formats like PNG preserve every number exactly; lossy formats like JPEG throw away some detail you likely won't notice.
+When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're exploiting repetition in those numbers to make a much smaller file. Lossless formats like PNG typically preserve every number exactly (matching the original pixel values once decoded); lossy formats like JPEG throw away some detail you likely won't notice.
 
 This is where computers start. Not with "a picture of a dog." With a giant grid of numbers.
 
