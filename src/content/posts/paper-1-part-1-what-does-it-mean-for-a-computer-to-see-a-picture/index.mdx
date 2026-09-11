@@ -25,7 +25,12 @@ Every image on your screen is stored as a grid of [pixels](https://simple.wikipe
 
 So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range. And neural networks (programs that learn from examples, which we'll meet later in this series) often shrink these values down to sit between 0 and 1, because that helps them learn more reliably.)
 
-When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're either exploiting repetition in those numbers or discarding detail your eye won't miss, depending on the format. Lossless formats like PNG compress the file but decode back to the exact original pixel values; lossy formats like JPEG throw away some detail you likely won't notice.
+When you scroll through your photos, your phone is shuffling around millions of numbers. And when you compress an image for email (that is, when you shrink its file size so it uploads faster and takes up less storage), you're playing one of two tricks with those numbers:
+
+- **Write the repeats as shorthand.** A clear blue sky means the same three numbers repeated thousands of times in a row. A format can store that as, in effect, "sky color, five thousand times" instead of writing it out five thousand times. Unpacking the shorthand gives back every original number exactly. This is called lossless compression, and it's what PNG files do.
+- **Throw away detail your eye won't miss.** A format can also smooth over tiny differences between neighboring pixels and store the simpler result. The numbers that come back are close to the originals, but not identical. This is called lossy compression, it's what JPEG files do, and it's why JPEGs are so small.
+
+Either way, compressing a picture is just doing arithmetic on a grid of numbers.
 
 This is where computers start. Not with "a picture of a dog." With a giant grid of numbers.
 
@@ -42,7 +47,7 @@ That file is a real image format (called "plain PPM") that image editors such as
 Things to look for when you open it:
 
 - After the short header, every group of three numbers is one pixel: red, green, blue.
-- The file starts with `170 210 240` repeated over and over. That's the sky: some red, more green, a lot of blue makes light blue.
+- The file starts with `170 210 240` repeated over and over. That's the sky: some red, more green, a lot of blue makes light blue. (It's also exactly the kind of repetition that the lossless shorthand trick from earlier collapses.)
 - Scroll down until the numbers change to `100 60 30`. More red than green, very little blue: that's the dark brown of the dog's ears.
 - Keep scrolling and you'll find `25 25 25` (the nearly-black eyes and nose) and `230 120 140` (the pink tongue).
 
