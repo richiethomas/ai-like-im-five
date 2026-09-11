@@ -1,8 +1,8 @@
 ---
-title: "Paper #1, Part 3: How to Test Yourself Without Cheating"
-excerpt: "Before you can claim your classifier works, you need to measure it. But there's a right way and a very wrong way to do this. The wrong way is tempting—and almost everyone does it at least once."
+title: "Paper #1, Part 4: How to Test Yourself Without Cheating"
+excerpt: "Before you can claim your classifier works, you need to measure it. But there's a right way and a very wrong way to do this. The wrong way is tempting, and almost everyone does it at least once."
 category: "Fundamentals"
-date: 2023-09-06T23:59:59Z
+date: 2023-09-07T23:59:59Z
 author:
   name: "Richie Thomas"
   role: "Engineer"
@@ -11,7 +11,7 @@ draft: false
 tags: ["train/test split", "cross-validation", "model evaluation"]
 ---
 
-Now we have a classifier—even if it's just nearest neighbor. How do you know if it actually works?
+Now we have a classifier (even if it's just nearest neighbor). How do you know if it actually works?
 
 The obvious answer: test it. Run it on some images and see how many it gets right. But there's a trap here, and it's one of the most common mistakes in machine learning.
 
@@ -60,9 +60,9 @@ This seems pedantic, but it's the difference between a classifier that actually 
 
 When you train on training data and test on training data, you're measuring something called **training accuracy**. This number is almost always better than real performance, sometimes wildly so.
 
-When you test on held-out validation/test data, you're measuring **generalization accuracy** — how well your classifier handles images it's never seen. This is what matters in the real world.
+When you test on held-out validation/test data, you're measuring **generalization accuracy**: how well your classifier handles images it's never seen. This is what matters in the real world.
 
-The gap between training accuracy and test accuracy reveals **overfitting**: how much your model has memorized rather than learned. We'll talk more about this in Part 10, but the principle starts here.
+The gap between training accuracy and test accuracy reveals **overfitting**: how much your model has memorized rather than learned. We'll talk more about this in Part 11, but the principle starts here.
 
 ## Cross-Validation
 
