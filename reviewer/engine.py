@@ -41,7 +41,8 @@ from .schemas import (
 class DebateEngine:
     def __init__(self, claims: list[Claim], reviewer_names: list[str],
                  max_rounds_per_claim: int = MAX_CONTESTED_ROUNDS_PER_CLAIM,
-                 max_total_turns: int = MAX_TOTAL_DEBATE_TURNS):
+                 max_total_turns: int = MAX_TOTAL_DEBATE_TURNS,
+                 initial_events: list[Event] | None = None):
         self.claims = {c.id: c for c in claims}
         self.reviewer_names = list(reviewer_names)
         self.max_rounds_per_claim = max_rounds_per_claim
@@ -49,7 +50,9 @@ class DebateEngine:
         self.round = 0            # scan is round 0; first debate round is 1
         self.total_turns = 0      # sum of per-claim contested-round increments
         self.stopped = False
-        self.events: list[Event] = []
+        # Single event stream for the whole run: the orchestrator's pre-engine
+        # events (scan, drops) come first, then everything the engine emits.
+        self.events: list[Event] = list(initial_events or [])
         # stance currently under debate, per open claim
         self._pending_stance: dict[str, Stance] = {}
 
@@ -217,6 +220,10 @@ class DebateEngine:
     def stop_for_budget(self, spent_usd: float, budget_usd: float) -> None:
         self._stop_open_claims("budget_stop", {"spent_usd": round(spent_usd, 4),
                                                "budget_usd": budget_usd})
+
+    def force_stop(self, reason: str) -> None:
+        """External safety stop (e.g. orchestrator loop guard)."""
+        self._stop_open_claims("round_cap_stop", {"reason": reason})
 
     def _stop_open_claims(self, event_type: str, data: dict) -> None:
         stopped_ids = []
