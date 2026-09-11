@@ -1,8 +1,8 @@
 ---
-title: "Paper #1, Part 9: Garbage In, Garbage Out — Why Data Prep Matters"
+title: "Paper #1, Part 10: Garbage In, Garbage Out (Why Data Prep Matters)"
 excerpt: "Your network is only as good as your data. Before you feed pixels to a neural network, you need to prepare them. It's unglamorous but essential."
 category: "Fundamentals"
-date: 2023-09-12T23:59:59Z
+date: 2023-09-13T23:59:59Z
 author:
   name: "Richie Thomas"
   role: "Engineer"
@@ -35,7 +35,7 @@ standardized_pixel = (raw_pixel - mean) / std_dev
 
 Subtract the mean of all pixels, divide by the standard deviation. This centers the data around zero with unit variance.
 
-Why? Networks learn faster when inputs have zero mean and unit variance. Weights don't need to spend parameters learning "the overall shift"—they can focus on patterns.
+Why? Networks learn faster when inputs have zero mean and unit variance. Weights don't need to spend parameters learning "the overall shift"; they can focus on patterns.
 
 ## Why This Matters
 
@@ -58,4 +58,4 @@ Now we have:
 - Networks with layers and activations
 - Properly normalized inputs
 
-The next challenge: a network trained on training data often overfits—memorizes rather than generalizes. Part 10 covers overfitting and how to prevent it with regularization.
+The next challenge: a network trained on training data often overfits: it memorizes rather than generalizes. Part 11 covers overfitting and how to prevent it with regularization.
