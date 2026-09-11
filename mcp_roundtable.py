@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 from typing import Optional
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Setup logging
 logging.basicConfig(
@@ -182,29 +183,44 @@ class RoundtableOrchestrator:
                     "debate_rounds": 0
                 }
 
-                # All reviewers scan
-                log.debug(f"  Calling {len(self.reviewer_processes)} reviewers for scan_article")
-                for model_name, process in self.reviewer_processes.items():
+                # All reviewers scan in parallel
+                log.debug(f"  Calling {len(self.reviewer_processes)} reviewers for scan_article (parallel)")
+                request = {
+                    "method": "scan_article",
+                    "params": {"title": self.title, "content": self.content[:3000]}
+                }
+
+                def scan_reviewer(model_name, process):
+                    """Scan with one reviewer, return (model_name, findings, elapsed)."""
                     log.debug(f"    Scanning with {model_name}...")
+                    start = time.time()
                     try:
-                        start = time.time()
-                        request = {
-                            "method": "scan_article",
-                            "params": {"title": self.title, "content": self.content[:3000]}
-                        }
                         response = self.call_server(process, request)
                         findings = response.get("findings", [])
                         elapsed = time.time() - start
+                        return (model_name, findings, elapsed)
+                    except Exception as e:
+                        elapsed = time.time() - start
+                        log.error(f"    {model_name}: error after {elapsed:.1f}s — {e}")
+                        return (model_name, [], elapsed)
 
+                # Run all scans concurrently
+                with ThreadPoolExecutor(max_workers=4) as executor:
+                    futures = {
+                        executor.submit(scan_reviewer, model_name, process): model_name
+                        for model_name, process in self.reviewer_processes.items()
+                    }
+
+                    for future in as_completed(futures):
+                        model_name, findings, elapsed = future.result()
                         if findings:
                             dimension_state[dimension]["reviewer_findings"][model_name] = findings
                             log.info(f"    {model_name}: {len(findings)} issues ({elapsed:.1f}s)")
                             print(f"  {model_name}: {len(findings)} issues")
                         else:
                             log.debug(f"    {model_name}: no findings ({elapsed:.1f}s)")
-                    except Exception as e:
-                        log.error(f"    {model_name}: error — {e}")
-                        print(f"  {model_name}: error — {e}")
+
+                log.info(f"  All reviewers scanned in parallel")
 
                 if not dimension_state[dimension]["reviewer_findings"]:
                     log.info(f"  No issues found — moving to next dimension")
@@ -255,19 +271,21 @@ class RoundtableOrchestrator:
 
             else:
                 # Continued debate on this dimension
+                log.info(f"Round {round_num}: {dimension} (Reviewer rebuttal)")
                 print(f"Round {round_num}: {dimension} (Reviewer rebuttal)")
                 dimension_state[dimension]["debate_rounds"] += 1
 
-                # Reviewers respond to author's last response
+                # Reviewers respond to author's last response (in parallel)
                 author_last = dimension_state[dimension]["author_responses"][-1]
                 rebuttals = {}
 
-                for model_name, process in self.reviewer_processes.items():
-                    try:
-                        concerns = dimension_state[dimension]["reviewer_findings"].get(model_name, [])
-                        if not concerns:
-                            continue
+                def get_rebuttal(model_name, process):
+                    """Get rebuttal from one reviewer."""
+                    concerns = dimension_state[dimension]["reviewer_findings"].get(model_name, [])
+                    if not concerns:
+                        return (model_name, None)
 
+                    try:
                         request = {
                             "method": "debate_stance",
                             "params": {
@@ -280,11 +298,24 @@ class RoundtableOrchestrator:
                         }
                         response = self.call_server(process, request)
                         rebuttal = response.get("response", "")
+                        return (model_name, rebuttal)
+                    except Exception as e:
+                        log.error(f"  {model_name}: rebuttal error — {e}")
+                        return (model_name, None)
+
+                # Get rebuttals in parallel
+                with ThreadPoolExecutor(max_workers=4) as executor:
+                    futures = {
+                        executor.submit(get_rebuttal, model_name, process): model_name
+                        for model_name, process in self.reviewer_processes.items()
+                    }
+
+                    for future in as_completed(futures):
+                        model_name, rebuttal = future.result()
                         if rebuttal:
                             rebuttals[model_name] = rebuttal
+                            log.debug(f"  {model_name}: submitted rebuttal")
                             print(f"  {model_name}: submitted response")
-                    except Exception as e:
-                        print(f"  {model_name}: error — {e}")
 
                 if not rebuttals:
                     print(f"  → Reviewers accepted — next dimension")
@@ -401,7 +432,8 @@ def main():
         sys.exit(1)
 
     article_path = sys.argv[1]
-    orchestrator = RoundtableOrchestrator(article_path)
+    # 10 minute timeout for full roundtable
+    orchestrator = RoundtableOrchestrator(article_path, max_rounds=100)
 
     try:
         if not orchestrator.start_servers():
