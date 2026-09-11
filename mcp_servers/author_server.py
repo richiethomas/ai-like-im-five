@@ -16,6 +16,16 @@ class AuthorMCPServer(BaseMCPServer):
         super().__init__("claude-sonnet-5-author")
         self.client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
+    def handle_request(self, request: dict) -> dict:
+        """Override to add respond_to_roundtable method."""
+        method = request.get("method")
+        params = request.get("params", {})
+
+        if method == "respond_to_roundtable":
+            return self.respond_to_roundtable(**params)
+        else:
+            return super().handle_request(request)
+
     def scan_article(self, title: str, content: str) -> dict:
         """Prepare author context for debate (not used in author/reviewer mode)."""
         return {"context": "Author ready to defend article"}

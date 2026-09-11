@@ -150,43 +150,46 @@ class AuthorVsReviewersOrchestrator:
         author_model = "claude-sonnet-5"
 
         round_num = 1
-        while round_num <= self.max_rounds:
-            current_dimension = DIMENSION_PRIORITY[self.current_dimension_idx]
+        dimension_idx = 0
+
+        while round_num <= self.max_rounds and dimension_idx < len(DIMENSION_PRIORITY):
+            current_dimension = DIMENSION_PRIORITY[dimension_idx]
             print(f"\nRound {round_num}: {current_dimension}")
 
-            if round_num == 1:
-                # Round 1: Reviewers raise initial issues on current dimension
-                reviewer_concerns = self._reviewers_raise_issues(reviewer_models, current_dimension)
-                if not reviewer_concerns:
-                    print(f"  ✓ No issues found, moving to next dimension")
-                    self.current_dimension_idx += 1
-                    if self.current_dimension_idx >= len(DIMENSION_PRIORITY):
-                        print(f"\n✓ All dimensions reviewed")
-                        break
-                    continue
+            # Reviewers scan for issues in current dimension
+            reviewer_concerns = self._reviewers_raise_issues(reviewer_models, current_dimension)
 
-                self.reviewer_positions[round_num] = reviewer_concerns
-                self._parse_reviewer_concerns(reviewer_concerns, current_dimension)
+            if not reviewer_concerns:
+                print(f"  ✓ No issues found — moving to next dimension")
+                self.dimension_coverage[current_dimension]["resolved"] = True
+                dimension_idx += 1
+                continue
 
-            # Author responds to current reviewer positions
-            author_response = self._author_responds(author_model, current_dimension, self.reviewer_positions.get(round_num))
-            self.author_positions[round_num] = author_response
-            self._parse_author_response(author_response, current_dimension)
+            print(f"  Total issues: {sum(len(c) for c in reviewer_concerns.values())}")
 
-            # Check if reviewers want to rebut
-            if round_num < self.max_rounds:
-                reviewer_rebuttals = self._reviewers_rebut(reviewer_models, current_dimension, author_response)
-                if reviewer_rebuttals:
-                    self.reviewer_positions[round_num + 1] = reviewer_rebuttals
-                else:
-                    # No rebuttals: move to next dimension
-                    self.dimension_coverage[current_dimension]["resolved"] = True
-                    self.current_dimension_idx += 1
-                    if self.current_dimension_idx >= len(DIMENSION_PRIORITY):
-                        print(f"\n✓ All dimensions reviewed in {round_num} rounds")
-                        break
+            # Author responds to all reviewer concerns
+            author_response = self._author_responds(author_model, current_dimension, reviewer_concerns)
+            self._parse_author_response(author_response, current_dimension, reviewer_concerns)
 
+            # Log roundtable entry
+            self.transcript.append({
+                "round": round_num,
+                "dimension": current_dimension,
+                "reviewers": list(reviewer_concerns.keys()),
+                "reviewer_issue_count": sum(len(c) for c in reviewer_concerns.values()),
+                "author_response_preview": author_response[:200] + "..." if len(author_response) > 200 else author_response
+            })
+
+            # For now, simple logic: one round per dimension, then move on
+            # TODO: Implement rebuttals for substantive disagreements
+            self.dimension_coverage[current_dimension]["rounds"] = 1
+            dimension_idx += 1
             round_num += 1
+
+        if dimension_idx >= len(DIMENSION_PRIORITY):
+            print(f"\n✓ All dimensions reviewed in {round_num - 1} rounds")
+        else:
+            print(f"\n⊘ Stopped at dimension {dimension_idx + 1}/{len(DIMENSION_PRIORITY)} after {round_num - 1} rounds")
 
         # Generate report
         report = self._generate_report()
