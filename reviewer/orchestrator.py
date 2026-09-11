@@ -161,7 +161,8 @@ def run_review(article_path: str | Path,
 
 
 def write_artifacts(result: RunResult) -> tuple[Path, Path]:
-    """Render report.json + transcript.md into the run directory."""
+    """Render report.json + transcript.md + metrics.json into the run dir."""
+    from .metrics import build_metrics
     from .report import build_report
     from .transcript import render_transcript
 
@@ -175,4 +176,8 @@ def write_artifacts(result: RunResult) -> tuple[Path, Path]:
                                    result.article.title)
     transcript_path = result.out_dir / "transcript.md"
     transcript_path.write_text(transcript)
+
+    metrics = build_metrics(result.engine, result.ledger)
+    (result.out_dir / "metrics.json").write_text(
+        json.dumps(metrics, ensure_ascii=False, indent=2))
     return report_path, transcript_path

@@ -51,8 +51,24 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Consensus:      {len(report['consensus_claims'])} claims with 3+ model support")
     print(f"Cost:           ${report['cost']['total_usd']:.4f} "
           f"of ${report['cost']['budget_usd']:.2f}")
+    from .metrics import build_metrics
+    metrics = build_metrics(engine, ledger)
+    reviewer_rows = {k: v for k, v in metrics.items() if k != "claude-sonnet-5"}
+    if reviewer_rows:
+        print("\nModel usefulness:")
+        print(f"  {'model':20s} {'raised':>6s} {'solo':>4s} {'agreed':>6s} "
+              f"{'dism':>4s} {'sev-bias':>8s} {'cost':>8s} {'$/agreed':>9s}")
+        for name, v in sorted(reviewer_rows.items(),
+                              key=lambda kv: -kv[1]["agreed_raised"]):
+            bias = v["severity_bias"] if v["severity_bias"] is not None else "—"
+            cpa = (f"${v['cost_per_agreed_raised']:.4f}"
+                   if v["cost_per_agreed_raised"] is not None else "—")
+            print(f"  {name:20s} {v['claims_raised']:>6d} {v['solo_claims']:>4d} "
+                  f"{v['agreed_raised']:>6d} {v['dismissed_raised']:>4d} "
+                  f"{str(bias):>8s} ${v['cost_usd']:>7.4f} {cpa:>9s}")
+
     print(f"\nArtifacts in {result.out_dir}/:")
-    print("  report.json, transcript.md, checkpoint.json")
+    print("  report.json, transcript.md, metrics.json, checkpoint.json")
 
     return 0 if report["outcome"] == "PASS" else 1
 
