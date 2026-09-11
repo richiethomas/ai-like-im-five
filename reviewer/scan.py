@@ -29,8 +29,8 @@ Review ALL six dimensions:
 2. CLARITY — could a passage mislead or confuse? are analogies apt?
 3. COMPLETENESS — missing caveats, absent context a reader needs
 4. CONSISTENCY — self-contradictions, terms used inconsistently
-5. PEDAGOGY — appropriate for non-technical readers? too dense or too thin?
-6. CLICHÉS — vague filler and LLM clichés ("honest", "genuine", "game-changer", "rides on", "shines for", "land" as a verb)
+5. PEDAGOGY — appropriate for non-technical readers? too dense or too thin? Flag any proper noun (people, courses, companies) or technical term (array, byte, tensor, etc.) introduced without an inline plain-language explanation at first use.
+6. CLICHÉS — vague filler and LLM clichés ("honest", "genuine", "game-changer", "rides on", "shines for", "land" as a verb). ANY use of an em-dash (—) is a violation: report every occurrence, severity 3, with a fix that rewrites the sentence using a period, comma, colon, or parentheses.
 
 Severity calibration:
 - 9-10: factually wrong or seriously misleading
