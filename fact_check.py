@@ -86,7 +86,7 @@ class FactCheckOrchestrator:
         if os.getenv("GEMINI_API_KEY"):
             self.models.append("gemini-3.5-flash")  # 2.0-flash deprecated
         if os.getenv("GROQ_API_KEY"):
-            self.models.append("llama-3-8b")  # Use smaller model; 70b may not be available
+            self.models.append("mixtral-8x7b")  # GROQ model: commonly available, free tier
 
         if not self.models:
             raise ValueError("No API keys configured. Set ANTHROPIC_API_KEY and/or OPENAI_API_KEY at minimum.")
@@ -247,14 +247,15 @@ Instructions for your response:
                     self.cost_tracker[model] += 0.15
                 except ImportError:
                     raise Exception("google.generativeai not installed. Run: pip install google-generativeai")
-            elif model == "llama-3-8b":
+            elif model == "mixtral-8x7b":
                 groq_key = os.getenv("GROQ_API_KEY")
                 if groq_key:
                     try:
                         from groq import Groq
                         groq_client = Groq(api_key=groq_key)
+                        # Try mixtral (more commonly available on GROQ)
                         response = groq_client.chat.completions.create(
-                            model="llama-3-8b-8192",
+                            model="mixtral-8x7b-32768",
                             max_tokens=1000,
                             messages=[{"role": "user", "content": prompt}]
                         )
