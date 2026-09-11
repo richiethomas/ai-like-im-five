@@ -1,8 +1,8 @@
 ---
-title: "Paper #1, Part 2: The Simplest Way to Guess — Nearest Neighbor"
+title: "Paper #1, Part 3: The Simplest Way to Guess (Nearest Neighbor)"
 excerpt: "Before we build anything clever, let's try the dumbest possible approach to image classification. It's simpler than you'd think, and it teaches us something crucial about why this problem is hard."
 category: "Vision"
-date: 2023-09-05T23:59:59Z
+date: 2023-09-06T23:59:59Z
 author:
   name: "Richie Thomas"
   role: "Engineer"
@@ -60,7 +60,7 @@ distance = sqrt((100 - 101)² + (150 - 151)² + (200 - 199)²)
          ≈ 1.73
 ```
 
-This is the distance you learned in high school geometry — the straight-line distance between two points. It punishes large differences more than small ones (because of the squaring).
+This is the distance you learned in high school geometry: the straight-line distance between two points. It punishes large differences more than small ones (because of the squaring).
 
 On the CIFAR-10 dataset (a standard benchmark of 60,000 small images), L1 achieved about 38% accuracy and L2 achieved about 35% on a test set. That's barely better than random guessing (which would be 10% on 10 categories).
 
@@ -74,15 +74,15 @@ A dog photographed in shadow might have numbers [20, 25, 30] for a particular pi
 
 Meanwhile, a dog and a wolf have very similar shapes and textures. They might have nearly identical pixel values in many places. But one is a dog and one is a wolf.
 
-Nearest neighbor doesn't care about what the pixels *mean* — just how close the numbers are. It matches based on accident visual similarity (lighting, angle, background) rather than actual content.
+Nearest neighbor doesn't care about what the pixels *mean*, just how close the numbers are. It matches based on accident visual similarity (lighting, angle, background) rather than actual content.
 
-This is why, as you add more challenging variations — viewpoint changes, scale changes, occlusion — nearest neighbor gets worse and worse. It's trying to solve the problem with pixel arithmetic when the problem is fundamentally about *semantic content*.
+This is why, as you add more challenging variations (viewpoint changes, scale changes, occlusion), nearest neighbor gets worse and worse. It's trying to solve the problem with pixel arithmetic when the problem is fundamentally about *semantic content*.
 
 ## The Insight
 
-But here's what nearest neighbor teaches us: **we can't solve image classification with pixel-level comparisons alone**. We need to extract something deeper from the images — features or patterns that are more robust to the seven challenges we listed in Part 1.
+But here's what nearest neighbor teaches us: **we can't solve image classification with pixel-level comparisons alone**. We need to extract something deeper from the images: features or patterns that are more robust to the seven challenges we listed in Part 2.
 
-This is where the rest of CS231n comes in. Every technique we'll learn — linear classifiers, neural networks, convolutional networks — is building on this insight: find a better representation of the image than raw pixels, then classify based on that representation.
+This is where the rest of CS231n comes in. Every technique we'll learn (linear classifiers, neural networks, convolutional networks) is building on this insight: find a better representation of the image than raw pixels, then classify based on that representation.
 
 Nearest neighbor fails because it uses raw pixels. Everything that comes next is about avoiding that trap.
 
