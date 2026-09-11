@@ -96,7 +96,7 @@ class FactCheckOrchestrator:
 
         self.max_rounds = 100
         self.consensus_threshold_rounds = 5
-        self.debate_history = []  # Track all debate messages
+        self.transcript = []  # Full record of all model interactions (initial scans + debate)
         self.findings_by_claim = defaultdict(lambda: defaultdict(list))  # claim -> model_id -> findings
         self.claim_round_counts = defaultdict(lambda: defaultdict(int))  # claim -> model_id -> count
 
@@ -270,8 +270,24 @@ Instructions for your response:
 
             # Parse findings from response
             findings = self._parse_findings(text, model)
+
+            # Record in transcript
+            self.transcript.append({
+                "round": 1,
+                "model": model,
+                "type": "initial_scan",
+                "prompt": prompt,
+                "response": text,
+                "findings_count": len(findings)
+            })
         except Exception as e:
             print(f"  Error from {model}: {e}")
+            self.transcript.append({
+                "round": 1,
+                "model": model,
+                "type": "initial_scan",
+                "error": str(e)
+            })
 
         return findings
 
@@ -489,8 +505,19 @@ def main():
     with open(report_path, 'w') as f:
         json.dump(report, f, indent=2)
 
+    # Save full transcript (all model interactions)
+    transcript_path = Path(article_path).parent / f"{Path(article_path).stem}_fact_check_transcript.json"
+    with open(transcript_path, 'w') as f:
+        json.dump({
+            "article": report["article"],
+            "transcript": orchestrator.transcript,
+            "total_interactions": len(orchestrator.transcript),
+            "cost_estimate": report["cost_estimate"]
+        }, f, indent=2)
+
     print(f"\n{'='*60}")
     print(f"Report saved to: {report_path}")
+    print(f"Transcript saved to: {transcript_path}")
     print(f"Status: {report['status']}")
     print(f"Action items (severity > 2): {len(report['agreed_upon_changes'])}")
     print(f"Consensus blockers: {len(report['consensus_blockers'])}")
