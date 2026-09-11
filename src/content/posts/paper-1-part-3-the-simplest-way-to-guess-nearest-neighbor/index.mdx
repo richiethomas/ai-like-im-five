@@ -49,7 +49,7 @@ distance = |100 - 101| + |150 - 151| + |200 - 199|
 
 This is simple and fast. For a full image, you'd add up the difference in every single pixel value across all 1.44 million numbers.
 
-The name comes from Manhattan's street grid: a taxi there can't cut diagonally through buildings, so a trip is four blocks over plus three blocks up, the sum of the two legs. This formula measures distance the same way, one leg per pixel. "L1" is the mathematicians' catalog label for it: the 1 means each difference is used as-is, and squaring them instead gives you the L2 below.
+The name comes from Manhattan's street grid: a taxi there can't cut diagonally through buildings, so a trip is four blocks over plus three blocks up, the sum of the two legs. This formula measures distance the same way, one leg per pixel. "L1" is the mathematicians' catalog label for it: the 1 means each difference is added in to the first power (raised to 1, which leaves it unchanged). L2, described below, raises each difference to the second power (squares it) before adding.
 
 ### L2 Distance (Euclidean Distance)
 
