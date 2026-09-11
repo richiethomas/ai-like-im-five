@@ -14,7 +14,7 @@ export const siteConfig = {
   socialImage: "/og-image.png",
   /** Shown in the home sidebar "About" card. */
   about:
-    "Working through 30papers.com—the reading list Ilya Sutskever gave John Carmack—one concept at a time. Starting from first principles, no prerequisites assumed. Built in public by someone learning alongside you.",
+    "My learning log for working through 30papers.com, the reading list Ilya Sutskever reportedly gave John Carmack. Written first for an audience of me: I'm autistic with ADHD, and these notes are built to make sense to my brain. If they make sense to yours too, even better.",
   /**
    * Both forms below ship enabled with an empty `action`, which makes them fully
    * interactive demos that submit nowhere: a small script confirms the submit
