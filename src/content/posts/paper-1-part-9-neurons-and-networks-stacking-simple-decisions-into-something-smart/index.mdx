@@ -1,8 +1,8 @@
 ---
-title: "Paper #1, Part 8: Neurons and Networks — Stacking Simple Decisions Into Something Smart"
+title: "Paper #1, Part 9: Neurons and Networks (Stacking Simple Decisions Into Something Smart)"
 excerpt: "A single linear classifier is rigid. But what if you stack multiple layers, each adding non-linearity? That's a neural network, and it's how simple computation becomes sophisticated."
 category: "Fundamentals"
-date: 2023-09-11T23:59:59Z
+date: 2023-09-12T23:59:59Z
 author:
   name: "Richie Thomas"
   role: "Engineer"
@@ -11,7 +11,7 @@ draft: false
 tags: ["neural networks", "activation functions"]
 ---
 
-From Part 4: a linear classifier computes a weighted sum of pixels and picks the highest score.
+From Part 5: a linear classifier computes a weighted sum of pixels and picks the highest score.
 
 The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), you're stuck.
 
@@ -67,13 +67,13 @@ By the time you reach the final layer, you've built up enough abstraction to sol
 
 With one linear layer, you can only draw straight lines to separate classes. With two layers plus activation, you can draw curves. With three layers, you can draw arbitrarily complex shapes.
 
-More layers = more expressive power. But also more parameters to learn and more risk of overfitting (we'll talk about this in Part 10).
+More layers = more expressive power. But also more parameters to learn and more risk of overfitting (we'll talk about this in Part 11).
 
 ## The Universal Approximation Theorem
 
 There's a mathematical result that says: a neural network with just one hidden layer, given enough neurons, can approximate any continuous function.
 
-This is powerful. It means neural networks aren't limited by architecture—they're limited by:
+This is powerful. It means neural networks aren't limited by architecture; they're limited by:
 1. Having enough neurons
 2. Having enough data to learn the patterns
 3. Finding the right weights through gradient descent
@@ -84,4 +84,4 @@ It doesn't say you need just one hidden layer. Multiple layers often learn more 
 
 We now have the building block: neurons with non-linear activations, stacked into layers.
 
-But we still need to prepare the data properly. Feeding raw pixel values (0-255) directly into a network can cause training problems. That's data preprocessing, which is Part 9.
+But we still need to prepare the data properly. Feeding raw pixel values (0-255) directly into a network can cause training problems. That's data preprocessing, which is Part 10.
