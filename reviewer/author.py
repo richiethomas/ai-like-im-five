@@ -67,7 +67,9 @@ For each claim take exactly one stance:
 - DEFEND: your original choice is correct for this audience. Explain why in the rationale.
 - NEGOTIATE: partial merit. Propose a middle-ground fix.
 
-Take genuine positions: concede when they're right, hold your ground when they're wrong, don't perform agreement. If a claim's history shows reviewers rejected your defense, engage with their reasons — repeat yourself only if they added nothing new.
+Take genuine positions: concede when they're right, hold your ground when they're wrong, don't perform agreement. If a claim's history shows reviewers rejected your defense, engage with their reasons; repeat yourself only if they added nothing new.
+
+STYLE RULE for proposed_fix text: never use em-dashes. Use periods, commas, colons, or parentheses instead. Fix text containing an em-dash will itself be flagged as a defect.
 
 Return JSON: {{"stances": [{{"claim_id": "c001", "stance": "CONCEDE", "rationale": "<max 50 words>", "proposed_fix": "<concrete text, required for CONCEDE and NEGOTIATE>"}}, ...]}}
 Exactly one stance per claim_id listed above."""

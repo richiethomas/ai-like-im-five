@@ -23,9 +23,9 @@ A computer doesn't work that way. A computer can only manipulate numbers. So bef
 
 Every image on your screen is stored as a grid of [pixels](https://simple.wikipedia.org/wiki/Pixel), tiny colored squares. If the image is 800 pixels wide and 600 pixels tall, that's an 800 × 600 grid. Each pixel's color is written down as three numbers: how much red, how much green, and how much blue it contains (the [RGB](https://simple.wikipedia.org/wiki/RGB) system). Each of those three numbers is a whole number from 0 (none of that color) to 255 (as much as possible).
 
-So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range, and the neural networks we'll meet later often rescale the values to sit between 0 and 1.)
+So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range. And neural networks, the brain-inspired programs we'll meet later in this series, often rescale the values to sit between 0 and 1, because they train more reliably on small numbers.)
 
-When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're exploiting repetition in those numbers to make a much smaller file. Lossless formats like PNG typically preserve every number exactly (matching the original pixel values once decoded); lossy formats like JPEG throw away some detail you likely won't notice.
+When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're either exploiting repetition in those numbers or discarding detail your eye won't miss, depending on the format. Lossless formats like PNG compress the file but decode back to the exact original pixel values; lossy formats like JPEG throw away some detail you likely won't notice.
 
 This is where computers start. Not with "a picture of a dog." With a giant grid of numbers.
 
