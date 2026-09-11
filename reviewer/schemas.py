@@ -87,7 +87,7 @@ MAX_CONTESTED_ROUNDS_PER_CLAIM = 5
 MAX_TOTAL_DEBATE_TURNS = 100
 NITPICK_SEVERITY_CEILING = 2      # aggregate severity <= this -> RECORDED, not debated
 CONSENSUS_MODEL_COUNT = 3         # models raising/endorsing = consensus (reporting stat)
-PASS_BLOCK_SUPPORT_COUNT = 2      # agreed items with this many supporters gate PASS
+PASS_BLOCK_SUPPORT_COUNT = 2      # agreed items INDEPENDENTLY RAISED by this many models gate PASS
 MIN_VALID_VOTES = 2               # a vote wave with fewer valid votes doesn't count
 BUDGET_USD = 10.0
 

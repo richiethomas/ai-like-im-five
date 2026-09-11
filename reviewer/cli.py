@@ -45,8 +45,8 @@ def main(argv: list[str] | None = None) -> int:
           f"({report['debate_turns']} debate turns)")
     gating = sum(1 for c in report["agreed_changes"] if c["gates_pass"])
     print(f"Agreed changes: {len(report['agreed_changes'])} "
-          f"({gating} gate PASS: 2+ model support above severity 2; "
-          f"{len(report['agreed_changes']) - gating} advisory)")
+          f"({gating} gate PASS: independently raised by 2+ models above "
+          f"severity 2; {len(report['agreed_changes']) - gating} advisory)")
     print(f"Blockers:       {len(report['blockers'])}")
     print(f"Dismissed:      {len(report['dismissed'])}")
     print(f"Nitpicks:       {len(report['recorded_nitpicks'])} (recorded, not debated)")

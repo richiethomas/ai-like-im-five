@@ -19,11 +19,14 @@ def outcome_for(claims: list[Claim], stopped: bool) -> str:
 
     - INCOMPLETE: the run was stopped (budget/round cap) with claims unresolved.
     - BLOCKED: at least one claim debated to deadlock.
-    - NEEDS_CHANGES: agreed changes above the nitpick ceiling with 2+ model
-      support (raisers plus endorsers) are pending. Single-model agreed items
-      are advisory — reported, but they don't gate PASS (user decision
-      2026-09-11: a lone model's concern isn't enough to hold an article).
-    - PASS: nothing open or blocked; no multi-supported agreed item above
+    - NEEDS_CHANGES: agreed changes above the nitpick ceiling INDEPENDENTLY
+      RAISED by 2+ models in the scan are pending. Endorsements don't count
+      toward the gate (user decision 2026-09-11, revised same day after three
+      rounds of data: polled co-signing is near-automatic, so an
+      endorsement-inclusive gate refills every round and never converges;
+      independent double-discovery is the signal that holds an article).
+      Everything else agreed is advisory — reported, not gating.
+    - PASS: nothing open or blocked; no multi-raiser agreed item above
       severity 2.
     """
     statuses = {c.status for c in claims}
@@ -34,7 +37,7 @@ def outcome_for(claims: list[Claim], stopped: bool) -> str:
         return ReportOutcome.BLOCKED.value
     if any(c.status == ClaimStatus.AGREED.value
            and c.aggregate_severity > NITPICK_SEVERITY_CEILING
-           and c.supporter_count >= PASS_BLOCK_SUPPORT_COUNT
+           and len(c.models) >= PASS_BLOCK_SUPPORT_COUNT
            for c in claims):
         return ReportOutcome.NEEDS_CHANGES.value
     return ReportOutcome.PASS.value
@@ -59,7 +62,7 @@ def _claim_entry(c: Claim) -> dict:
         "resolution_fix": c.resolution_fix,
         "gates_pass": (c.status == ClaimStatus.AGREED.value
                        and c.aggregate_severity > NITPICK_SEVERITY_CEILING
-                       and c.supporter_count >= PASS_BLOCK_SUPPORT_COUNT),
+                       and len(c.models) >= PASS_BLOCK_SUPPORT_COUNT),
     }
 
 

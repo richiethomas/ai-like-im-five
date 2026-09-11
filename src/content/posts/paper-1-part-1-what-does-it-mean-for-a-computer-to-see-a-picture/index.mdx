@@ -27,7 +27,7 @@ For a color image, it's actually three numbers per cell: one for red, one for gr
 
 When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're exploiting redundancy in those millions of numbers to store them in far fewer bytes, without literally deleting them.
 
-This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array, where each of the three RGB values per pixel is an integer from 0 to 255.** (0–255 assumes the common 8-bit-per-channel format; some images use 16-bit values or are rescaled to 0–1 for neural networks.) A larger or smaller photo just means more or fewer pixels — the grid structure (width × height × 3 color values) stays the same.
+This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array, where each of the three RGB values per pixel is an integer from 0 to 255.** (Conventionally this array is written height × width × 3 — 600 rows × 800 columns, so 600 × 800 × 3. And 0–255 assumes the common 8-bit-per-channel format; some images use 16-bit values or are rescaled to 0–1 for neural networks.) A larger or smaller photo just means more or fewer pixels — the grid structure (width × height × 3 color values) stays the same.
 
 ## The Problem: Classification
 
