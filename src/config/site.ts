@@ -23,7 +23,7 @@ export const siteConfig = {
    */
   newsletter: {
     enabled: true,
-    action: "",
+    action: "https://buttondown.com/api/emails/embed-subscribe/ailikeimfive",
     method: "post",
     emailFieldName: "email",
     title: "Get new posts by email",
