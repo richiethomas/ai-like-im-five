@@ -150,7 +150,7 @@ class FactCheckOrchestrator:
             print(f"  Active disagreements: {len(blocker_items)}")
 
             # Run debate round
-            debate_occurred = self._debate_round(blocker_items, initial_findings)
+            debate_occurred = self._debate_round(blocker_items, initial_findings, round_num=round_num)
             if not debate_occurred:
                 break
 
@@ -345,7 +345,7 @@ Instructions for your response:
 
         return findings
 
-    def _debate_round(self, blocker_items: list[BlockerItem], all_findings: dict) -> bool:
+    def _debate_round(self, blocker_items: list[BlockerItem], all_findings: dict, round_num: int = 2) -> bool:
         """Run a debate round on blocker items."""
         if not blocker_items:
             return False
@@ -389,8 +389,24 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
 
                     blocker.positions[model].append(response_text)
                     self.claim_round_counts[blocker.claim][model] += 1
+
+                    # Record in transcript
+                    self.transcript.append({
+                        "round": round_num,
+                        "model": model,
+                        "type": "debate_response",
+                        "claim_being_debated": blocker.claim,
+                        "prompt": prompt,
+                        "response": response_text
+                    })
                 except Exception as e:
                     print(f"  Debate error from {model}: {e}")
+                    self.transcript.append({
+                        "round": round_num,
+                        "model": model,
+                        "type": "debate_response",
+                        "error": str(e)
+                    })
 
         return True
 
