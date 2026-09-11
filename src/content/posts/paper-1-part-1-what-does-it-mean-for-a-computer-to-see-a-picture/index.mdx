@@ -11,7 +11,7 @@ draft: false
 tags: ["image classification", "computer vision basics"]
 ---
 
-We're going to spend this series working through [CS231n](https://cs231n.github.io/), a free Stanford course on how computers learn to see. It's a foundational course in deep learning, the kind of course that builds the intuition you need before tackling dense research papers. It also sits at the start of a famous reading list that [Ilya Sutskever](https://en.wikipedia.org/wiki/Ilya_Sutskever) (a co-founder of OpenAI and one of the researchers behind ChatGPT) is said to have given [John Carmack](https://en.wikipedia.org/wiki/John_Carmack) (the programmer behind the video games Doom and Quake).
+We're going to spend this series working through [CS231n](https://cs231n.github.io/), the course number of Stanford's free class on how computers learn to see. It's a foundational course in deep learning, the kind of course that builds the intuition you need before tackling dense research papers. It also sits at the start of a famous reading list that [Ilya Sutskever](https://en.wikipedia.org/wiki/Ilya_Sutskever) (a co-founder of OpenAI and one of the researchers behind ChatGPT) is said to have given [John Carmack](https://en.wikipedia.org/wiki/John_Carmack) (the programmer behind the video games Doom and Quake).
 
 But before we build anything, we need to ask the most basic question: what does a computer actually receive when we hand it a picture?
 
@@ -19,11 +19,11 @@ But before we build anything, we need to ask the most basic question: what does 
 
 Your brain sees a photo and almost instantly knows it contains a dog. You don't think about it. The image "makes sense" to you.
 
-A computer doesn't work that way. A computer can only manipulate numbers. So before a computer can "understand" an image at all, the image has to be converted into numbers. By "understand" we just mean: map the numbers to the correct label. The computer isn't doing anything like human comprehension.
+A computer doesn't work that way. A computer can only work with numbers. (Underneath, even those numbers are stored as tiny on-off switches, but thinking of them as numbers is enough for our purposes.) So before a computer can "understand" an image at all, the image has to be converted into numbers. By "understand" we just mean: map the numbers to the correct label. The computer isn't doing anything like human comprehension.
 
 Every image on your screen is stored as a grid of [pixels](https://simple.wikipedia.org/wiki/Pixel), tiny colored squares. If the image is 800 pixels wide and 600 pixels tall, that's an 800 × 600 grid. Each pixel's color is written down as three numbers: how much red, how much green, and how much blue it contains (the [RGB](https://simple.wikipedia.org/wiki/RGB) system). Each of those three numbers is a whole number from 0 (none of that color) to 255 (as much as possible).
 
-So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range. And neural networks, the brain-inspired programs we'll meet later in this series, often rescale the values to sit between 0 and 1, because they train more reliably on small numbers.)
+So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range. And neural networks (programs that learn from examples, which we'll meet later in this series) often shrink these values down to sit between 0 and 1, because that helps them learn more reliably.)
 
 When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're either exploiting repetition in those numbers or discarding detail your eye won't miss, depending on the format. Lossless formats like PNG compress the file but decode back to the exact original pixel values; lossy formats like JPEG throw away some detail you likely won't notice.
 
@@ -50,6 +50,6 @@ The dog you see and the wall of numbers are the same thing. That single idea pow
 
 ## What's Next
 
-In [the next post](/post/paper-1-part-2-the-problem-of-classification/), we ask the question that CS231n spends a semester answering: given a grid of numbers like this one, how can a computer decide what the picture shows? It sounds simple. Seven specific things make it surprisingly hard.
+In [the next post](/post/paper-1-part-2-the-problem-of-classification/), we ask the question that CS231n spends a semester answering: given a grid of numbers like this one, how can a computer decide what the picture shows? It sounds simple. Seven specific things make it surprisingly hard, starting with the fact that the same dog photographed in different lighting produces a completely different grid of numbers.
 
 New terms from this series are collected in the [glossary](/glossary/).
