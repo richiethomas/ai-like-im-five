@@ -258,7 +258,7 @@ Instructions for your response:
                             "Content-Type": "application/json"
                         }
                         data = {
-                            "model": "meta-llama/Llama-3-70b-chat-hf",
+                            "model": "meta-llama/Llama-3.3-70b-instruct-turbo",
                             "max_tokens": 1000,
                             "messages": [{"role": "user", "content": prompt}]
                         }
