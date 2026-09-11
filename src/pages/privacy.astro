@@ -49,7 +49,7 @@ const allPosts = visiblePosts(await getCollection("posts"));
           siteConfig.email ? (
             <p>For privacy requests, email <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.</p>
           ) : (
-            <p>Add a privacy contact address in <code>src/config/site.ts</code> before publishing.</p>
+            <p>For privacy requests, use the <a href="/contact/">contact page</a>.</p>
           )
         }
       </div>
