@@ -84,9 +84,9 @@ class FactCheckOrchestrator:
         if os.getenv("DEEPSEEK_API_KEY"):
             self.models.append("deepseek-chat")
         if os.getenv("GEMINI_API_KEY"):
-            self.models.append("gemini-2.0-flash")
+            self.models.append("gemini-3.5-flash")  # 2.0-flash deprecated
         if os.getenv("GROQ_API_KEY"):
-            self.models.append("llama-3-70b")
+            self.models.append("llama-3-8b")  # Use smaller model; 70b may not be available
 
         if not self.models:
             raise ValueError("No API keys configured. Set ANTHROPIC_API_KEY and/or OPENAI_API_KEY at minimum.")
@@ -203,10 +203,16 @@ Instructions for your response:
                     raise Exception("Claude client not initialized")
                 response = anthropic_client.messages.create(
                     model=model,
-                    max_tokens=1000,
+                    max_tokens=16000,  # Allow extended thinking
                     messages=[{"role": "user", "content": prompt}]
                 )
-                text = response.content[0].text
+                # Extract text from response (handle ThinkingBlock + TextBlock)
+                text = ""
+                for block in response.content:
+                    if hasattr(block, 'text'):
+                        text += block.text
+                if not text:
+                    raise Exception("No text content in Claude response")
                 self.cost_tracker[model] += 0.5
             elif model == "gpt-4o-mini":
                 if not openai_client:
@@ -231,24 +237,24 @@ Instructions for your response:
                 )
                 text = response.choices[0].message.content
                 self.cost_tracker[model] += 0.2
-            elif model == "gemini-2.0-flash":
+            elif model == "gemini-3.5-flash":
                 try:
                     import google.generativeai as genai
                     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-                    gemini_model = genai.GenerativeModel("gemini-2.0-flash")
+                    gemini_model = genai.GenerativeModel("gemini-3.5-flash")
                     response = gemini_model.generate_content(prompt)
                     text = response.text
                     self.cost_tracker[model] += 0.15
                 except ImportError:
                     raise Exception("google.generativeai not installed. Run: pip install google-generativeai")
-            elif model == "llama-3-70b":
+            elif model == "llama-3-8b":
                 groq_key = os.getenv("GROQ_API_KEY")
                 if groq_key:
                     try:
                         from groq import Groq
                         groq_client = Groq(api_key=groq_key)
                         response = groq_client.chat.completions.create(
-                            model="llama-3-70b-8192",
+                            model="llama-3-8b-8192",
                             max_tokens=1000,
                             messages=[{"role": "user", "content": prompt}]
                         )
