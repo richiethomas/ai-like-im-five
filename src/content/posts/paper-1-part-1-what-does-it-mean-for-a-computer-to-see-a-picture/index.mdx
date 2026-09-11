@@ -1,6 +1,6 @@
 ---
 title: "Paper #1, Part 1: What Does It Mean for a Computer to 'See' a Picture?"
-excerpt: "Before we build anything, we need to ask: what is the actual problem we're solving? A computer doesn't see the way your brain does. Let's start there."
+excerpt: "Before we build anything, we need one idea: to a computer, a picture is a grid of numbers. Don't take my word for it. Open the file and look."
 category: "Vision"
 date: 2023-09-04T23:59:59Z
 author:
@@ -11,67 +11,45 @@ draft: false
 tags: ["image classification", "computer vision basics"]
 ---
 
-We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational course in deep learning — the kind of course that builds the intuition you need before tackling the dense research papers on lists like Ilya Sutskever's famous reading list for John Carmack.
+We're going to spend this series working through [CS231n](https://cs231n.github.io/), a free Stanford course on how computers learn to see. It's a foundational course in deep learning, the kind of course that builds the intuition you need before tackling dense research papers. It also sits at the start of a famous reading list that [Ilya Sutskever](https://en.wikipedia.org/wiki/Ilya_Sutskever) (a co-founder of OpenAI and one of the researchers behind ChatGPT) is said to have given [John Carmack](https://en.wikipedia.org/wiki/John_Carmack) (the programmer behind the video games Doom and Quake).
 
-But before we build anything, we need to ask the most basic question: what is the problem we're actually solving?
+But before we build anything, we need to ask the most basic question: what does a computer actually receive when we hand it a picture?
 
 ## A Picture Is Just Numbers
 
-Your brain sees a photo and instantly knows it contains a dog. You don't think about it. The image "makes sense" to you.
+Your brain sees a photo and almost instantly knows it contains a dog. You don't think about it. The image "makes sense" to you.
 
 A computer doesn't work that way. A computer can only manipulate numbers. So before a computer can "understand" an image at all, the image has to be converted into numbers. By "understand" we just mean: map the numbers to the correct label. The computer isn't doing anything like human comprehension.
 
-In a digital image, this has already happened. Every image on your screen is stored as a grid. If the image is 800 pixels wide and 600 pixels tall, that's 800 × 600 cells in the grid. Each cell contains a number. That number represents a color.
+Every image on your screen is stored as a grid of [pixels](https://simple.wikipedia.org/wiki/Pixel), tiny colored squares. If the image is 800 pixels wide and 600 pixels tall, that's an 800 × 600 grid. Each pixel's color is written down as three numbers: how much red, how much green, and how much blue it contains (the [RGB](https://simple.wikipedia.org/wiki/RGB) system). Each of those three numbers is a whole number from 0 (none of that color) to 255 (as much as possible).
 
-For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB). So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo.
+So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo. (The 0 to 255 range is the most common convention. Some formats allow a wider range, and the neural networks we'll meet later often rescale the values to sit between 0 and 1.)
 
-When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're exploiting redundancy in those millions of numbers to store them in far fewer bytes. Lossless formats like PNG preserve every value exactly; lossy formats like JPEG discard some detail you likely won't notice.
+When you scroll through your photos, your phone is shuffling around millions of numbers. When you compress an image for email, you're exploiting repetition in those numbers to make a much smaller file. Lossless formats like PNG preserve every number exactly; lossy formats like JPEG throw away some detail you likely won't notice.
 
-This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array, where each of the three RGB values per pixel is an integer from 0 to 255.** (Conventionally this array is written height × width × 3 — 600 rows × 800 columns, so 600 × 800 × 3. And 0–255 assumes the common 8-bit-per-channel format; some images use 16-bit values or are rescaled to 0–1 for neural networks.) A larger or smaller photo just means more or fewer pixels — the grid structure (width × height × 3 color values) stays the same.
+This is where computers start. Not with "a picture of a dog." With a giant grid of numbers.
 
-## The Problem: Classification
+## Try It Yourself
 
-Now comes the task we're going to focus on: **image classification**. The goal is simple to state:
+Don't take my word for it. Here is a 64 × 64 pixel cartoon dog:
 
-Given an image (which is just a grid of numbers), assign it a label from a fixed list of choices.
+![A 64 by 64 pixel cartoon dog](/experiments/picture-is-numbers/dog.png)
 
-For example:
-- Is this a picture of a cat or a dog?
-- Is this a photograph of a car, a bike, or a truck?
-- Does this X-ray show a broken bone: yes or no?
+And here is **the exact same picture, as a file of numbers you can read**: [dog.ppm.txt](/experiments/picture-is-numbers/dog.ppm.txt).
 
-This sounds easy because your brain does it instantly. But it's genuinely hard for a computer — hard enough that the seven challenges below are why simply comparing pixel grids doesn't work.
+That file is a real image format (called "plain PPM") that image editors such as the free program [GIMP](https://www.gimp.org/) will open as a picture. But because it stores its numbers as ordinary text, you can also just read it, in your browser or in any text editor. No special software needed.
 
-## The Seven Things That Make It Hard
+Things to look for when you open it:
 
-Let me give you CS231n's list of challenges. These are all real obstacles that complicate the classification task:
+- After the short header, every group of three numbers is one pixel: red, green, blue.
+- The file starts with `170 210 240` repeated over and over. That's the sky: some red, more green, a lot of blue makes light blue.
+- Scroll down until the numbers change to `100 60 30`. More red than green, very little blue: that's the dark brown of the dog's ears.
+- Keep scrolling and you'll find `25 25 25` (the nearly-black eyes and nose) and `230 120 140` (the pink tongue).
 
-**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is. Concretely: rotate the camera 90 degrees around the dog, and nearly every one of those 1.44 million values changes, even though it's the same animal.
-
-**Scale variation.** A dog in the foreground of a photo takes up most of the image. A dog in the distance is tiny. Same dog, vastly different numbers.
-
-**Deformation.** Dogs move. They stretch, crouch, tilt their head. The shape changes, the numbers change.
-
-**Occlusion.** Part of the dog might be hidden behind a tree or a person. Think of a dog photographed behind a picket fence — only slivers of fur and one eye visible. The computer sees an incomplete picture but still has to produce the correct label, relying on whatever visible patterns it has learned to associate with "dog."
-
-**Illumination conditions.** A dog in bright sunlight has completely different numbers than the same dog in shadow or under indoor lighting. The dog's actual color is the same; the light changes everything the camera records.
-
-**Background clutter.** If the dog is sitting in a park, the background is a mess of trees and grass. The computer has to figure out which numbers belong to "dog" and which are "everything else." That's surprisingly hard.
-
-**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike. Think of a Poodle, a Bulldog, and a Dalmatian — three dogs that share almost no obvious visual features, yet all belong to the same class. The computer needs to find the common thread underneath huge visual variation.
-
-## Why This Matters
-
-Much of image classification, in some sense, comes down to clever solutions to these seven problems.
-
-A naive approach — comparing the number grids directly — fails in general for exactly the seven reasons above, though it can still work in narrow, controlled cases like matching a fixed logo photographed under identical lighting and angle every time. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
-
-We need methods that are robust to these variations — meaning the answer stays right even when the picture changes. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
-
-This is what CS231n teaches us to build: starting with nearest neighbor, then linear classifiers, then the convolutional networks that handle all seven challenges at once.
+The dog you see and the wall of numbers are the same thing. That single idea powers everything in this series.
 
 ## What's Next
 
-In the next post, we'll look at the simplest possible approach to image classification: nearest neighbor. It won't work well, but it'll teach us something crucial about why this problem is hard and point us toward better solutions.
+In [the next post](/post/paper-1-part-2-the-problem-of-classification/), we ask the question that CS231n spends a semester answering: given a grid of numbers like this one, how can a computer decide what the picture shows? It sounds simple. Seven specific things make it surprisingly hard.
 
-For now, just hold onto this: a picture is numbers. The computer's job is to look at those numbers and assign a label. Seven things get in the way. We're going to build tools to overcome each of them.
+New terms from this series are collected in the [glossary](/glossary/).
