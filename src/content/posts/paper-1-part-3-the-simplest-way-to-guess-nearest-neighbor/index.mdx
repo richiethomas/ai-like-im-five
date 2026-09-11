@@ -62,7 +62,7 @@ distance = sqrt((100 - 101)² + (150 - 151)² + (200 - 199)²)
          ≈ 1.73
 ```
 
-This is the distance you learned in high school geometry: the straight-line distance between two points, named after Euclid, the Greek mathematician whose textbook defined ordinary geometry about 2,300 years ago. It punishes large differences more than small ones (because of the squaring).
+This is the distance you learned in high school geometry: the straight-line distance between two points. It's called Euclidean after Euclidean geometry, the ordinary flat-space geometry going back to the Greek mathematician Euclid. It punishes large differences more than small ones (because of the squaring).
 
 On the CIFAR-10 dataset (a standard benchmark of 60,000 small images: 50,000 for training and 10,000 for testing), L1 scored about 38% accuracy and L2 about 35%. That's nearly four times better than random guessing (10% on 10 categories), and still nowhere near good enough to use.
 
@@ -82,11 +82,11 @@ This is why, as you add more challenging variations (viewpoint changes, scale ch
 
 ## The Insight
 
-That failure is the lesson. If comparing raw pixels can't work, then whatever does work must first **extract something deeper from the image**: features or patterns that survive the seven challenges we listed in Part 2.
+Nearest neighbor's failure points to what any working method needs. If comparing raw pixels can't work, then whatever does work must first **extract something deeper from the image**: features or patterns that survive the seven challenges we listed in Part 2 (viewpoint, scale, lighting, occlusion, and the rest).
 
 This is where the rest of CS231n comes in. Every technique we'll learn (linear classifiers, neural networks, convolutional networks) is building on this insight: find a better representation of the image than raw pixels, then classify based on that representation.
 
-Nearest neighbor fails because it uses raw pixels. Everything that comes next is about avoiding that trap.
+Nearest neighbor fails because it compares raw pixels. Every method in the rest of this series first transforms the image into features, then compares those instead.
 
 ## What's Next
 
