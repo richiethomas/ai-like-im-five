@@ -64,7 +64,7 @@ distance = sqrt((100 - 101)² + (150 - 151)² + (200 - 199)²)
 
 This is the distance you learned in high school geometry: the straight-line distance between two points, named after Euclid, the Greek mathematician whose textbook defined ordinary geometry about 2,300 years ago. It punishes large differences more than small ones (because of the squaring).
 
-On the CIFAR-10 dataset (a standard benchmark of 60,000 small images), L1 achieved about 38% accuracy and L2 achieved about 35% on a test set. That's barely better than random guessing (which would be 10% on 10 categories).
+On the CIFAR-10 dataset (a standard benchmark of 60,000 small images: 50,000 for training and 10,000 for testing), L1 scored about 38% accuracy and L2 about 35%. That's nearly four times better than random guessing (10% on 10 categories), and still nowhere near good enough to use.
 
 ## Why This Fails
 
@@ -74,9 +74,9 @@ The problem is **pixel-level similarity is not semantic similarity**. Two images
 
 A dog photographed in shadow might have numbers [20, 25, 30] for a particular pixel. The same dog in bright sunlight might have [200, 210, 220] for that pixel. These numbers are nothing alike, even though it's the same dog.
 
-Meanwhile, a dog and a wolf have very similar shapes and textures. They might have nearly identical pixel values in many places. But one is a dog and one is a wolf.
+Meanwhile, a dog and a wolf can have very similar shapes, textures, and pixel values. If the nearest stored image to your wolf photo happens to be a dog, nearest neighbor confidently answers "dog."
 
-Nearest neighbor doesn't care about what the pixels *mean*, just how close the numbers are. It matches based on accident visual similarity (lighting, angle, background) rather than actual content.
+Nearest neighbor doesn't care about what the pixels *mean*, just how close the numbers are. It matches based on accidental visual similarity (lighting, angle, background) rather than actual content.
 
 This is why, as you add more challenging variations (viewpoint changes, scale changes, occlusion), nearest neighbor gets worse and worse. It's trying to solve the problem with pixel arithmetic when the problem is fundamentally about *semantic content*.
 
