@@ -25,6 +25,7 @@ const isDemo = isEnabled && action.length === 0;
     target={action ? "_blank" : undefined}
     rel="noopener"
     data-newsletter-form={isDemo ? "" : undefined}
+    data-newsletter-inline={!isDemo && action ? "" : undefined}
   >
     <label class="sr-only" for="newsletter-email">Email address</label>
     <input
@@ -67,6 +68,60 @@ const isDemo = isEnabled && action.length === 0;
               "Thanks. This demo form is not connected to a provider yet, so nothing was sent.";
           }
           form.reset();
+        });
+      });
+    </script>
+  )
+}
+
+{
+  !isDemo && action && (
+    <script is:inline>
+      /* Inline subscribe: post to the same-origin Pages Function so the reader
+         never leaves the site. If the function is missing or errors, fall back
+         to the plain form flow (Buttondown's hosted page in a new tab), which
+         is also what no-JS visitors get. */
+      document.querySelectorAll("[data-newsletter-inline]").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const status = form.querySelector("[data-newsletter-status]");
+          const button = form.querySelector("button[type=submit]");
+          const email = form.querySelector("input[name=email]")?.value || "";
+          const say = (text) => {
+            if (status) status.textContent = text;
+          };
+          if (button) button.disabled = true;
+          say("Subscribing…");
+          try {
+            const res = await fetch("/api/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.ok) {
+              say(
+                data.code === "already-subscribed"
+                  ? "You're already on the list."
+                  : "Almost done. Check your inbox for a confirmation email."
+              );
+              form.reset();
+            } else if (res.status === 400) {
+              say("That email address doesn't look right. Mind checking it?");
+            } else if (res.status === 429) {
+              say("Too many attempts right now. Please try again in a minute.");
+            } else {
+              // Function unconfigured or upstream down: use the plain flow.
+              // (Programmatic submit skips this handler, so no loop.)
+              form.submit();
+              return;
+            }
+          } catch {
+            form.submit();
+            return;
+          } finally {
+            if (button) button.disabled = false;
+          }
         });
       });
     </script>
