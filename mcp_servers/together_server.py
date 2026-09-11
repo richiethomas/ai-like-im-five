@@ -66,6 +66,40 @@ Do you maintain your position, or do you agree/disagree with any of the other mo
         except Exception as e:
             return {"error": str(e), "response": ""}
 
+    def debate_stance(self, title: str, content: str, dimension: str, your_concerns: list, author_response: str) -> dict:
+        """Respond to author's defense of your concerns."""
+        concerns_text = "\n".join([f"- {c['issue']}" for c in your_concerns])
+
+        prompt = f"""You reviewed an article and raised {dimension} concerns:
+
+{concerns_text}
+
+The author has now responded:
+
+{author_response}
+
+---
+
+Do you accept the author's response, or do you want to push back further? Consider:
+- Did the author address your core concern?
+- Is their rationale convincing?
+- Should you concede this point, or rebut?
+
+If you accept, respond with: ACCEPT | [brief explanation]
+If you push back, respond with: REBUT | [your counterargument]
+If you compromise, respond with: NEGOTIATE | [proposed middle ground]
+
+Be concise and substantive."""
+
+        try:
+            headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+            data = {"model": "meta-llama/Llama-3.3-70b-instruct-turbo", "max_tokens": 500, "messages": [{"role": "user", "content": prompt}]}
+            response = requests.post(f"{self.base_url}/chat/completions", headers=headers, json=data)
+            response.raise_for_status()
+            return {"response": response.json()["choices"][0]["message"]["content"]}
+        except Exception as e:
+            return {"error": str(e), "response": ""}
+
 def main():
     server = TogetherMCPServer()
     server.run()

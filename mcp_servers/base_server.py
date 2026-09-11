@@ -42,6 +42,8 @@ class BaseMCPServer(ABC):
             return self.scan_article(**params)
         elif method == "debate":
             return self.debate(**params)
+        elif method == "debate_stance":
+            return self.debate_stance(**params)
         else:
             return {"error": f"Unknown method: {method}"}
 
@@ -54,6 +56,14 @@ class BaseMCPServer(ABC):
     def debate(self, claim: str, my_position: str, other_positions: dict) -> dict:
         """Respond to debate on a claim."""
         pass
+
+    def debate_stance(self, title: str, content: str, dimension: str, your_concerns: list, author_response: str) -> dict:
+        """Respond to author's stance on your concerns. Override in subclass if needed."""
+        return {"response": ""}
+
+    def respond_to_rebuttals(self, title: str, content: str, dimension: str, reviewer_rebuttals: str) -> dict:
+        """Respond to reviewer rebuttals. Override in subclass if needed."""
+        return {"response": ""}
 
     def _parse_findings(self, text: str) -> list:
         """Parse findings from LLM response."""

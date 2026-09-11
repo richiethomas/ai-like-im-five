@@ -17,12 +17,14 @@ class AuthorMCPServer(BaseMCPServer):
         self.client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     def handle_request(self, request: dict) -> dict:
-        """Override to add respond_to_roundtable method."""
+        """Override to add respond_to_roundtable and respond_to_rebuttals methods."""
         method = request.get("method")
         params = request.get("params", {})
 
         if method == "respond_to_roundtable":
             return self.respond_to_roundtable(**params)
+        elif method == "respond_to_rebuttals":
+            return self.respond_to_rebuttals(**params)
         else:
             return super().handle_request(request)
 
@@ -75,6 +77,47 @@ Be direct. Address each unique concern once, grouping by topic if multiple revie
             response = self.client.messages.create(
                 model="claude-sonnet-5",
                 max_tokens=2500,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return {"response": response.content[0].text}
+        except Exception as e:
+            return {"error": str(e), "response": ""}
+
+    def respond_to_rebuttals(self, title: str, content: str, dimension: str, reviewer_rebuttals: str) -> dict:
+        """Author responds to reviewer rebuttals pushing back on the author's previous response."""
+        prompt = f"""You are the author of this article and are defending it against reviewer rebuttals.
+
+Article: {title}
+
+Content:
+{content}
+
+---
+
+Reviewers are pushing back on your previous response with these rebuttals:
+
+{reviewer_rebuttals}
+
+---
+
+Respond to their pushback. You can:
+1. Concede on a specific point if they make a good argument
+2. Push back further and explain why your position is correct
+3. Propose a compromise that addresses their concern
+
+Format your response as:
+
+REBUTTAL_TO: [brief restatement of what reviewers are pushing back on]
+STANCE: [CONCEDE | DEFEND | NEGOTIATE]
+RATIONALE: [1-2 sentences]
+PROPOSED_FIX: [if applicable, concrete revision]
+
+Be direct and substantive. This is genuine debate, not performative agreement."""
+
+        try:
+            response = self.client.messages.create(
+                model="claude-sonnet-5",
+                max_tokens=2000,
                 messages=[{"role": "user", "content": prompt}]
             )
             return {"response": response.content[0].text}

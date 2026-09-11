@@ -151,45 +151,97 @@ class AuthorVsReviewersOrchestrator:
 
         round_num = 1
         dimension_idx = 0
+        debate_state = {}  # Track state per dimension: {dimension: {round, author_stance, reviewer_positions}}
 
         while round_num <= self.max_rounds and dimension_idx < len(DIMENSION_PRIORITY):
             current_dimension = DIMENSION_PRIORITY[dimension_idx]
-            print(f"\nRound {round_num}: {current_dimension}")
 
-            # Reviewers scan for issues in current dimension
-            reviewer_concerns = self._reviewers_raise_issues(reviewer_models, current_dimension)
+            # Check if we're starting fresh on this dimension
+            if current_dimension not in debate_state:
+                print(f"\nRound {round_num}: {current_dimension} (Initial scan)")
+                debate_state[current_dimension] = {
+                    "initial_issues": {},
+                    "author_stances": [],
+                    "reviewer_rebuttals": [],
+                    "round_started": round_num
+                }
 
-            if not reviewer_concerns:
-                print(f"  ✓ No issues found — moving to next dimension")
-                self.dimension_coverage[current_dimension]["resolved"] = True
-                dimension_idx += 1
-                continue
+                # Reviewers scan for issues
+                reviewer_concerns = self._reviewers_raise_issues(reviewer_models, current_dimension)
+                if not reviewer_concerns:
+                    print(f"  ✓ No issues found — moving to next dimension")
+                    self.dimension_coverage[current_dimension]["resolved"] = True
+                    dimension_idx += 1
+                    round_num += 1
+                    continue
 
-            print(f"  Total issues: {sum(len(c) for c in reviewer_concerns.values())}")
+                debate_state[current_dimension]["initial_issues"] = reviewer_concerns
+                print(f"  Reviewers found {sum(len(c) for c in reviewer_concerns.values())} issues")
 
-            # Author responds to all reviewer concerns
-            author_response = self._author_responds(author_model, current_dimension, reviewer_concerns)
-            self._parse_author_response(author_response, current_dimension, reviewer_concerns)
+                # Author responds
+                round_num += 1
+                print(f"Round {round_num}: {current_dimension} (Author response)")
+                author_response = self._author_responds(author_model, current_dimension, reviewer_concerns)
+                debate_state[current_dimension]["author_stances"].append(author_response)
+                self._parse_author_response(author_response, current_dimension, reviewer_concerns)
+                print(f"  Author responded with stances")
 
-            # Log roundtable entry
-            self.transcript.append({
-                "round": round_num,
-                "dimension": current_dimension,
-                "reviewers": list(reviewer_concerns.keys()),
-                "reviewer_issue_count": sum(len(c) for c in reviewer_concerns.values()),
-                "author_response_preview": author_response[:200] + "..." if len(author_response) > 200 else author_response
-            })
+                # Check if author conceded everything
+                if "DEFEND" not in author_response and "NEGOTIATE" not in author_response:
+                    print(f"  → Author conceded all concerns")
+                    self.dimension_coverage[current_dimension]["resolved"] = True
+                    dimension_idx += 1
+                    round_num += 1
+                    continue
 
-            # For now, simple logic: one round per dimension, then move on
-            # TODO: Implement rebuttals for substantive disagreements
-            self.dimension_coverage[current_dimension]["rounds"] = 1
-            dimension_idx += 1
+            else:
+                # Continuing debate on current dimension
+                print(f"\nRound {round_num}: {current_dimension} (Reviewer rebuttal)")
+
+                # Reviewers see author's last response and choose to rebut or concede
+                author_last_stance = debate_state[current_dimension]["author_stances"][-1]
+                rebuttals = self._reviewers_rebut(
+                    reviewer_models,
+                    current_dimension,
+                    debate_state[current_dimension]["initial_issues"],
+                    author_last_stance
+                )
+
+                if not rebuttals:
+                    print(f"  ✓ Reviewers accepted author's position — dimension resolved")
+                    self.dimension_coverage[current_dimension]["resolved"] = True
+                    dimension_idx += 1
+                    round_num += 1
+                    continue
+
+                debate_state[current_dimension]["reviewer_rebuttals"].append(rebuttals)
+                print(f"  Reviewers submitted rebuttals from {len(rebuttals)} models")
+
+                # Author responds to rebuttals
+                round_num += 1
+                if round_num > self.max_rounds:
+                    print(f"Round limit reached. Debate continues in deferred topics.")
+                    break
+
+                print(f"Round {round_num}: {current_dimension} (Author responds to rebuttals)")
+                author_response = self._author_responds_to_rebuttals(author_model, current_dimension, rebuttals)
+                debate_state[current_dimension]["author_stances"].append(author_response)
+                self._parse_author_response(author_response, current_dimension, rebuttals)
+                print(f"  Author responded to rebuttals")
+
+                # Check if resolution reached
+                if "DEFEND" not in author_response or len(debate_state[current_dimension]["author_stances"]) >= 5:
+                    print(f"  → Moving to next dimension (5+ rounds or all conceded)")
+                    self.dimension_coverage[current_dimension]["resolved"] = True
+                    self.dimension_coverage[current_dimension]["rounds"] = round_num - debate_state[current_dimension]["round_started"] + 1
+                    dimension_idx += 1
+
             round_num += 1
 
         if dimension_idx >= len(DIMENSION_PRIORITY):
-            print(f"\n✓ All dimensions reviewed in {round_num - 1} rounds")
+            print(f"\n✓ All dimensions fully debated in {round_num - 1} rounds")
         else:
-            print(f"\n⊘ Stopped at dimension {dimension_idx + 1}/{len(DIMENSION_PRIORITY)} after {round_num - 1} rounds")
+            print(f"\n⊘ Stopped at round {round_num - 1}/{self.max_rounds}. Debate continues on deferred dimensions.")
 
         # Generate report
         report = self._generate_report()
@@ -240,14 +292,55 @@ class AuthorVsReviewersOrchestrator:
             print(f"  Author error: {e}")
             return ""
 
-    def _reviewers_rebut(self, reviewers: list, dimension: str, author_response: str) -> dict:
-        """Reviewers respond to author's defense."""
-        # For now, simplified: if author gave DEFEND responses, reviewers can push back
-        # Real implementation would parse author stances and rebut accordingly
-        if "DEFEND" in author_response:
-            # Could trigger rebuttal debate
-            return {}
-        return {}
+    def _reviewers_rebut(self, reviewers: list, dimension: str, initial_concerns: dict, author_response: str) -> dict:
+        """Reviewers respond to author's defense. They can accept, push back, or propose compromise."""
+        rebuttals = {}
+
+        for reviewer in reviewers:
+            try:
+                request = {
+                    "method": "debate_stance",
+                    "params": {
+                        "title": self.title,
+                        "content": self.content[:3000],
+                        "dimension": dimension,
+                        "your_concerns": initial_concerns.get(reviewer, []),
+                        "author_response": author_response
+                    }
+                }
+                response = self._call_mcp_server(reviewer, request)
+                rebuttal_text = response.get("response", "")
+
+                if rebuttal_text and rebuttal_text.strip():
+                    rebuttals[reviewer] = rebuttal_text
+                    print(f"    {reviewer}: submitted rebuttal")
+            except Exception as e:
+                print(f"    {reviewer}: error during rebuttal — {e}")
+
+        return rebuttals
+
+    def _author_responds_to_rebuttals(self, author_model: str, dimension: str, rebuttals: dict) -> str:
+        """Author responds to reviewer rebuttals, defending or conceding further."""
+        rebuttals_text = "\n\n".join([
+            f"**{reviewer}** rebuts:\n{text}"
+            for reviewer, text in rebuttals.items()
+        ])
+
+        try:
+            request = {
+                "method": "respond_to_rebuttals",
+                "params": {
+                    "title": self.title,
+                    "content": self.content[:3000],
+                    "dimension": dimension,
+                    "reviewer_rebuttals": rebuttals_text
+                }
+            }
+            response = self._call_mcp_server(author_model, request)
+            return response.get("response", "")
+        except Exception as e:
+            print(f"    Author error: {e}")
+            return ""
 
     def _parse_author_response(self, response_text: str, dimension: str, reviewer_concerns: dict):
         """Parse author's response to extract stances."""

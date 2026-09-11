@@ -25,11 +25,12 @@
     },
     "gpt-4o-mini": {
       "model_id": "gpt-4o-mini",
-      "findings_count": 5,
+      "findings_count": 7,
       "consensus_findings": 0,
-      "unique_findings": 4,
+      "unique_findings": 7,
       "avg_severity": 5.0,
       "dimensions_covered": [
+        "CLARITY",
         "COMPLETENESS",
         "CORRECTNESS",
         "PEDAGOGY"
@@ -38,19 +39,20 @@
       "concessions_made": 0,
       "arguments_changed_consensus": 0,
       "cost": 0,
-      "uniqueness_index": 80.0,
+      "uniqueness_index": 100.0,
       "consensus_rate": 0.0,
       "cost_benefit": 0,
       "debate_effectiveness": 0
     },
     "deepseek-chat": {
       "model_id": "deepseek-chat",
-      "findings_count": 6,
+      "findings_count": 11,
       "consensus_findings": 0,
-      "unique_findings": 6,
+      "unique_findings": 11,
       "avg_severity": 5.0,
       "dimensions_covered": [
-        "CLARITY / PEDAGOGY",
+        "CLARITY",
+        "CLICH\u00c9S",
         "COMPLETENESS",
         "CORRECTNESS",
         "PEDAGOGY"
@@ -82,12 +84,13 @@
     },
     "llama-3-70b": {
       "model_id": "llama-3-70b",
-      "findings_count": 5,
+      "findings_count": 8,
       "consensus_findings": 0,
-      "unique_findings": 4,
+      "unique_findings": 8,
       "avg_severity": 5.0,
       "dimensions_covered": [
         "CLARITY",
+        "CLICH\u00c9S",
         "COMPLETENESS",
         "CORRECTNESS",
         "PEDAGOGY"
@@ -96,7 +99,7 @@
       "concessions_made": 0,
       "arguments_changed_consensus": 0,
       "cost": 0,
-      "uniqueness_index": 80.0,
+      "uniqueness_index": 100.0,
       "consensus_rate": 0.0,
       "cost_benefit": 0,
       "debate_effectiveness": 0
@@ -107,8 +110,8 @@
       "round": 1,
       "model": "gpt-4o-mini",
       "type": "initial_scan",
-      "claim": "\"A computer can only manipulate numbers. So before a computer can 'understand' an image at all, the image has to be converted into numbers.\"",
-      "issue": "While the statement is broadly true, it oversimplifies the complexity of how computers process images. Modern computer vision systems include algorithms designed to extract features and patterns from images, not merely numbers. The phrase may imply that understanding is only a numerical manipulation, which is misleading.",
+      "claim": "\"That's 800 \u00d7 600 cells in the grid. Each cell contains a number.\"",
+      "issue": "While most digital images represent each pixel as a single numerical value (for grayscale) or three values (for RGB components), the claim overlooks formats like RGBA (which adds an alpha channel) or CMYK for printing, which also represent colors differently. It is misleading to state that each cell only contains one number for color representation.",
       "severity": 5,
       "dimension": "CORRECTNESS"
     },
@@ -116,8 +119,8 @@
       "round": 1,
       "model": "gpt-4o-mini",
       "type": "initial_scan",
-      "claim": "\"Every image on your screen is stored as a grid.\"",
-      "issue": "This claim is somewhat misleading as it suggests that images are only structured as grids of pixels. While this is true for raster images, there are other formats (like vector images) that do not conform to a strict grid structure.",
+      "claim": "\"This is where computers start. Not with 'a picture of a dog.' With: **a 800 \u00d7 600 \u00d7 3 array of numbers between 0 and 255.**\"",
+      "issue": "The statement implies that all images, regardless of type, have uniform dimensions and RGB color depth. This is misleading, as images can be of varying dimensions, color depths, and possibly grayscale. Additionally, not all images encoded in binary must strictly fall within the range of 0-255 (e.g., floating-point images).",
       "severity": 5,
       "dimension": "CORRECTNESS"
     },
@@ -125,17 +128,17 @@
       "round": 1,
       "model": "gpt-4o-mini",
       "type": "initial_scan",
-      "claim": "\"So an 800 \u00d7 600 image is really an 800 \u00d7 600 \u00d7 3 grid of numbers. That's 1.44 million numbers to represent one photo.\"",
-      "issue": "The calculation presented is misleading. The number of elements is accurately mentioned, but it neglects to clarify that this represents the raw count of color channels alone, and does not account for other factors like additional metadata, compression, or even the effective pixel dimensions based on a specific color depth (like 8 bits per channel).",
+      "claim": "\"But it's genuinely hard for a computer, and understanding *why* it's hard is the entry point to everything we're building.\"",
+      "issue": "This statement fails to specify why the tasks are inherently difficult for computers, which might leave readers puzzled about the underlying nature of the difficulty. It could mislead stakeholders into thinking the issue is merely about complexity rather than foundational differences between human and machine perception.",
       "severity": 5,
-      "dimension": "CORRECTNESS"
+      "dimension": "CLARITY"
     },
     {
       "round": 1,
       "model": "gpt-4o-mini",
       "type": "initial_scan",
-      "claim": "\"The goal is simple to state: Given an image (which is just a grid of numbers), assign it a label from a fixed list of choices.\"",
-      "issue": "The definition of the classification task omits the concept of the model training process, including feature extraction and decision thresholds, which are crucial to understanding what goes into successfully completing the classification task.",
+      "claim": "\"These are all real obstacles that complicate the classification task:\"",
+      "issue": "While the article identifies challenges in classification, it does not provide an explanation of how these issues are typically addressed in computer vision. Readers may benefit from understanding approaches like data augmentation, convolutional neural networks, and transfer learning as solutions.",
       "severity": 5,
       "dimension": "COMPLETENESS"
     },
@@ -143,8 +146,26 @@
       "round": 1,
       "model": "gpt-4o-mini",
       "type": "initial_scan",
-      "claim": "\"This sounds easy because your brain does it instantly. But it's genuinely hard for a computer, and understanding *why* it's hard is the entry point to everything we're building.\"",
-      "issue": "The statement attempts to make a contrast between human perception and computer processing, but it lacks detail on the specific reasons why such tasks are challenging for computers, which could mislead readers into thinking the difficulty is solely abstract or inherent to technology.",
+      "claim": "\"A dog in bright sunlight has completely different numbers t\"",
+      "issue": "The statement is incomplete, leading to confusion. Moreover, it does not expand on how illumination affects color representation, which is crucial to understanding classification difficulties regarding lighting conditions.",
+      "severity": 5,
+      "dimension": "COMPLETENESS"
+    },
+    {
+      "round": 1,
+      "model": "gpt-4o-mini",
+      "type": "initial_scan",
+      "claim": "\"Clever ways to store those millions of numbers in fewer bytes.\"",
+      "issue": "The phrase \"clever ways to store\" is vague and could lead to misconceptions about image compression and its role in the deep learning process. Details on the techniques used (like lossy vs. lossless compression) and their implications for model training could better inform readers.",
+      "severity": 5,
+      "dimension": "CLARITY"
+    },
+    {
+      "round": 1,
+      "model": "gpt-4o-mini",
+      "type": "initial_scan",
+      "claim": "\"This sounds easy because your brain does it instantly.\"",
+      "issue": "This analogy may oversimplify the complexities and mechanisms of human vision, which might mislead readers to underestimate the computational difficulties involved. While it aims to relate to the audience, it could do so more responsibly.",
       "severity": 5,
       "dimension": "PEDAGOGY"
     },
@@ -152,62 +173,107 @@
       "round": 1,
       "model": "deepseek-chat",
       "type": "initial_scan",
-      "claim": "\"That's 1.44 million numbers to represent one photo\" (for an 800 \u00d7 600 \u00d7 3 image)**",
-      "issue": "The arithmetic is wrong. 800 \u00d7 600 \u00d7 3 = 1,440,000, which is 1.44 million \u2014 wait, that's actually correct. However, the article later states \"a 800 \u00d7 600 \u00d7 3 array of numbers between 0 and 255,\" which is fine. Let me recompute: 800 \u00d7 600 = 480,000; \u00d7 3 = 1,440,000. The claim is accurate. No issue here. I retract this.",
+      "claim": "\"Every image on your screen is stored as a grid. If the image is 800 pixels wide and 600 pixels tall, that's 800 \u00d7 600 cells in the grid.\"",
+      "issue": "\"Every image on your screen is stored as a grid\" is stated as a universal fact. It's mostly true for raster images, but vector graphics (SVG, fonts, some icons) are stored as mathematical descriptions of shapes and rendered to a grid only at display time. For business readers who work with brand assets, this distinction matters and the absolute phrasing is misleading.",
+      "severity": 5,
+      "dimension": "CLARITY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"That's **1.44 million numbers** to represent one photo.\"",
+      "issue": "The arithmetic is correct (800 \u00d7 600 \u00d7 3 = 1,440,000), but the phrasing treats this as the storage cost. It's the *uncompressed* element count. The very next paragraph mentions compression, so the reader is left with a false impression that a JPEG on disk contains 1.44M stored values. The distinction between \"values in the array\" and \"bytes stored on disk\" is exactly the kind of thing this audience conflates.",
       "severity": 5,
       "dimension": "CORRECTNESS"
     },
     {
       "round": 1,
       "model": "deepseek-chat",
-      "type": "initial_scan",
-      "claim": "\"a 800 \u00d7 600 \u00d7 3 array of numbers between 0 and 255\"**",
-      "issue": "The article never explains *why* the range is 0\u2013255. For non-technical readers, \"between 0 and 255\" appears arbitrary and unexplained. This is a missed pedagogical opportunity and could confuse readers about whether the range is a property of all images or a convention.",
-      "severity": 5,
-      "dimension": "COMPLETENESS"
-    },
-    {
-      "round": 1,
-      "model": "deepseek-chat",
-      "type": "initial_scan",
-      "claim": "The framing of \"The Seven Things That Make It Hard\" \u2014 but only five items are visible before the text truncates**",
-      "issue": "The article promises seven challenges but the provided content cuts off mid-sentence on the fifth (illumination). This may be a truncation artifact rather than an author error, but as presented, the list is incomplete and the count is unverified. A fact-checker must flag that the article's own structural promise (seven items) is not fulfilled in the text as given.",
-      "severity": 5,
-      "dimension": "COMPLETENESS"
-    },
-    {
-      "round": 1,
-      "model": "deepseek-chat",
-      "type": "initial_scan",
-      "claim": "\"It's a foundational text in deep learning \u2014 the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.\"**",
-      "issue": "This is a specific, checkable factual claim about a private correspondence (Sutskever's reading list for Carmack). CS231n is a *course*, not a \"text\" in the conventional sense \u2014 there is no single canonical book titled \"CS231n.\" The course has lecture notes and assignments. Calling the course a \"foundational text\" is a category error and the anecdotal attribution is unverifiable from the article alone.",
-      "severity": 5,
-      "dimension": "CORRECTNESS"
-    },
-    {
-      "round": 1,
-      "model": "deepseek-chat",
-      "type": "initial_scan",
-      "claim": "\"Does this X-ray show a broken bone: yes or no?\" as an example of image classification**",
-      "issue": "This example conflates a binary classification task with a diagnostic one that carries real-world medical and regulatory weight. For business stakeholders, using a medical diagnosis as a casual illustrative example can imply the technology is deployment-ready for clinical use, which it is not without extensive validation. It also sits awkwardly next to cat/dog and car/bike/truck examples, suggesting equivalent difficulty and stakes.",
-      "severity": 5,
-      "dimension": "PEDAGOGY"
-    },
-    {
-      "round": 1,
-      "model": "deepseek-chat",
-      "type": "initial_scan",
-      "claim": "\"Your brain sees a photo and instantly knows it contains a dog. You don't think about it. The image 'makes sense' to you.\"**",
-      "issue": "This is a mild but pervasive anthropomorphizing framing that runs through the section. It's not wrong, but it sets up an implicit contrast (\"brain = instant, computer = numbers\") that can mislead readers into thinking the hard part is purely representational. The actual difficulty \u2014 that the *mapping* from numbers to labels is not obvious \u2014 is stated later but the setup oversimplifies.",
-      "severity": 5,
-      "dimension": "CLARITY / PEDAGOGY"
-    },
-    {
-      "round": 1,
-      "model": "llama-3-70b",
       "type": "initial_scan",
       "claim": "\"a 800 \u00d7 600 \u00d7 3 array of numbers between 0 and 255\"",
-      "issue": "The claim implies that all digital images are represented as 24-bit RGB images, which is not always the case. Some images may use different color models, such as CMYK, or have a different bit depth.",
+      "issue": "The 0\u2013255 range is correct for 8-bit-per-channel images, which is the common case, but the article presents it as a universal property of images. 16-bit, HDR, and float images use different ranges. More importantly, CS231n's actual framing is *three separate 2D arrays* (one per channel), each 800\u00d7600, not a single 3D array \u2014 a distinction the course emphasizes and that matters when the article later discusses convolutions per channel.",
+      "severity": 5,
+      "dimension": "CORRECTNESS"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"Is this a picture of a cat or a dog? / Is this a photograph of a car, a bike, or a truck? / Does this X-ray show a broken bone: yes or no?\"",
+      "issue": "All three examples are binary or near-binary. The article earlier promised \"a label from a fixed list of choices,\" which implies a *multi-class* problem. The examples undersell the difficulty and don't match the framing. A reader could walk away thinking classification is mostly yes/no.",
+      "severity": 5,
+      "dimension": "PEDAGOGY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"Let me give you CS231n's list of challenges.\"",
+      "issue": "CS231n's canonical list of challenges for image classification has *six* items commonly cited (viewpoint variation, scale variation, deformation, occlusion, illumination, background clutter, and intra-class variation \u2014 sometimes grouped as seven). The article promises \"The Seven Things That Make It Hard\" but only shows five before the text cuts off, and the sixth/seventh (background clutter, intra-class variation) are the two most commonly omitted by non-technical writers because they're hardest to explain. This is a real gap.",
+      "severity": 5,
+      "dimension": "COMPLETENESS"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"A foundational text in deep learning \u2014 the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.\"",
+      "issue": "CS231n is a *course* (lecture notes, assignments, slides), not a \"text.\" Calling it a \"foundational text\" is loose and, more importantly, the Sutskever\u2013Carmack reading list is a specific, verifiable artifact. If the list cited is the widely circulated \"Ilya Sutskever's reading list for John Carmack\" that includes *The Annotated Transformer*, *The Bitter Lesson*, and similar items, CS231n's presence should be verified \u2014 the claim reads like a credential-flourish that could easily be inert or misattributed. At minimum this is a citation the reader cannot check.",
+      "severity": 5,
+      "dimension": "CORRECTNESS"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"When you compress an image for email, you're finding clever ways to store those millions of numbers in fewer bytes.\"",
+      "issue": "This walks back the earlier \"1.44 million numbers to represent one photo\" claim without acknowledging the tension. The reader now has two incompatible mental models: (a) an image *is* 1.44M numbers; (b) those numbers can be squeezed into fewer bytes. Both are true at different layers, but the article never distinguishes \"the array the model sees\" from \"the file on disk.\" Business stakeholders routinely confuse the two, and this paragraph cements the confusion rather than resolving it.",
+      "severity": 5,
+      "dimension": "CLARITY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"A computer can only manipulate numbers.\"",
+      "issue": "True but over-broad and slightly misleading in context. Computers manipulate *bits*, then interpret them as numbers, characters, symbols, pointers, and structures. Saying \"only numbers\" is a simplification that happens to serve the narrative here, but it sets up a false dichotomy: as if computers can't handle symbols until we \"convert\" them to numbers. This framing is common but it teaches the wrong intuition \u2014 that \"seeing\" is fundamentally about numeric conversion rather than about learned representation.",
+      "severity": 5,
+      "dimension": "PEDAGOGY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"Your brain sees a photo and instantly knows it contains a dog. You don't think about it.\"",
+      "issue": "This is the classic \"vision is easy\" setup, which CS231n itself pushes back on. The framing primes the reader to think the *computer's* difficulty is the interesting part, when in fact the surprising fact is that *human* vision is doing enormous subconscious computation. This matters for business readers because it affects how they estimate what \"solved vision\" would even mean.",
+      "severity": 5,
+      "dimension": "PEDAGOGY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete set of numbers and has to guess the rest.\"",
+      "issue": "\"Has to guess the rest\" implies the model reconstructs the hidden pixels. It doesn't. Classification models infer the *label* from partial evidence; they don't (typically) hallucinate the missing region. The word \"guess\" blurs two very different operations \u2014 inference of category vs. reconstruction of image content.",
+      "severity": 5,
+      "dimension": "CLARITY"
+    },
+    {
+      "round": 1,
+      "model": "deepseek-chat",
+      "type": "initial_scan",
+      "claim": "\"These are all real obstacles that complicate the classification task\"",
+      "issue": "\"Real obstacles\" is a low-grade filler intensifier in the family of \"genuine,\" \"honest,\" \"actual.\" It adds nothing; the list already establishes that the obstacles are obstacles. Also \"complicate the classification task\" is circular \u2014 complications of the task are what they are.",
+      "severity": 5,
+      "dimension": "CLICH\u00c9S"
+    },
+    {
+      "round": 1,
+      "model": "llama-3-70b",
+      "type": "initial_scan",
+      "claim": "A computer can only manipulate numbers.",
+      "issue": "This statement is an oversimplification. While it's true that computers process information using numerical representations, it's not entirely accurate to say they can only manipulate numbers. Computers can also process other types of data, such as text, images, and audio, which are often represented using numerical codes.",
       "severity": 5,
       "dimension": "CORRECTNESS"
     },
@@ -215,8 +281,8 @@
       "round": 1,
       "model": "llama-3-70b",
       "type": "initial_scan",
-      "claim": "\"The goal is simple to state: Given an image (which is just a grid of numbers), assign it a label from a fixed list of choices.\"",
-      "issue": "The article does not mention that image classification can also involve assigning multiple labels to an image (multi-label classification) or predicting a probability distribution over all possible labels.",
+      "claim": "Every image on your screen is stored as a grid.",
+      "issue": "This statement is incomplete, as it doesn't account for other image storage formats, such as vector graphics or compressed images.",
       "severity": 5,
       "dimension": "COMPLETENESS"
     },
@@ -224,17 +290,17 @@
       "round": 1,
       "model": "llama-3-70b",
       "type": "initial_scan",
-      "claim": "\"The Seven Things That Make It Hard\"",
-      "issue": "The article lists seven challenges in image classification, but it does not provide a comprehensive overview of all the challenges involved in this task. Other important challenges, such as noise, blur, or adversarial attacks, are not mentioned.",
+      "claim": "For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB).",
+      "issue": "This statement is mostly correct, but it doesn't account for other color models, such as CMYK or YUV, which may use different numbers of color channels.",
       "severity": 5,
-      "dimension": "COMPLETENESS"
+      "dimension": "CORRECTNESS"
     },
     {
       "round": 1,
       "model": "llama-3-70b",
       "type": "initial_scan",
-      "claim": "\"A computer doesn't work that way. A computer can only manipulate numbers.\"",
-      "issue": "This statement might be misleading, as it implies that computers are incapable of processing non-numerical data. While it's true that computers ultimately process binary code, they can be programmed to manipulate and understand various types of data, including images, text, and audio.",
+      "claim": "The goal is simple to state: Given an image (which is just a grid of numbers), assign it a label from a fixed list of choices.",
+      "issue": "This statement may be misleading, as it implies that image classification is a straightforward task. In reality, image classification can be a complex task that requires sophisticated algorithms and large amounts of training data.",
       "severity": 5,
       "dimension": "CLARITY"
     },
@@ -242,8 +308,35 @@
       "round": 1,
       "model": "llama-3-70b",
       "type": "initial_scan",
-      "claim": "\"your brain does it instantly\"",
-      "issue": "This statement might oversimplify the complexity of human visual perception and give non-technical readers an unrealistic understanding of how easily humans can recognize images.",
+      "claim": "The Seven Things That Make It Hard",
+      "issue": "The article lists seven challenges in image classification, but it doesn't provide a comprehensive overview of all the challenges involved. Other challenges, such as noise, blur, or adversarial attacks, are not mentioned.",
+      "severity": 5,
+      "dimension": "COMPLETENESS"
+    },
+    {
+      "round": 1,
+      "model": "llama-3-70b",
+      "type": "initial_scan",
+      "claim": "A dog in bright sunlight has completely different numbers",
+      "issue": "This statement is unclear, as it doesn't specify what \"completely different numbers\" means in the context of image processing.",
+      "severity": 5,
+      "dimension": "CLARITY"
+    },
+    {
+      "round": 1,
+      "model": "llama-3-70b",
+      "type": "initial_scan",
+      "claim": "The article uses the phrase \"genuinely hard for a computer\"",
+      "issue": "The phrase \"genuinely hard\" is a clich\u00e9 that doesn't add much value to the text.",
+      "severity": 5,
+      "dimension": "CLICH\u00c9S"
+    },
+    {
+      "round": 1,
+      "model": "llama-3-70b",
+      "type": "initial_scan",
+      "claim": "The article assumes a non-technical audience",
+      "issue": "The article uses some technical terms, such as \"convolutional neural networks\" and \"CS231n,\" without explaining them in detail. This may confuse non-technical readers.",
       "severity": 5,
       "dimension": "PEDAGOGY"
     }

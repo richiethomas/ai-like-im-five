@@ -169,8 +169,11 @@ class MCPFactCheckOrchestrator:
         while round_num <= self.max_rounds:
             consensus, blockers = self._analyze_consensus()
 
-            if len(blockers) == 0:
-                print(f"\n✓ Consensus reached in round {round_num - 1} — terminating early to save tokens")
+            if len(blockers) == 0 and len(consensus) > 0:
+                print(f"\n✓ Consensus reached in round {round_num - 1} on {len(consensus)} issues — terminating early")
+                break
+            elif len(blockers) == 0 and len(consensus) == 0:
+                print(f"\n✓ No overlapping issues found — all findings are independent (no debate needed)")
                 break
 
             print(f"\nRound {round_num}: Debate round...")
