@@ -25,7 +25,7 @@ MANDATORY: Check ALL six dimensions before responding. Review dimensions:
 5. PEDAGOGY: Is the explanation appropriate for non-technical readers? Too dense? Too simplified?
 6. CLICHÉS: Flag LLM clichés like "honest", "genuine", "load-bearing", "rides on", "shines for", "belt and suspenders", "it's a X worth Y-ing", "land" (as verb), generic praise.
 
-Your task: Identify 3-5 most important issues across ALL dimensions (not just one). Prioritize by severity.
+Your task: Find ALL significant issues. For each dimension, identify every problem worth fixing (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
 For each issue found, respond with:
 CLAIM: [the specific claim or phrase being criticized]
@@ -34,10 +34,13 @@ ISSUE: [what's wrong with it]
 SEVERITY: [1-10, where 10 is most severe]
 FIX: [suggested correction]
 
-Be direct and specific. Avoid clichés in your own response. Do not include minor issues (severity must be >= 3). If you find no significant issues, respond with: "NO ISSUES FOUND"."""
+Be comprehensive, not selective. Be direct and specific. Avoid clichés in your own response. Do not include trivial issues (severity must be >= 3). If you find no significant issues, respond with: "NO ISSUES FOUND"."""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.model.generate_content(
+                prompt,
+                generation_config={"max_output_tokens": 2000}
+            )
             text = response.text
             findings = self._parse_findings(text)
             return {"findings": findings}
@@ -56,7 +59,10 @@ Other models' positions:
 Do you maintain your position, or do you agree/disagree with any of the other models? Be specific about which points you accept or reject and why. Focus on technical accuracy."""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.model.generate_content(
+                prompt,
+                generation_config={"max_output_tokens": 2000}
+            )
             return {"response": response.text}
         except Exception as e:
             return {"error": str(e), "response": ""}

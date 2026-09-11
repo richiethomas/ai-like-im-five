@@ -307,20 +307,27 @@ class MCPFactCheckOrchestrator:
         return json.loads(response_line)
 
     def _analyze_consensus(self):
-        """Analyze findings to detect consensus vs blockers."""
+        """Analyze findings to detect consensus vs blockers.
+
+        Consensus = 3+ models reported the same claim/issue.
+        Blocker = Models discussed a claim 5+ times each with no agreement.
+        """
         consensus = []
         blockers = []
 
-        for claim, state in self.debate_states.items():
-            # Check if enough models have weighed in
-            models_with_positions = {m: pos for m, pos in state.positions.items() if pos}
+        for claim, models_dict in self.findings_by_claim.items():
+            models_reporting_claim = list(models_dict.keys())
+            round_counts = self.debate_states.get(claim, DebateState(claim=claim, positions={}, round_count={})).round_count
 
-            if len(models_with_positions) >= 3:
-                # Consensus = 3+ models agreeing
+            # Consensus: 3+ models independently found the same issue
+            if len(models_reporting_claim) >= 3:
                 consensus.append(claim)
-            elif max(state.round_count.values()) >= self.consensus_threshold:
-                # Blocker = 5+ rounds per model with no agreement
-                blockers.append(claim)
+            # Blocker: models discussed this claim 5+ times each but didn't converge
+            elif models_reporting_claim and max(round_counts.values()) >= self.consensus_threshold:
+                # Check if debate occurred (pos has entries from multiple rounds)
+                max_positions = max(len(self.debate_states[claim].positions.get(m, [])) for m in models_reporting_claim if self.debate_states.get(claim))
+                if max_positions > 1:  # Debate happened (more than 1 position recorded)
+                    blockers.append(claim)
 
         return consensus, blockers
 
@@ -390,6 +397,13 @@ class MCPFactCheckOrchestrator:
         self._calculate_consensus_rate(consensus)
         self._generate_metrics_report()
 
+        # Convert metrics to dict, converting sets to lists for JSON serialization
+        model_metrics = {}
+        for model, metrics in self.metrics.items():
+            m_dict = asdict(metrics)
+            m_dict['dimensions_covered'] = sorted(list(metrics.dimensions_covered))
+            model_metrics[model] = m_dict
+
         report = {
             "article": self.title,
             "excerpt": self.excerpt,
@@ -398,7 +412,7 @@ class MCPFactCheckOrchestrator:
                 "consensus": consensus,
                 "blockers": blockers
             },
-            "model_metrics": {model: asdict(metrics) for model, metrics in self.metrics.items()},
+            "model_metrics": model_metrics,
             "transcript": self.transcript,
             "cost_estimate": sum(self.cost_tracker.values())
         }

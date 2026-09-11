@@ -36,7 +36,7 @@ Review dimensions:
 5. PEDAGOGY: Is the explanation appropriate for non-technical readers? Too dense? Too simplified?
 6. CLICHÉS: Flag LLM clichés like "honest", "genuine", "load-bearing", "rides on", "shines for", "belt and suspenders", "it's a X worth Y-ing", "land" (as verb), generic praise.
 
-Your task: Identify 3-5 most important issues across ALL dimensions (not just one). Prioritize by severity.
+Your task: Find ALL significant issues. For each dimension, identify every problem worth fixing (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
 For each issue found, respond with:
 CLAIM: [the specific claim or phrase being criticized]
@@ -47,15 +47,16 @@ FIX: [suggested correction]
 
 Instructions for your response:
 - Check each dimension systematically.
+- Be comprehensive, not selective.
 - Be direct and specific. No filler.
 - Avoid clichés in your own response.
-- Do not include minor issues (severity must be >= 3 to be worth reporting).
+- Do not include trivial issues (severity must be >= 3 to be worth reporting).
 - If you find no significant issues across all dimensions, respond with: "NO ISSUES FOUND"."""
 
         try:
             response = self.client.messages.create(
                 model="claude-sonnet-5",
-                max_tokens=1000,
+                max_tokens=2000,
                 messages=[{"role": "user", "content": prompt}]
             )
             text = response.content[0].text
