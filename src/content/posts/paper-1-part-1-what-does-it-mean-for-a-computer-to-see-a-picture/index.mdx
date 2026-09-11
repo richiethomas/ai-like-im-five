@@ -11,7 +11,7 @@ draft: false
 tags: ["image classification", "computer vision basics"]
 ---
 
-We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational course in deep learning — the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.
+We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational course in deep learning — the kind of course that builds the intuition you need before tackling the dense research papers on lists like Ilya Sutskever's famous reading list for John Carmack.
 
 But before we build anything, we need to ask the most basic question: what is the problem we're actually solving?
 
@@ -19,15 +19,15 @@ But before we build anything, we need to ask the most basic question: what is th
 
 Your brain sees a photo and instantly knows it contains a dog. You don't think about it. The image "makes sense" to you.
 
-A computer doesn't work that way. A computer can only manipulate numbers. So before a computer can "understand" an image at all, the image has to be converted into numbers.
+A computer doesn't work that way. A computer can only manipulate numbers. So before a computer can "understand" an image at all, the image has to be converted into numbers. By "understand" we just mean: map the numbers to the correct label. The computer isn't doing anything like human comprehension.
 
 In a digital image, this has already happened. Every image on your screen is stored as a grid. If the image is 800 pixels wide and 600 pixels tall, that's 800 × 600 cells in the grid. Each cell contains a number. That number represents a color.
 
 For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB). So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo.
 
-When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're finding clever ways to store those millions of numbers in fewer bytes.
+When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're exploiting redundancy in those millions of numbers to store them in far fewer bytes, without literally deleting them.
 
-This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array of numbers, each between 0 and 255 (the standard range for a color channel).** The exact dimensions change with image size, but the idea is the same.
+This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array, where each of the three RGB values per pixel is an integer from 0 to 255.** (0–255 assumes the common 8-bit-per-channel format; some images use 16-bit values or are rescaled to 0–1 for neural networks.) A larger or smaller photo just means more or fewer pixels — the grid structure (width × height × 3 color values) stays the same.
 
 ## The Problem: Classification
 
@@ -40,35 +40,35 @@ For example:
 - Is this a photograph of a car, a bike, or a truck?
 - Does this X-ray show a broken bone: yes or no?
 
-This sounds easy because your brain does it instantly. But it's genuinely hard for a computer, and understanding *why* it's hard is the entry point to everything we're building.
+This sounds easy because your brain does it instantly. But it's genuinely hard for a computer — hard enough that the seven challenges below are why simply comparing pixel grids doesn't work.
 
 ## The Seven Things That Make It Hard
 
 Let me give you CS231n's list of challenges. These are all real obstacles that complicate the classification task:
 
-**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is. Concretely: rotate the camera 90 degrees around the dog, and nearly every one of those 1.44 million numbers changes, even though it's the same animal.
+**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is. Concretely: rotate the camera 90 degrees around the dog, and nearly every one of those 1.44 million values changes, even though it's the same animal.
 
 **Scale variation.** A dog in the foreground of a photo takes up most of the image. A dog in the distance is tiny. Same dog, vastly different numbers.
 
 **Deformation.** Dogs move. They stretch, crouch, tilt their head. The shape changes, the numbers change.
 
-**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete set of numbers and has to infer what's missing, based on patterns it has learned.
+**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete picture but still has to produce the correct label, relying on whatever visible patterns it has learned to associate with "dog."
 
 **Illumination conditions.** A dog in bright sunlight has completely different numbers than the same dog in shadow or under indoor lighting. The dog's actual color is the same; the light changes everything the camera records.
 
 **Background clutter.** If the dog is sitting in a park, the background is a mess of trees and grass. The computer has to figure out which numbers belong to "dog" and which are "everything else." That's surprisingly hard.
 
-**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike — arguably more different from each other than a Great Dane is from a wolf. Think of a Poodle, a Bulldog, and a Dalmatian — three dogs that share almost no obvious visual features, yet all belong to the same class. The computer needs to find the common thread underneath huge visual variation.
+**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike. Think of a Poodle, a Bulldog, and a Dalmatian — three dogs that share almost no obvious visual features, yet all belong to the same class. The computer needs to find the common thread underneath huge visual variation.
 
 ## Why This Matters
 
 Much of image classification, in some sense, comes down to clever solutions to these seven problems.
 
-A naive approach — comparing the number grids directly — fails for exactly the seven reasons above: rotate, resize, or relight the same dog and its numbers change completely (though simple template matching still works in narrow, controlled cases like fixed-position barcode scanning). If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
+A naive approach — comparing the number grids directly — fails in general for exactly the seven reasons above, though it can still work in narrow, controlled cases like fixed-position barcode scanning. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
 
 We need methods that are robust to these variations — meaning the answer stays right even when the picture changes. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
 
-This is what CS231n teaches us to build.
+This is what CS231n teaches us to build: starting with nearest neighbor, then linear classifiers, then the convolutional networks that handle all seven challenges at once.
 
 ## What's Next
 
