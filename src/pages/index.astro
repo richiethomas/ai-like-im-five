@@ -20,7 +20,7 @@ const hasMore = rest.length > feed.length;
   <SiteHeader posts={allPosts} />
   <main id="content" class="outer">
     <div class="inner">
-      <h1 class="sr-only">{siteConfig.name} — {siteConfig.tagline}</h1>
+      <h1 class="sr-only">{siteConfig.name}: {siteConfig.tagline}</h1>
 
       {latest && (
         <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Latest post">
