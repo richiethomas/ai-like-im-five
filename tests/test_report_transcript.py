@@ -117,3 +117,20 @@ def test_transcript_from_real_run(real_state):
         assert cid in text
     # sane size: a real debate reads as pages, not a stub
     assert len(text) > 3000
+
+
+def test_transcript_metrics_section(real_state):
+    from reviewer.metrics import build_metrics
+    eng = rebuild_engine(real_state)
+    ledger = CostLedger.from_dict(real_state["ledger"])
+    metrics = build_metrics(eng, ledger)
+    text = render_transcript(eng.events, eng.claims,
+                             real_state["article_title"], metrics=metrics)
+    assert "## Model Usefulness" in text
+    assert "| model | raised |" in text
+    for name in eng.reviewer_names:
+        if metrics.get(name, {}).get("claims_raised", 0) > 0:
+            assert f"| {name} |" in text
+    # without metrics the section is absent
+    plain = render_transcript(eng.events, eng.claims, real_state["article_title"])
+    assert "## Model Usefulness" not in plain

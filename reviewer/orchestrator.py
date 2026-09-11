@@ -172,12 +172,12 @@ def write_artifacts(result: RunResult) -> tuple[Path, Path]:
     report_path = result.out_dir / "report.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2))
 
-    transcript = render_transcript(result.engine.events, result.engine.claims,
-                                   result.article.title)
-    transcript_path = result.out_dir / "transcript.md"
-    transcript_path.write_text(transcript)
-
     metrics = build_metrics(result.engine, result.ledger)
     (result.out_dir / "metrics.json").write_text(
         json.dumps(metrics, ensure_ascii=False, indent=2))
+
+    transcript = render_transcript(result.engine.events, result.engine.claims,
+                                   result.article.title, metrics=metrics)
+    transcript_path = result.out_dir / "transcript.md"
+    transcript_path.write_text(transcript)
     return report_path, transcript_path

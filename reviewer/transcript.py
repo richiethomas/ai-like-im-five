@@ -27,8 +27,37 @@ def _claim_heading(c: Claim) -> str:
             f"— raised by {', '.join(c.models)}{loc}")
 
 
+def _metrics_table(metrics: dict) -> list[str]:
+    lines = ["", "## Model Usefulness", "",
+             "| model | raised | solo | agreed | dismissed | consensus | sev-bias | anchor-drop | cost | $/agreed |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
+    rows = sorted(metrics.items(), key=lambda kv: -kv[1].get("agreed_raised", 0))
+    for name, v in rows:
+        if v.get("claims_raised", 0) == 0 and v.get("votes_cast", 0) == 0 \
+                and v.get("endorsements_given", 0) == 0 and name == "claude-sonnet-5":
+            continue  # the author raises nothing by design; skip its empty row
+        bias = v.get("severity_bias")
+        drop = v.get("anchor_drop_rate")
+        cpa = v.get("cost_per_agreed_raised")
+        lines.append(
+            f"| {name} | {v.get('claims_raised', 0)} | {v.get('solo_claims', 0)} "
+            f"| {v.get('agreed_raised', 0)} | {v.get('dismissed_raised', 0)} "
+            f"| {v.get('consensus_participation', 0)} "
+            f"| {bias if bias is not None else '—'} "
+            f"| {f'{drop:.0%}' if drop is not None else '—'} "
+            f"| ${v.get('cost_usd', 0):.4f} "
+            f"| {f'${cpa:.4f}' if cpa is not None else '—'} |")
+    lines.append("")
+    lines.append("_raised = claims this model surfaced; solo = raised by it alone; "
+                 "agreed/dismissed = final status of raised claims; consensus = "
+                 "consensus claims it supported; sev-bias = mean severity vs claim "
+                 "median on shared claims; anchor-drop = findings lost to failed "
+                 "quote anchoring._")
+    return lines
+
+
 def render_transcript(events: list[Event], claims: dict[str, Claim],
-                      article_title: str) -> str:
+                      article_title: str, metrics: dict | None = None) -> str:
     lines: list[str] = [
         f"# Roundtable Review: {article_title}",
         "",
@@ -125,5 +154,8 @@ def render_transcript(events: list[Event], claims: dict[str, Claim],
             lines.append(f"- {c.id} (sev {c.aggregate_severity}, "
                          f"{c.dimension}){consensus}{extra}")
         lines.append("")
+
+    if metrics:
+        lines += _metrics_table(metrics)
 
     return "\n".join(lines)
