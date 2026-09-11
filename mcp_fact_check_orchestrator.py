@@ -10,9 +10,53 @@ import sys
 import os
 from pathlib import Path
 from typing import Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from collections import defaultdict
 import re
+
+@dataclass
+class ModelMetrics:
+    """Tracks performance metrics for each model."""
+    model_id: str
+    findings_count: int = 0
+    consensus_findings: int = 0
+    unique_findings: int = 0
+    avg_severity: float = 0.0
+    dimensions_covered: set = field(default_factory=set)
+    debate_rounds_participated: int = 0
+    concessions_made: int = 0
+    arguments_changed_consensus: int = 0
+    cost: float = 0.0
+
+    # Calculated scores
+    uniqueness_index: float = 0.0
+    consensus_rate: float = 0.0
+    cost_benefit: float = 0.0
+    debate_effectiveness: float = 0.0
+
+    def calculate_scores(self):
+        """Calculate performance scores."""
+        self.uniqueness_index = (self.unique_findings / max(1, self.findings_count)) * 100
+        self.consensus_rate = (self.consensus_findings / max(1, self.findings_count)) * 100
+        self.cost_benefit = (self.consensus_findings * self.avg_severity) / max(0.01, self.cost) if self.cost > 0 else 0
+        self.debate_effectiveness = (self.arguments_changed_consensus / max(1, self.debate_rounds_participated)) * 100 if self.debate_rounds_participated > 0 else 0
+
+    def verdict(self):
+        """Determine if model should be kept."""
+        keep_score = 0
+        if self.uniqueness_index > 30:
+            keep_score += 1
+        if self.consensus_rate > 75:
+            keep_score += 1
+        if self.cost_benefit > 3.0:
+            keep_score += 1
+
+        if keep_score >= 2:
+            return "KEEP"
+        elif keep_score == 1:
+            return "REVIEW"
+        else:
+            return "REMOVE"
 
 @dataclass
 class Finding:
@@ -49,6 +93,10 @@ class MCPFactCheckOrchestrator:
         self.debate_states = {}  # claim -> DebateState
         self.transcript = []
         self.cost_tracker = defaultdict(float)
+
+        # Metrics tracking
+        self.metrics = {}  # model_id -> ModelMetrics
+        self.all_findings_for_dimension_calc = defaultdict(lambda: defaultdict(list))  # model_id -> dimension -> findings
 
     def _extract_article(self):
         """Extract title, excerpt, and content from MDX file."""
@@ -142,6 +190,9 @@ class MCPFactCheckOrchestrator:
         findings = {}
 
         for model in self.servers.keys():
+            # Initialize metrics for this model
+            self.metrics[model] = ModelMetrics(model_id=model)
+
             try:
                 # Send scan request to MCP server
                 request = {
@@ -158,10 +209,14 @@ class MCPFactCheckOrchestrator:
                 findings[model] = model_findings
                 print(f"  {model}: {len(model_findings)} findings")
 
-                # Track findings
+                # Track findings and metrics
+                severities = []
                 for finding_dict in model_findings:
                     finding = Finding(**finding_dict)
                     self.findings_by_claim[finding.claim][model].append(finding)
+                    self.all_findings_for_dimension_calc[model][finding.dimension].append(finding)
+
+                    severities.append(finding.severity)
 
                     if finding.claim not in self.debate_states:
                         self.debate_states[finding.claim] = DebateState(
@@ -180,8 +235,16 @@ class MCPFactCheckOrchestrator:
                         "type": "initial_scan",
                         "claim": finding.claim,
                         "issue": finding.issue,
-                        "severity": finding.severity
+                        "severity": finding.severity,
+                        "dimension": finding.dimension
                     })
+
+                # Update metrics
+                self.metrics[model].findings_count = len(model_findings)
+                self.metrics[model].avg_severity = sum(severities) / len(severities) if severities else 0
+                self.metrics[model].dimensions_covered = set(self.all_findings_for_dimension_calc[model].keys())
+                self.metrics[model].cost = self.cost_tracker.get(model, 0)
+
             except Exception as e:
                 print(f"  Error from {model}: {e}")
                 findings[model] = []
@@ -261,8 +324,72 @@ class MCPFactCheckOrchestrator:
 
         return consensus, blockers
 
+    def _calculate_uniqueness(self):
+        """Calculate which findings are unique to each model."""
+        all_claims = set()
+        for claim, models_dict in self.findings_by_claim.items():
+            all_claims.add(claim)
+
+        for model in self.servers.keys():
+            model_claims = set()
+            for claim, models_dict in self.findings_by_claim.items():
+                if model in models_dict:
+                    model_claims.add(claim)
+
+            # Unique = claims only this model found
+            claims_only_this_model = model_claims.copy()
+            for other_model in self.servers.keys():
+                if other_model != model:
+                    other_claims = set()
+                    for claim, models_dict in self.findings_by_claim.items():
+                        if other_model in models_dict:
+                            other_claims.add(claim)
+                    claims_only_this_model -= other_claims
+
+            self.metrics[model].unique_findings = len(claims_only_this_model)
+
+    def _calculate_consensus_rate(self, consensus_items):
+        """Calculate % of each model's findings that made consensus."""
+        for model in self.servers.keys():
+            model_claims = set()
+            for claim, models_dict in self.findings_by_claim.items():
+                if model in models_dict:
+                    model_claims.add(claim)
+
+            consensus_set = set(consensus_items)
+            consensus_count = len(model_claims & consensus_set)
+
+            self.metrics[model].consensus_findings = consensus_count
+
+    def _generate_metrics_report(self):
+        """Generate human-readable metrics report."""
+        print(f"\n{'='*60}")
+        print("Model Performance Metrics")
+        print(f"{'='*60}\n")
+
+        # Calculate derived metrics
+        self._calculate_uniqueness()
+
+        for model in sorted(self.servers.keys()):
+            metrics = self.metrics[model]
+            metrics.calculate_scores()
+
+            print(f"{model}")
+            print(f"  Findings:                {metrics.findings_count}")
+            print(f"  Consensus Findings:      {metrics.consensus_findings}")
+            print(f"  Unique Findings:         {metrics.unique_findings} ({metrics.uniqueness_index:.1f}%)")
+            print(f"  Avg Severity:            {metrics.avg_severity:.1f}")
+            print(f"  Dimensions Covered:      {', '.join(sorted(metrics.dimensions_covered)) if metrics.dimensions_covered else 'None'}")
+            print(f"  Consensus Rate:          {metrics.consensus_rate:.1f}%")
+            print(f"  Cost-Benefit Ratio:      {metrics.cost_benefit:.2f}")
+            print(f"  Verdict:                 {metrics.verdict()}")
+            print()
+
     def _generate_report(self, consensus, blockers):
         """Generate final report."""
+        self._calculate_consensus_rate(consensus)
+        self._generate_metrics_report()
+
         report = {
             "article": self.title,
             "excerpt": self.excerpt,
@@ -271,6 +398,7 @@ class MCPFactCheckOrchestrator:
                 "consensus": consensus,
                 "blockers": blockers
             },
+            "model_metrics": {model: asdict(metrics) for model, metrics in self.metrics.items()},
             "transcript": self.transcript,
             "cost_estimate": sum(self.cost_tracker.values())
         }
