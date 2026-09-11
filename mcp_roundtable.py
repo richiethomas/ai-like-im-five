@@ -83,7 +83,7 @@ class RoundtableOrchestrator:
         try:
             log.debug("Starting author server...")
             self.author_process = subprocess.Popen(
-                ["python3", "mcp_author.py"],
+                ["/opt/homebrew/opt/python@3.12/bin/python3.12", "mcp_author.py"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -104,7 +104,7 @@ class RoundtableOrchestrator:
                 env = os.environ.copy()
                 env["REVIEWER_MODEL"] = env_name
                 process = subprocess.Popen(
-                    ["python3", "mcp_reviewer.py"],
+                    ["/opt/homebrew/opt/python@3.12/bin/python3.12", "mcp_reviewer.py"],
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -124,7 +124,7 @@ class RoundtableOrchestrator:
         print()
         return True
 
-    def call_server(self, process, request: dict, timeout_sec: float = 30) -> dict:
+    def call_server(self, process, request: dict, timeout_sec: float = 60) -> dict:
         """Send request to MCP server, get response."""
         method = request.get("method", "unknown")
         log.debug(f"  Calling server method={method}")
