@@ -11,7 +11,7 @@ draft: false
 tags: ["image classification", "computer vision basics"]
 ---
 
-We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational text in deep learning — the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.
+We're going to spend the next 15 posts working through CS231n, a Stanford course on convolutional neural networks. It's a foundational course in deep learning — the kind of thing Ilya Sutskever thought was important enough to put on the reading list he gave John Carmack.
 
 But before we build anything, we need to ask the most basic question: what is the problem we're actually solving?
 
@@ -23,11 +23,11 @@ A computer doesn't work that way. A computer can only manipulate numbers. So bef
 
 In a digital image, this has already happened. Every image on your screen is stored as a grid. If the image is 800 pixels wide and 600 pixels tall, that's 800 × 600 cells in the grid. Each cell contains a number. That number represents a color.
 
-For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB). So an 800 × 600 image is really a 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo.
+For a color image, it's actually three numbers per cell: one for red, one for green, one for blue (RGB). So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.44 million numbers** to represent one photo.
 
 When you scroll through your photos, your phone is actually shuffling around millions of numbers. When you compress an image for email, you're finding clever ways to store those millions of numbers in fewer bytes.
 
-This is where computers start. Not with "a picture of a dog." With: **a 800 × 600 × 3 array of numbers between 0 and 255.**
+This is where computers start. Not with "a picture of a dog." With: **an 800 × 600 × 3 array of numbers, each between 0 and 255 (the standard range for a color channel).** The exact dimensions change with image size, but the idea is the same.
 
 ## The Problem: Classification
 
@@ -46,27 +46,27 @@ This sounds easy because your brain does it instantly. But it's genuinely hard f
 
 Let me give you CS231n's list of challenges. These are all real obstacles that complicate the classification task:
 
-**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is.
+**Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers is wildly different depending on where the camera is. Concretely: rotate the camera 90 degrees around the dog, and nearly every one of those 1.44 million numbers changes, even though it's the same animal.
 
 **Scale variation.** A dog in the foreground of a photo takes up most of the image. A dog in the distance is tiny. Same dog, vastly different numbers.
 
 **Deformation.** Dogs move. They stretch, crouch, tilt their head. The shape changes, the numbers change.
 
-**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete set of numbers and has to guess the rest.
+**Occlusion.** Part of the dog might be hidden behind a tree or a person. The computer sees an incomplete set of numbers and has to infer what's missing, based on patterns it has learned.
 
 **Illumination conditions.** A dog in bright sunlight has completely different numbers than the same dog in shadow or under indoor lighting. The dog's actual color is the same; the light changes everything the camera records.
 
 **Background clutter.** If the dog is sitting in a park, the background is a mess of trees and grass. The computer has to figure out which numbers belong to "dog" and which are "everything else." That's surprisingly hard.
 
-**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike. They might look more different from each other than a dog looks from a similar-sized wolf. The computer needs to find the common thread underneath huge visual variation.
+**Intra-class variation.** A Chihuahua and a Great Dane are both dogs, but they look almost nothing alike — arguably more different from each other than a Great Dane is from a wolf. Think of a Poodle, a Bulldog, and a Dalmatian — three dogs that share almost no obvious visual features, yet all belong to the same class. The computer needs to find the common thread underneath huge visual variation.
 
 ## Why This Matters
 
-The entire field of computer vision is, in some sense, a series of clever solutions to these seven problems.
+Much of image classification, in some sense, comes down to clever solutions to these seven problems.
 
-A naive approach — comparing the number grids directly — doesn't work. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
+A naive approach — comparing the number grids directly — fails for exactly the seven reasons above: rotate, resize, or relight the same dog and its numbers change completely (though simple template matching still works in narrow, controlled cases like fixed-position barcode scanning). If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
 
-We need methods that are *invariant* to these variations. Robust to them. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
+We need methods that are robust to these variations — meaning the answer stays right even when the picture changes. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
 
 This is what CS231n teaches us to build.
 
