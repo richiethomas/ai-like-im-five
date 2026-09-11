@@ -70,7 +70,7 @@ Now open their number files side by side with the original:
 - [dog-moved.ppm.txt](/experiments/classification/dog-moved.ppm.txt): the dog only shifted position, yet **more than half the numbers in the file changed**. Every pixel the dog moved onto, and every pixel it moved off of, has new values.
 - [dog-fence.ppm.txt](/experiments/classification/dog-fence.ppm.txt): scan for the stripes of `140 140 140`. Those gray columns replaced whole stretches of dog numbers.
 
-To you, all three pictures are obviously the same dog. To a program comparing numbers, they barely agree. That gap between "obviously the same" and "numerically different" is the entire problem of computer vision, and the seven challenges above are the ways that gap opens up.
+To you, all three pictures are obviously the same dog. To a program comparing numbers, they barely agree. A classifier has to answer "dog" for all three anyway. Each of the seven challenges is one more way the numbers can change while the dog stays the same.
 
 ## What's Next
 

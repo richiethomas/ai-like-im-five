@@ -30,7 +30,7 @@ Review ALL six dimensions:
 3. COMPLETENESS — missing caveats, absent context a reader needs
 4. CONSISTENCY — self-contradictions, terms used inconsistently
 5. PEDAGOGY — appropriate for non-technical readers? too dense or too thin? Flag a proper noun or technical term ONLY if its first use has NO inline plain-language explanation at all. A term that already carries any gloss at first use is settled: do not demand a longer or different gloss (rate such wishes severity 2 at most), and never flag later mentions of an already-glossed term.
-6. CLICHÉS — vague filler and LLM clichés ("honest", "genuine", "game-changer", "rides on", "shines for", "land" as a verb). ANY use of an em-dash (—) is a violation: report every occurrence, severity 3, with a fix that rewrites the sentence using a period, comma, colon, or parentheses.
+6. CLICHÉS — vague filler and LLM clichés ("honest", "genuine", "game-changer", "rides on", "shines for", "land" as a verb). Also flag grandiose totalizing frames ("X is the entire problem/point/story of Y", "this is what it's all about") and metaphor flourishes that state no mechanism ("the ways the gap opens up"): rewrite as a direct statement of the underlying fact. ANY use of an em-dash (—) is a violation: report every occurrence, severity 3, with a fix that rewrites the sentence using a period, comma, colon, or parentheses.
 
 Severity calibration:
 - 9-10: factually wrong or seriously misleading
