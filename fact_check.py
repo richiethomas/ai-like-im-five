@@ -86,8 +86,8 @@ class FactCheckOrchestrator:
             self.models.append("deepseek-chat")
         if os.getenv("GEMINI_API_KEY"):
             self.models.append("gemini-3.5-flash")  # 2.0-flash deprecated
-        if os.getenv("GROQ_API_KEY"):
-            self.models.append("llama-3.3-70b")  # GROQ model: current Llama 3.3
+        if os.getenv("TOGETHER_AI_API_KEY"):
+            self.models.append("llama-3-70b")  # Together AI: Meta Llama 3 70B
 
         if not self.models:
             raise ValueError("No API keys configured. Set ANTHROPIC_API_KEY and/or OPENAI_API_KEY at minimum.")
@@ -248,19 +248,28 @@ Instructions for your response:
                     self.cost_tracker[model] += 0.15
                 except ImportError:
                     raise Exception("google.generativeai not installed. Run: pip install google-generativeai")
-            elif model == "llama-3.3-70b":
-                groq_key = os.getenv("GROQ_API_KEY")
-                if groq_key:
+            elif model == "llama-3-70b":
+                together_key = os.getenv("TOGETHER_AI_API_KEY")
+                if together_key:
                     try:
-                        from groq import Groq
-                        groq_client = Groq(api_key=groq_key)
-                        response = groq_client.chat.completions.create(
-                            model="llama-3.3-70b-versatile",
-                            max_tokens=1000,
-                            messages=[{"role": "user", "content": prompt}]
+                        import requests
+                        headers = {
+                            "Authorization": f"Bearer {together_key}",
+                            "Content-Type": "application/json"
+                        }
+                        data = {
+                            "model": "meta-llama/Llama-3-70b-chat-hf",
+                            "max_tokens": 1000,
+                            "messages": [{"role": "user", "content": prompt}]
+                        }
+                        response = requests.post(
+                            "https://api.together.xyz/v1/chat/completions",
+                            headers=headers,
+                            json=data
                         )
-                        text = response.choices[0].message.content
-                        self.cost_tracker[model] += 0.1
+                        response.raise_for_status()
+                        text = response.json()["choices"][0]["message"]["content"]
+                        self.cost_tracker[model] += 0.05
                     except ImportError:
                         raise Exception("groq not installed. Run: pip install groq")
                 else:
