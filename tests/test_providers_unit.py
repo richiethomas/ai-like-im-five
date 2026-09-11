@@ -131,3 +131,51 @@ def test_pre_parsed_data_skips_json_parsing():
     p = FakeProvider([RawResponse(text=None, data={"direct": True},
                                   input_tokens=10, output_tokens=5, truncated=False)])
     assert p.structured("prompt", {"type": "object"}, 100) == {"direct": True}
+
+
+# --- Gemini schema-less fallback --------------------------------------------
+
+class ScriptedGemini(GeminiProvider):
+    """GeminiProvider with _call scripted instead of hitting the network."""
+
+    def __init__(self, responses, ledger=None):
+        super().__init__("gemini-3.5-flash", "gemini-3.5-flash",
+                         "GEMINI_API_KEY", ledger)
+        self.responses = list(responses)
+        self.calls = []  # (max_tokens, schema is not None)
+
+    def _call(self, prompt, max_tokens, schema):
+        self.calls.append((max_tokens, schema is not None))
+        return self.responses.pop(0)
+
+
+def test_gemini_empty_structured_response_falls_back_to_text_mode():
+    """Live failure mode: response_schema calls return EMPTY text (tokens
+    billed, nothing delivered) while text mode works. The provider must
+    retry schema-less and parse leniently."""
+    from reviewer.costs import CostLedger
+    ledger = CostLedger()
+    p = ScriptedGemini([
+        ok("", tokens=(1960, 146)),                      # structured: empty
+        ok('```json\n{"findings": [{"issue": "x"}]}\n```',
+           tokens=(1960, 200)),                          # text-mode fallback
+    ], ledger)
+    assert p.structured("prompt with JSON shape", {"type": "object"}, 4000,
+                        label="scan") == {"findings": [{"issue": "x"}]}
+    assert p.calls == [(4000, True), (4000, False)]      # second call schema-less
+    labels = [e["label"] for e in ledger.entries]
+    assert labels == ["scan", "scan:schemaless"]         # both calls billed
+
+
+def test_gemini_fallback_still_raises_when_text_mode_also_garbage():
+    import json as _json
+    import pytest as _pytest
+    p = ScriptedGemini([ok(""), ok("still not json")])
+    with _pytest.raises(_json.JSONDecodeError):
+        p.structured("prompt", {"type": "object"}, 4000)
+
+
+def test_gemini_healthy_structured_response_skips_fallback():
+    p = ScriptedGemini([ok('{"findings": []}')])
+    assert p.structured("prompt", {"type": "object"}, 4000) == {"findings": []}
+    assert p.calls == [(4000, True)]                     # no second call

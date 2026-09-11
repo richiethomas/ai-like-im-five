@@ -243,6 +243,21 @@ class GeminiProvider(Provider):
             return [cls.adapt_schema(v) for v in node]
         return node
 
+    def structured(self, prompt: str, schema: dict, max_tokens: int,
+                   label: str = "") -> dict:
+        """Gemini's response_schema mode intermittently returns EMPTY text
+        while still billing output tokens (observed live: two scan attempts,
+        ~145 output tokens each, zero characters delivered). Its plain-text
+        mode has never failed, and every structured prompt already spells out
+        the JSON shape — so on a parse failure, fall back to text mode and
+        parse leniently."""
+        try:
+            return super().structured(prompt, schema, max_tokens, label)
+        except json.JSONDecodeError:
+            raw = self._call(prompt, max_tokens, None)
+            self._record(raw, f"{label}:schemaless")
+            return parse_json_lenient(raw.text or "")
+
     def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
         model = self._get_model()
         config: dict = {"max_output_tokens": max_tokens}
