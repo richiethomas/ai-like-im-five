@@ -40,9 +40,9 @@ DIMENSION_PRIORITY = [
 ]
 
 class AuthorVsReviewersOrchestrator:
-    def __init__(self, article_path: str, max_rounds_per_dimension: int = 3):
+    def __init__(self, article_path: str, max_rounds: int = 100):
         self.article_path = article_path
-        self.max_rounds_per_dimension = max_rounds_per_dimension
+        self.max_rounds = max_rounds
 
         # Load article
         self.title, self.excerpt, self.content = self._extract_article()
@@ -51,12 +51,15 @@ class AuthorVsReviewersOrchestrator:
         self.servers = {}
         self.server_processes = {}
 
-        # Roundtable state per dimension
-        self.dimension_debates = {}  # dimension -> {reviewers: {issues}, author_response, round_count}
+        # Roundtable state: continuous debate, not phase-based
+        self.current_dimension_idx = 0  # Track which dimension we're actively debating
+        self.dimension_coverage = {dim: {"rounds": 0, "resolved": False} for dim in DIMENSION_PRIORITY}
         self.transcript = []
         self.agreed_changes = []  # Issues author conceded
         self.open_disagreements = []  # Issues author pushed back on
         self.negotiated = []  # Issues with partial consensus
+        self.reviewer_positions = {}  # round -> {reviewer: position_text}
+        self.author_positions = {}  # round -> position_text
 
     def _extract_article(self):
         """Extract title, excerpt, and content from MDX file."""
@@ -137,32 +140,62 @@ class AuthorVsReviewersOrchestrator:
         return server_map.get(model, f"mcp_servers/{model.replace('-', '_')}_server.py")
 
     def run_roundtable(self):
-        """Run roundtable debate through dimensions in priority order."""
+        """Run continuous roundtable debate across all dimensions for up to 100 rounds."""
         print(f"{'='*60}")
         print(f"Roundtable: {self.title}")
+        print(f"Max rounds: {self.max_rounds}")
         print(f"{'='*60}\n")
 
-        for dimension_idx, dimension in enumerate(DIMENSION_PRIORITY, 1):
-            print(f"\n{'─'*60}")
-            print(f"Dimension {dimension_idx}/6: {dimension}")
-            print(f"{'─'*60}\n")
+        reviewer_models = [m for m in self.servers if m != "claude-sonnet-5"]
+        author_model = "claude-sonnet-5"
 
-            self._debate_dimension(dimension)
+        round_num = 1
+        while round_num <= self.max_rounds:
+            current_dimension = DIMENSION_PRIORITY[self.current_dimension_idx]
+            print(f"\nRound {round_num}: {current_dimension}")
+
+            if round_num == 1:
+                # Round 1: Reviewers raise initial issues on current dimension
+                reviewer_concerns = self._reviewers_raise_issues(reviewer_models, current_dimension)
+                if not reviewer_concerns:
+                    print(f"  ✓ No issues found, moving to next dimension")
+                    self.current_dimension_idx += 1
+                    if self.current_dimension_idx >= len(DIMENSION_PRIORITY):
+                        print(f"\n✓ All dimensions reviewed")
+                        break
+                    continue
+
+                self.reviewer_positions[round_num] = reviewer_concerns
+                self._parse_reviewer_concerns(reviewer_concerns, current_dimension)
+
+            # Author responds to current reviewer positions
+            author_response = self._author_responds(author_model, current_dimension, self.reviewer_positions.get(round_num))
+            self.author_positions[round_num] = author_response
+            self._parse_author_response(author_response, current_dimension)
+
+            # Check if reviewers want to rebut
+            if round_num < self.max_rounds:
+                reviewer_rebuttals = self._reviewers_rebut(reviewer_models, current_dimension, author_response)
+                if reviewer_rebuttals:
+                    self.reviewer_positions[round_num + 1] = reviewer_rebuttals
+                else:
+                    # No rebuttals: move to next dimension
+                    self.dimension_coverage[current_dimension]["resolved"] = True
+                    self.current_dimension_idx += 1
+                    if self.current_dimension_idx >= len(DIMENSION_PRIORITY):
+                        print(f"\n✓ All dimensions reviewed in {round_num} rounds")
+                        break
+
+            round_num += 1
 
         # Generate report
         report = self._generate_report()
         return report
 
-    def _debate_dimension(self, dimension: str):
-        """Debate one dimension: reviewers → author → optional rebuttals."""
-        reviewer_models = [m for m in self.servers if m != "claude-sonnet-5"]
-        author_model = "claude-sonnet-5"
-
-        # Phase 1: Reviewers scan for this dimension
-        print(f"Phase 1: Reviewers identify {dimension} issues...")
-        reviewer_concerns = {}
-
-        for reviewer in reviewer_models:
+    def _reviewers_raise_issues(self, reviewers: list, dimension: str) -> dict:
+        """Reviewers scan for issues in current dimension."""
+        concerns = {}
+        for reviewer in reviewers:
             try:
                 request = {
                     "method": "scan_article",
@@ -173,21 +206,20 @@ class AuthorVsReviewersOrchestrator:
                 }
                 response = self._call_mcp_server(reviewer, request)
                 findings = response.get("findings", [])
-
-                # Filter to this dimension
                 dimension_findings = [f for f in findings if f.get("dimension") == dimension]
                 if dimension_findings:
-                    reviewer_concerns[reviewer] = dimension_findings
-                    print(f"  {reviewer}: {len(dimension_findings)} {dimension} issues")
+                    concerns[reviewer] = dimension_findings
+                    print(f"  {reviewer}: {len(dimension_findings)} issues")
             except Exception as e:
                 print(f"  {reviewer}: error — {e}")
+        return concerns
 
-        if not reviewer_concerns:
-            print(f"  ✓ No {dimension} issues found")
-            return
+    def _parse_reviewer_concerns(self, concerns_by_model: dict, dimension: str):
+        """Track reviewer concerns for later analysis."""
+        pass
 
-        # Phase 2: Author responds to all concerns
-        print(f"\nPhase 2: Author responds to {len(reviewer_concerns)} reviewers...")
+    def _author_responds(self, author_model: str, dimension: str, reviewer_concerns: dict) -> str:
+        """Author responds to current reviewer concerns."""
         try:
             request = {
                 "method": "respond_to_roundtable",
@@ -195,27 +227,24 @@ class AuthorVsReviewersOrchestrator:
                     "title": self.title,
                     "content": self.content[:3000],
                     "dimension": dimension,
-                    "reviewer_concerns_by_model": reviewer_concerns
+                    "reviewer_concerns_by_model": reviewer_concerns or {}
                 }
             }
             response = self._call_mcp_server(author_model, request)
-            author_response = response.get("response", "")
-
-            # Parse author stances
-            self._parse_author_response(author_response, dimension, reviewer_concerns)
-
-            print(f"  ✓ Author responded")
-
-            # Log to transcript
-            self.transcript.append({
-                "dimension": dimension,
-                "reviewers_raised": list(reviewer_concerns.keys()),
-                "reviewer_concerns_count": sum(len(c) for c in reviewer_concerns.values()),
-                "author_response": author_response
-            })
-
+            print(f"  Author responded")
+            return response.get("response", "")
         except Exception as e:
-            print(f"  Error: {e}")
+            print(f"  Author error: {e}")
+            return ""
+
+    def _reviewers_rebut(self, reviewers: list, dimension: str, author_response: str) -> dict:
+        """Reviewers respond to author's defense."""
+        # For now, simplified: if author gave DEFEND responses, reviewers can push back
+        # Real implementation would parse author stances and rebut accordingly
+        if "DEFEND" in author_response:
+            # Could trigger rebuttal debate
+            return {}
+        return {}
 
     def _parse_author_response(self, response_text: str, dimension: str, reviewer_concerns: dict):
         """Parse author's response to extract stances."""
@@ -259,7 +288,7 @@ class AuthorVsReviewersOrchestrator:
         return json.loads(response_line)
 
     def _generate_report(self):
-        """Generate final roundtable report."""
+        """Generate final roundtable report with coverage analysis."""
         print(f"\n{'='*60}")
         print("Roundtable Summary")
         print(f"{'='*60}\n")
@@ -269,23 +298,44 @@ class AuthorVsReviewersOrchestrator:
         print(f"Open Disagreements: {len(self.open_disagreements)}")
         print()
 
-        # Breakdown by dimension
-        print("By Dimension:")
+        # Dimension coverage
+        print("Dimension Coverage:")
+        covered = []
+        deferred = []
         for dim in DIMENSION_PRIORITY:
             agreed = len([c for c in self.agreed_changes if c['dimension'] == dim])
             neg = len([c for c in self.negotiated if c['dimension'] == dim])
             open_d = len([c for c in self.open_disagreements if c['dimension'] == dim])
-            if agreed + neg + open_d > 0:
-                print(f"  {dim}: {agreed} agreed + {neg} negotiated + {open_d} open")
+            total = agreed + neg + open_d
+
+            status = "✓ Covered" if self.dimension_coverage[dim]["resolved"] else "○ Deferred"
+            print(f"  {dim}: {total} issues — {status}")
+
+            if self.dimension_coverage[dim]["resolved"]:
+                covered.append(dim)
+            else:
+                deferred.append(dim)
+
+        print()
+        if deferred:
+            print(f"Deferred dimensions (need more rounds): {', '.join(deferred)}")
+            print("Recommendation: Further discussion warranted on deferred topics")
+        else:
+            print("All dimensions covered")
 
         report = {
             "article": self.title,
             "mode": "author_vs_reviewers",
+            "rounds_used": len(self.author_positions),
+            "max_rounds": self.max_rounds,
+            "dimensions_covered": covered,
+            "dimensions_deferred": deferred,
             "agreed_changes": self.agreed_changes,
             "negotiated_changes": self.negotiated,
             "open_disagreements": self.open_disagreements,
             "transcript": self.transcript,
-            "action_items": len(self.agreed_changes) + len(self.negotiated)
+            "action_items": len(self.agreed_changes) + len(self.negotiated),
+            "needs_further_discussion": len(deferred) > 0
         }
         return report
 
