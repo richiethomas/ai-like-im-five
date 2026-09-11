@@ -16,9 +16,17 @@ if [ ! -f "fact_check.py" ]; then
     exit 1
 fi
 
-# Check Python deps
+# Create venv if needed
+VENV_DIR=".venv-fact-check"
+if [ ! -d "$VENV_DIR" ]; then
+    echo "📦 Creating virtual environment..."
+    python3 -m venv "$VENV_DIR"
+fi
+
+# Activate venv and install deps
+source "$VENV_DIR/bin/activate"
 if ! python3 -c "import anthropic, openai" 2>/dev/null; then
-    echo "📦 Installing dependencies..."
+    echo "📦 Installing dependencies into venv..."
     pip install -q -r requirements_fact_check.txt
 fi
 

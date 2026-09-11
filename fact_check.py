@@ -28,10 +28,18 @@ except Exception as e:
     print(f"Warning: OpenAI initialization failed: {e}")
     openai_client = None
 
-# DeepSeek: use OpenAI-compatible endpoint
-# Set DEEPSEEK_API_KEY and DEEPSEEK_BASE_URL in env, or leave blank for placeholder
-# Gemini: requires separate google.generativeai setup
-# Llama: use Together AI (TOGETHER_API_KEY) or Groq (GROQ_API_KEY)
+# Clichés to flag in articles and avoid in responses
+CLICHES = [
+    "honest", "honestly", "genuine", "genuinely",
+    "load-bearing", "rides on", "riding on", "seams",
+    "it's a.*worth", "shines for", "shines when",
+    "belt and suspenders", "keep the data honest",
+    "here's what I'd watch", "the point is",
+    "really", "really important", "real risk", "real cost",
+    "land", "changes that land", "decisions that land",
+    "great question", "excellent point", "sharp observation",
+    "good catch", "nice catch", "that's a great instinct",
+]
 
 @dataclass
 class FactCheckFinding:
@@ -65,7 +73,25 @@ class FactCheckOrchestrator:
     def __init__(self, budget_per_article: float = 10.0):
         self.budget_per_article = budget_per_article
         self.cost_tracker = defaultdict(float)
-        self.models = ["claude-3-5-sonnet-20241022", "gpt-4o-mini", "deepseek-chat", "gemini-2.0-flash"]
+
+        # Build model list based on available API keys
+        self.models = []
+        if os.getenv("ANTHROPIC_API_KEY"):
+            self.models.append("claude-3-5-sonnet-20241022")
+        if os.getenv("OPENAI_API_KEY"):
+            self.models.append("gpt-4o-mini")
+        if os.getenv("DEEPSEEK_API_KEY"):
+            self.models.append("deepseek-chat")
+        if os.getenv("GEMINI_API_KEY"):
+            self.models.append("gemini-2.0-flash")
+        if os.getenv("GROQ_API_KEY") or os.getenv("TOGETHER_API_KEY"):
+            self.models.append("llama-3-70b")
+
+        if not self.models:
+            raise ValueError("No API keys configured. Set ANTHROPIC_API_KEY and/or OPENAI_API_KEY at minimum.")
+
+        print(f"Loaded {len(self.models)} models: {', '.join(self.models)}\n")
+
         self.max_rounds = 100
         self.consensus_threshold_rounds = 5
         self.debate_history = []  # Track all debate messages
@@ -112,8 +138,10 @@ class FactCheckOrchestrator:
         while round_num <= self.max_rounds:
             # Check if consensus reached
             consensus_items, blocker_items = self._analyze_consensus(initial_findings)
+
+            # If all issues have consensus, we're done early
             if len(blocker_items) == 0:
-                print(f"\n✓ Consensus reached in round {round_num - 1}")
+                print(f"\n✓ Consensus reached in round {round_num - 1} — terminating early to save tokens")
                 break
 
             print(f"\nRound {round_num}: Debate round...")
@@ -134,45 +162,99 @@ class FactCheckOrchestrator:
 
     def _initial_fact_check(self, model: str, title: str, content: str) -> list[FactCheckFinding]:
         """Run initial fact-check from a single model."""
-        prompt = f"""You are a rigorous technical fact-checker reviewing a blog article about deep learning and computer vision.
+        prompt = f"""You are a rigorous technical fact-checker reviewing a blog article about deep learning and computer vision, written for non-technical business stakeholders.
 
 Article: {title}
 
 Content:
 {content[:3000]}...
 
-Your task: Identify the 3-5 most important factual errors, oversimplifications, or misleading claims in this article. Focus ONLY on significant issues that would mislead readers. Ignore trivial nitpicks.
+Review dimensions (in order of importance):
+1. CORRECTNESS: Factual accuracy. Are claims true?
+2. CLARITY: Is the explanation clear and not misleading?
+3. COMPLETENESS: Are important caveats or nuances missing?
+4. CONSISTENCY: Are there internal contradictions?
+5. PEDAGOGY: Is the explanation appropriate for non-technical readers?
+6. CLICHÉS: Flag LLM clichés like "honest", "genuine", "load-bearing", "rides on", "shines for", "belt and suspenders", "it's a X worth Y-ing", "land" (as verb), generic praise.
+
+Your task: Identify the 3-5 most important issues across these dimensions. Focus ONLY on significant problems that would mislead or confuse readers. Ignore trivial nitpicks.
 
 For each issue found, respond with:
-CLAIM: [the specific claim being fact-checked]
-ISSUE: [what's wrong with it]
+CLAIM: [the specific claim or phrase]
+ISSUE: [what's wrong with it and which dimension]
 SEVERITY: [1-10, where 10 is most severe]
 FIX: [suggested correction]
 
-Be direct and rigorous. Do not include minor issues."""
+Instructions for your response:
+- Be direct and specific. No filler.
+- Avoid clichés in your own response: don't use "honest", "genuine", "load-bearing", "rides on", "seams", "shines for", "belt and suspenders", generic praise phrases.
+- Do not include minor issues.
+- If you find no significant issues, respond with: "NO ISSUES FOUND"."""
 
         findings = []
         try:
             if model == "claude-3-5-sonnet-20241022":
+                if not anthropic_client:
+                    raise Exception("Claude client not initialized")
                 response = anthropic_client.messages.create(
                     model=model,
                     max_tokens=1000,
                     messages=[{"role": "user", "content": prompt}]
                 )
                 text = response.content[0].text
-                self.cost_tracker[model] += 0.5  # Rough estimate
+                self.cost_tracker[model] += 0.5
             elif model == "gpt-4o-mini":
+                if not openai_client:
+                    raise Exception("OpenAI client not initialized")
                 response = openai_client.chat.completions.create(
                     model=model,
                     max_tokens=1000,
                     messages=[{"role": "user", "content": prompt}]
                 )
                 text = response.choices[0].message.content
-                self.cost_tracker[model] += 0.3  # Rough estimate
-            else:
-                # Placeholder for DeepSeek, Gemini, Llama
-                text = f"[{model} placeholder response]"
+                self.cost_tracker[model] += 0.3
+            elif model == "deepseek-chat":
+                from openai import OpenAI
+                ds_client = OpenAI(
+                    api_key=os.getenv("DEEPSEEK_API_KEY"),
+                    base_url="https://api.deepseek.com/v1"
+                )
+                response = ds_client.chat.completions.create(
+                    model="deepseek-chat",
+                    max_tokens=1000,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                text = response.choices[0].message.content
                 self.cost_tracker[model] += 0.2
+            elif model == "gemini-2.0-flash":
+                try:
+                    import google.generativeai as genai
+                    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+                    gemini_model = genai.GenerativeModel("gemini-2.0-flash")
+                    response = gemini_model.generate_content(prompt)
+                    text = response.text
+                    self.cost_tracker[model] += 0.15
+                except ImportError:
+                    raise Exception("google.generativeai not installed. Run: pip install google-generativeai")
+            elif model == "llama-3-70b":
+                groq_key = os.getenv("GROQ_API_KEY")
+                if groq_key:
+                    try:
+                        from groq import Groq
+                        groq_client = Groq(api_key=groq_key)
+                        response = groq_client.chat.completions.create(
+                            model="llama-3-70b-8192",
+                            max_tokens=1000,
+                            messages=[{"role": "user", "content": prompt}]
+                        )
+                        text = response.choices[0].message.content
+                        self.cost_tracker[model] += 0.05
+                    except ImportError:
+                        raise Exception("groq not installed. Run: pip install groq")
+                else:
+                    raise Exception("GROQ_API_KEY not set")
+            else:
+                raise Exception(f"Unknown model: {model}")
 
             # Parse findings from response
             findings = self._parse_findings(text, model)
@@ -184,6 +266,10 @@ Be direct and rigorous. Do not include minor issues."""
     def _parse_findings(self, text: str, model: str) -> list[FactCheckFinding]:
         """Parse fact-check findings from model response."""
         findings = []
+
+        # Check for "NO ISSUES FOUND" response
+        if "NO ISSUES FOUND" in text.upper():
+            return findings
 
         # Split by "CLAIM:" to get individual findings
         parts = text.split("CLAIM:")
