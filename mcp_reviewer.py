@@ -323,14 +323,14 @@ MANDATORY: Check ALL six dimensions. Review dimensions:
 
 Find ALL significant issues (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
-For each issue:
+For each issue, respond EXACTLY as follows (one issue per block, plain text only):
 CLAIM: [the specific claim or phrase being criticized]
 DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
 ISSUE: [what's wrong with it]
 SEVERITY: [1-10, where 10 is most severe]
 FIX: [suggested correction]
 
-Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
+Do NOT use markdown formatting (*bold*, headers, etc.). Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
 
         try:
             response = self.model.generate_content(prompt)
