@@ -61,8 +61,28 @@ class ReviewerMCPServer(ABC):
         """Debate a claim (kept for API consistency)."""
         pass
 
-    def _parse_findings(self, text: str) -> list:
-        """Parse findings from LLM response. Looks for CLAIM: / DIMENSION: / ISSUE: / SEVERITY: / FIX: format."""
+    def _parse_findings(self, response_data) -> list:
+        """Parse findings from LLM response. Handles both JSON (preferred) and text formats."""
+        # If response is already a dict (from JSON mode), extract findings
+        if isinstance(response_data, dict):
+            findings = response_data.get("findings", [])
+            # Normalize fields
+            for f in findings:
+                if "suggested_fix" not in f and "fix" in f:
+                    f["suggested_fix"] = f.pop("fix")
+                if "severity" in f and isinstance(f["severity"], str):
+                    try:
+                        f["severity"] = int(re.search(r'\d+', f["severity"]).group())
+                    except:
+                        f["severity"] = 5
+            return findings
+
+        # Fallback: parse text format (for backwards compatibility)
+        if isinstance(response_data, str):
+            text = response_data
+        else:
+            text = str(response_data)
+
         findings = []
         parts = text.split("CLAIM:")
 
@@ -109,6 +129,33 @@ class OpenAIReviewer(ReviewerMCPServer):
         super().__init__("gpt-4o-mini")
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+    FINDINGS_SCHEMA = {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "findings",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "findings": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "claim": {"type": "string"},
+                                "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
+                                "issue": {"type": "string"},
+                                "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                                "fix": {"type": "string"}
+                            },
+                            "required": ["claim", "dimension", "issue", "severity"]
+                        }
+                    }
+                },
+                "required": ["findings"]
+            }
+        }
+    }
+
     def scan_article(self, title: str, content: str) -> dict:
         prompt = f"""You are a rigorous technical fact-checker reviewing a blog article about deep learning and computer vision, written for non-technical business stakeholders.
 
@@ -127,23 +174,25 @@ MANDATORY: Check ALL six dimensions. Review dimensions:
 
 Find ALL significant issues (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
-For each issue:
-CLAIM: [the specific claim or phrase being criticized]
-DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
-ISSUE: [what's wrong with it]
-SEVERITY: [1-10, where 10 is most severe]
-FIX: [suggested correction]
+Return findings as JSON with this structure:
+{{
+  "findings": [
+    {{"claim": "...", "dimension": "CORRECTNESS", "issue": "...", "severity": 5, "fix": "..."}},
+    ...
+  ]
+}}
 
-Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
+Be comprehensive and specific. If no issues found, return {{"findings": []}}."""
 
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 max_tokens=2000,
+                response_format=self.FINDINGS_SCHEMA,
                 messages=[{"role": "user", "content": prompt}]
             )
-            text = response.choices[0].message.content
-            findings = self._parse_findings(text)
+            data = json.loads(response.choices[0].message.content)
+            findings = self._parse_findings(data)
             return {"findings": findings}
         except Exception as e:
             return {"error": str(e), "findings": []}
@@ -208,14 +257,42 @@ class DeepSeekReviewer(ReviewerMCPServer):
         super().__init__("deepseek-chat")
         self.api_key = os.getenv("DEEPSEEK_API_KEY")
         self.base_url = "https://api.deepseek.com/v1"
+        self.FINDINGS_SCHEMA = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "findings",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "findings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "claim": {"type": "string"},
+                                    "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
+                                    "issue": {"type": "string"},
+                                    "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                                    "fix": {"type": "string"}
+                                },
+                                "required": ["claim", "dimension", "issue", "severity"]
+                            }
+                        }
+                    },
+                    "required": ["findings"]
+                }
+            }
+        }
 
-    def _call_api(self, prompt: str, max_tokens: int = 2000) -> str:
+    def _call_api(self, prompt: str, max_tokens: int = 2000, response_format=None) -> str:
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
         data = {
             "model": "deepseek-chat",
             "max_tokens": max_tokens,
             "messages": [{"role": "user", "content": prompt}]
         }
+        if response_format:
+            data["response_format"] = response_format
         response = requests.post(f"{self.base_url}/chat/completions", headers=headers, json=data)
         response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
@@ -238,18 +315,20 @@ MANDATORY: Check ALL six dimensions. Review dimensions:
 
 Find ALL significant issues (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
-For each issue:
-CLAIM: [the specific claim or phrase being criticized]
-DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
-ISSUE: [what's wrong with it]
-SEVERITY: [1-10, where 10 is most severe]
-FIX: [suggested correction]
+Return findings as JSON:
+{{
+  "findings": [
+    {{"claim": "...", "dimension": "CORRECTNESS", "issue": "...", "severity": 5, "fix": "..."}},
+    ...
+  ]
+}}
 
-Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
+Be comprehensive and specific. If no issues found, return {{"findings": []}}."""
 
         try:
-            text = self._call_api(prompt, 2000)
-            findings = self._parse_findings(text)
+            text = self._call_api(prompt, 2000, self.FINDINGS_SCHEMA)
+            data = json.loads(text)
+            findings = self._parse_findings(data)
             return {"findings": findings}
         except Exception as e:
             return {"error": str(e), "findings": []}
@@ -304,6 +383,26 @@ class GeminiReviewer(ReviewerMCPServer):
         super().__init__("gemini-3.5-flash")
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = genai.GenerativeModel("gemini-3.5-flash")
+        self.schema = {
+            "type": "object",
+            "properties": {
+                "findings": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "claim": {"type": "string"},
+                            "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
+                            "issue": {"type": "string"},
+                            "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                            "fix": {"type": "string"}
+                        },
+                        "required": ["claim", "dimension", "issue", "severity"]
+                    }
+                }
+            },
+            "required": ["findings"]
+        }
 
     def scan_article(self, title: str, content: str) -> dict:
         prompt = f"""You are a rigorous technical fact-checker reviewing a blog article about deep learning and computer vision, written for non-technical business stakeholders.
@@ -323,18 +422,26 @@ MANDATORY: Check ALL six dimensions. Review dimensions:
 
 Find ALL significant issues (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
-For each issue, respond EXACTLY as follows (one issue per block, plain text only):
-CLAIM: [the specific claim or phrase being criticized]
-DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
-ISSUE: [what's wrong with it]
-SEVERITY: [1-10, where 10 is most severe]
-FIX: [suggested correction]
+Return findings as JSON:
+{{
+  "findings": [
+    {{"claim": "...", "dimension": "CORRECTNESS", "issue": "...", "severity": 5, "fix": "..."}},
+    ...
+  ]
+}}
 
-Do NOT use markdown formatting (*bold*, headers, etc.). Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
+Be comprehensive and specific. If no issues found, return {{"findings": []}}."""
 
         try:
-            response = self.model.generate_content(prompt)
-            findings = self._parse_findings(response.text)
+            response = self.model.generate_content(
+                prompt,
+                generation_config={
+                    "response_mime_type": "application/json",
+                    "response_schema": self.schema
+                }
+            )
+            data = json.loads(response.text)
+            findings = self._parse_findings(data)
             return {"findings": findings}
         except Exception as e:
             return {"error": str(e), "findings": []}
@@ -365,7 +472,7 @@ NEGOTIATE | [proposed middle ground]
 Be concise and substantive."""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.model.generate_content(prompt, stream=False)
             return {"response": response.text}
         except Exception as e:
             return {"error": str(e), "response": ""}
@@ -380,7 +487,7 @@ Others: {json.dumps(other_positions, indent=2)}
 Maintain or change your position? Be specific about accepting/rejecting points. Focus on accuracy."""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.model.generate_content(prompt, stream=False)
             return {"response": response.text}
         except Exception as e:
             return {"error": str(e), "response": ""}
@@ -391,14 +498,42 @@ class TogetherReviewer(ReviewerMCPServer):
         super().__init__("llama-3-70b")
         self.api_key = os.getenv("TOGETHER_AI_API_KEY")
         self.base_url = "https://api.together.xyz/v1"
+        self.FINDINGS_SCHEMA = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "findings",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "findings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "claim": {"type": "string"},
+                                    "dimension": {"type": "string", "enum": ["CORRECTNESS", "CLARITY", "COMPLETENESS", "CONSISTENCY", "PEDAGOGY", "CLICHÉS"]},
+                                    "issue": {"type": "string"},
+                                    "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                                    "fix": {"type": "string"}
+                                },
+                                "required": ["claim", "dimension", "issue", "severity"]
+                            }
+                        }
+                    },
+                    "required": ["findings"]
+                }
+            }
+        }
 
-    def _call_api(self, prompt: str, max_tokens: int = 2000) -> str:
+    def _call_api(self, prompt: str, max_tokens: int = 2000, response_format=None) -> str:
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
         data = {
             "model": "meta-llama/Llama-3.3-70b-instruct-turbo",
             "max_tokens": max_tokens,
             "messages": [{"role": "user", "content": prompt}]
         }
+        if response_format:
+            data["response_format"] = response_format
         response = requests.post(f"{self.base_url}/chat/completions", headers=headers, json=data)
         response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
@@ -421,18 +556,20 @@ MANDATORY: Check ALL six dimensions. Review dimensions:
 
 Find ALL significant issues (severity >= 3). This is a 500-1000 word article, so expect multiple issues per dimension.
 
-For each issue:
-CLAIM: [the specific claim or phrase being criticized]
-DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
-ISSUE: [what's wrong with it]
-SEVERITY: [1-10, where 10 is most severe]
-FIX: [suggested correction]
+Return findings as JSON:
+{{
+  "findings": [
+    {{"claim": "...", "dimension": "CORRECTNESS", "issue": "...", "severity": 5, "fix": "..."}},
+    ...
+  ]
+}}
 
-Be comprehensive and specific. If no issues found, respond with: "NO ISSUES FOUND"."""
+Be comprehensive and specific. If no issues found, return {{"findings": []}}."""
 
         try:
-            text = self._call_api(prompt, 2000)
-            findings = self._parse_findings(text)
+            text = self._call_api(prompt, 2000, self.FINDINGS_SCHEMA)
+            data = json.loads(text)
+            findings = self._parse_findings(data)
             return {"findings": findings}
         except Exception as e:
             return {"error": str(e), "findings": []}

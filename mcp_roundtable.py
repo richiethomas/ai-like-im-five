@@ -166,6 +166,7 @@ class RoundtableOrchestrator:
         round_num = 1
         dimension_idx = 0
         dimension_state = {}
+        transcript = []  # Store discussion for output
 
         log.debug(f"Starting main loop with {len(DIMENSION_PRIORITY)} dimensions")
 
@@ -187,7 +188,7 @@ class RoundtableOrchestrator:
                 log.debug(f"  Calling {len(self.reviewer_processes)} reviewers for scan_article (parallel)")
                 request = {
                     "method": "scan_article",
-                    "params": {"title": self.title, "content": self.content[:3000]}
+                    "params": {"title": self.title, "content": self.content}
                 }
 
                 def scan_reviewer(model_name, process):
@@ -217,6 +218,13 @@ class RoundtableOrchestrator:
                             dimension_state[dimension]["reviewer_findings"][model_name] = findings
                             log.info(f"    {model_name}: {len(findings)} issues ({elapsed:.1f}s)")
                             print(f"  {model_name}: {len(findings)} issues")
+                            # Add to transcript
+                            transcript.append({
+                                "type": "reviewer_findings",
+                                "dimension": dimension,
+                                "model": model_name,
+                                "findings": findings
+                            })
                         else:
                             log.debug(f"    {model_name}: no findings ({elapsed:.1f}s)")
 
@@ -254,6 +262,12 @@ class RoundtableOrchestrator:
                     elapsed = time.time() - start
 
                     dimension_state[dimension]["author_responses"].append(author_response)
+                    # Add to transcript
+                    transcript.append({
+                        "type": "author_response",
+                        "dimension": dimension,
+                        "response": author_response
+                    })
                     log.debug(f"  Parsing author response...")
                     self._parse_author_response(author_response, dimension)
                     log.info(f"  Author responded ({elapsed:.1f}s)")
@@ -316,6 +330,13 @@ class RoundtableOrchestrator:
                             rebuttals[model_name] = rebuttal
                             log.debug(f"  {model_name}: submitted rebuttal")
                             print(f"  {model_name}: submitted response")
+                            # Add to transcript
+                            transcript.append({
+                                "type": "reviewer_rebuttal",
+                                "dimension": dimension,
+                                "model": model_name,
+                                "rebuttal": rebuttal
+                            })
 
                 if not rebuttals:
                     print(f"  → Reviewers accepted — next dimension")
@@ -344,6 +365,12 @@ class RoundtableOrchestrator:
                     response = self.call_server(self.author_process, request)
                     author_response = response.get("response", "")
                     dimension_state[dimension]["author_responses"].append(author_response)
+                    # Add to transcript
+                    transcript.append({
+                        "type": "author_rebuttal_response",
+                        "dimension": dimension,
+                        "response": author_response
+                    })
                     self._parse_author_response(author_response, dimension)
                     print(f"  Author responded")
                 except Exception as e:
@@ -377,10 +404,64 @@ class RoundtableOrchestrator:
             "agreed_changes": self.agreed_changes,
             "negotiated": self.negotiated,
             "open_disagreements": self.open_disagreements,
-            "action_items": len(self.agreed_changes) + len(self.negotiated)
+            "action_items": len(self.agreed_changes) + len(self.negotiated),
+            "transcript": transcript
         }
 
         return report
+
+    def _format_transcript(self, transcript: list) -> str:
+        """Format transcript into readable markdown."""
+        lines = [
+            f"# Roundtable Discussion: {self.title}\n",
+            "A multi-model review debate between author and AI reviewers.\n",
+        ]
+
+        current_dimension = None
+
+        for entry in transcript:
+            entry_type = entry.get("type")
+            dimension = entry.get("dimension")
+
+            # Add dimension header
+            if dimension != current_dimension:
+                lines.append(f"\n## {dimension}\n")
+                current_dimension = dimension
+
+            if entry_type == "reviewer_findings":
+                model = entry.get("model")
+                findings = entry.get("findings", [])
+                lines.append(f"### {model} Raises Concerns\n")
+                for i, finding in enumerate(findings, 1):
+                    claim = finding.get("claim", "N/A")
+                    issue = finding.get("issue", "N/A")
+                    severity = finding.get("severity", "?")
+                    fix = finding.get("suggested_fix", "N/A")
+                    lines.append(f"**Issue {i}** (Severity {severity}/10)")
+                    lines.append(f"- **Claim:** {claim}")
+                    lines.append(f"- **Problem:** {issue}")
+                    lines.append(f"- **Fix:** {fix}\n")
+
+            elif entry_type == "author_response":
+                lines.append("### Author Responds\n")
+                response = entry.get("response", "")
+                lines.append(response)
+                lines.append("")
+
+            elif entry_type == "reviewer_rebuttal":
+                model = entry.get("model")
+                rebuttal = entry.get("rebuttal", "")
+                lines.append(f"### {model} Rebuts\n")
+                lines.append(rebuttal)
+                lines.append("")
+
+            elif entry_type == "author_rebuttal_response":
+                lines.append("### Author Responds to Rebuttals\n")
+                response = entry.get("response", "")
+                lines.append(response)
+                lines.append("")
+
+        return "\n".join(lines)
 
     def _parse_author_response(self, response: str, dimension: str):
         """Extract CONCEDE/DEFEND/NEGOTIATE stances from author response."""
@@ -419,11 +500,21 @@ class RoundtableOrchestrator:
             process.wait(timeout=5)
 
     def save_report(self, report: dict):
-        """Save report to JSON file."""
+        """Save report to JSON and transcript to markdown."""
+        # Save JSON report
         report_path = Path(self.article_path).parent / f"{Path(self.article_path).stem}_roundtable_report.json"
+        transcript = report.pop("transcript", [])  # Extract transcript before saving JSON
         with open(report_path, 'w') as f:
             json.dump(report, f, indent=2)
         print(f"Report saved: {report_path}")
+
+        # Save transcript as markdown
+        if transcript:
+            transcript_md = self._format_transcript(transcript)
+            transcript_path = Path(self.article_path).parent / f"{Path(self.article_path).stem}_roundtable_discussion.md"
+            with open(transcript_path, 'w') as f:
+                f.write(transcript_md)
+            print(f"Discussion transcript saved: {transcript_path}")
 
 
 def main():
