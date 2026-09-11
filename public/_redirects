@@ -1,0 +1,16 @@
+# Series renumbering (2026-09-11): old Part N slugs -> Part N+1
+
+/post/paper-1-part-9-garbage-in-garbage-out-why-data-prep-matters/ /post/paper-1-part-10-garbage-in-garbage-out-why-data-prep-matters/ 301
+/post/paper-1-part-10-memorizing-vs-learning-overfitting-and-regularization/ /post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/ 301
+/post/paper-1-part-11-convolutions-spotting-patterns-anywhere-in-a-picture/ /post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/ 301
+/post/paper-1-part-12-pooling-and-stacking-from-edges-to-objects/ /post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/ 301
+/post/paper-1-part-13-peeking-inside-the-black-box-what-is-a-cnn-looking-at/ /post/paper-1-part-14-peeking-inside-the-black-box-what-is-a-cnn-looking-at/ 301
+/post/paper-1-part-14-why-train-from-scratch-transfer-learning/ /post/paper-1-part-15-why-train-from-scratch-transfer-learning/ 301
+/post/paper-1-part-15-putting-it-together-what-cs231n-actually-teaches/ /post/paper-1-part-16-putting-it-together-what-cs231n-actually-teaches/ 301
+/post/paper-1-part-2-the-simplest-way-to-guess-nearest-neighbor/ /post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/ 301
+/post/paper-1-part-3-how-to-test-yourself-without-cheating/ /post/paper-1-part-4-how-to-test-yourself-without-cheating/ 301
+/post/paper-1-part-4-giving-the-computer-a-scorecard-linear-classifiers/ /post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/ 301
+/post/paper-1-part-5-how-does-the-computer-know-it-s-wrong-loss-functions/ /post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/ 301
+/post/paper-1-part-6-learning-by-trial-and-error-gradient-descent/ /post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/ 301
+/post/paper-1-part-7-backpropagation-how-blame-gets-passed-backward/ /post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/ 301
+/post/paper-1-part-8-neurons-and-networks-stacking-simple-decisions-into-something-smart/ /post/paper-1-part-9-neurons-and-networks-stacking-simple-decisions-into-something-smart/ 301
