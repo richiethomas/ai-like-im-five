@@ -9,8 +9,21 @@ import subprocess
 import sys
 import os
 import re
+import time
 from pathlib import Path
 from typing import Optional
+import logging
+
+# Setup logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s | %(levelname)-8s | %(message)s',
+    handlers=[
+        logging.FileHandler('/tmp/roundtable_debug.log'),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
+log = logging.getLogger(__name__)
 
 DIMENSION_PRIORITY = [
     "CORRECTNESS",
@@ -60,12 +73,14 @@ class RoundtableOrchestrator:
 
     def start_servers(self):
         """Start author + 4 reviewer MCP servers."""
+        log.info("Starting MCP servers...")
         print(f"\n{'='*60}")
         print("Starting MCP Roundtable Servers")
         print(f"{'='*60}\n")
 
         # Start author
         try:
+            log.debug("Starting author server...")
             self.author_process = subprocess.Popen(
                 ["python3", "mcp_author.py"],
                 stdin=subprocess.PIPE,
@@ -74,14 +89,17 @@ class RoundtableOrchestrator:
                 text=True,
                 bufsize=1
             )
+            log.info(f"Author server started (PID: {self.author_process.pid})")
             print(f"✓ Author ready (PID: {self.author_process.pid})")
         except Exception as e:
+            log.error(f"Failed to start Author: {e}")
             print(f"✗ Failed to start Author: {e}")
             return False
 
         # Start reviewers
         for env_name, model_name in REVIEWER_MODELS:
             try:
+                log.debug(f"Starting reviewer server for {model_name}...")
                 env = os.environ.copy()
                 env["REVIEWER_MODEL"] = env_name
                 process = subprocess.Popen(
@@ -94,27 +112,51 @@ class RoundtableOrchestrator:
                     env=env
                 )
                 self.reviewer_processes[model_name] = process
+                log.info(f"Reviewer {model_name} started (PID: {process.pid})")
                 print(f"✓ Reviewer ({model_name}) ready (PID: {process.pid})")
             except Exception as e:
+                log.error(f"Failed to start {model_name}: {e}")
                 print(f"✗ Failed to start {model_name}: {e}")
                 return False
 
+        log.info(f"All {len(self.reviewer_processes) + 1} servers started successfully")
         print()
         return True
 
-    def call_server(self, process, request: dict) -> dict:
+    def call_server(self, process, request: dict, timeout_sec: float = 30) -> dict:
         """Send request to MCP server, get response."""
-        process.stdin.write(json.dumps(request) + "\n")
-        process.stdin.flush()
+        method = request.get("method", "unknown")
+        log.debug(f"  Calling server method={method}")
 
-        response_line = process.stdout.readline()
-        if not response_line:
-            raise Exception(f"No response from server")
+        start = time.time()
+        try:
+            process.stdin.write(json.dumps(request) + "\n")
+            process.stdin.flush()
+            log.debug(f"  Request sent ({time.time() - start:.2f}s)")
 
-        return json.loads(response_line)
+            response_line = process.stdout.readline()
+            elapsed = time.time() - start
+            log.debug(f"  Response received ({elapsed:.2f}s total)")
+
+            if not response_line:
+                log.error(f"  No response from server after {elapsed:.2f}s")
+                raise Exception(f"No response from server (timeout after {elapsed:.1f}s)")
+
+            response = json.loads(response_line)
+            log.debug(f"  Response parsed successfully")
+            return response
+        except Exception as e:
+            elapsed = time.time() - start
+            log.error(f"  Server call failed after {elapsed:.2f}s: {e}")
+            raise
 
     def run_roundtable(self):
         """Run continuous back-and-forth roundtable debate."""
+        log.info(f"{'='*60}")
+        log.info(f"Starting roundtable: {self.title}")
+        log.info(f"Max rounds: {self.max_rounds}")
+        log.info(f"{'='*60}")
+
         print(f"{'='*60}")
         print(f"Roundtable: {self.title}")
         print(f"Max rounds: {self.max_rounds}")
@@ -124,11 +166,15 @@ class RoundtableOrchestrator:
         dimension_idx = 0
         dimension_state = {}
 
+        log.debug(f"Starting main loop with {len(DIMENSION_PRIORITY)} dimensions")
+
         while round_num <= self.max_rounds and dimension_idx < len(DIMENSION_PRIORITY):
             dimension = DIMENSION_PRIORITY[dimension_idx]
+            log.info(f"Round {round_num}: Dimension {dimension_idx + 1}/6 ({dimension})")
 
             # Start new dimension
             if dimension not in dimension_state:
+                log.debug(f"  Starting new dimension: {dimension}")
                 print(f"Round {round_num}: {dimension} (Initial scan)")
                 dimension_state[dimension] = {
                     "reviewer_findings": {},
@@ -137,21 +183,31 @@ class RoundtableOrchestrator:
                 }
 
                 # All reviewers scan
+                log.debug(f"  Calling {len(self.reviewer_processes)} reviewers for scan_article")
                 for model_name, process in self.reviewer_processes.items():
+                    log.debug(f"    Scanning with {model_name}...")
                     try:
+                        start = time.time()
                         request = {
                             "method": "scan_article",
                             "params": {"title": self.title, "content": self.content[:3000]}
                         }
                         response = self.call_server(process, request)
                         findings = response.get("findings", [])
+                        elapsed = time.time() - start
+
                         if findings:
                             dimension_state[dimension]["reviewer_findings"][model_name] = findings
+                            log.info(f"    {model_name}: {len(findings)} issues ({elapsed:.1f}s)")
                             print(f"  {model_name}: {len(findings)} issues")
+                        else:
+                            log.debug(f"    {model_name}: no findings ({elapsed:.1f}s)")
                     except Exception as e:
+                        log.error(f"    {model_name}: error — {e}")
                         print(f"  {model_name}: error — {e}")
 
                 if not dimension_state[dimension]["reviewer_findings"]:
+                    log.info(f"  No issues found — moving to next dimension")
                     print(f"  ✓ No issues — next dimension")
                     dimension_idx += 1
                     round_num += 1
@@ -160,10 +216,13 @@ class RoundtableOrchestrator:
                 # Author responds to initial findings
                 round_num += 1
                 if round_num > self.max_rounds:
+                    log.warning(f"Round limit reached, breaking")
                     break
 
+                log.info(f"Round {round_num}: {dimension} (Author response)")
                 print(f"Round {round_num}: {dimension} (Author response)")
                 try:
+                    start = time.time()
                     request = {
                         "method": "respond_to_roundtable",
                         "params": {
@@ -173,12 +232,18 @@ class RoundtableOrchestrator:
                             "reviewer_concerns_by_model": dimension_state[dimension]["reviewer_findings"]
                         }
                     }
+                    log.debug(f"  Calling author.respond_to_roundtable...")
                     response = self.call_server(self.author_process, request)
                     author_response = response.get("response", "")
+                    elapsed = time.time() - start
+
                     dimension_state[dimension]["author_responses"].append(author_response)
+                    log.debug(f"  Parsing author response...")
                     self._parse_author_response(author_response, dimension)
+                    log.info(f"  Author responded ({elapsed:.1f}s)")
                     print(f"  Author responded")
                 except Exception as e:
+                    log.error(f"  Author error: {e}")
                     print(f"  Author error: {e}")
 
                 # Check if further debate needed
