@@ -49,3 +49,6 @@ __pycache__/
 .pytest_cache/
 tests/fixtures/cache/
 review-runs/
+mutants/
+mutation_survivors.txt
+.mutmut-cache

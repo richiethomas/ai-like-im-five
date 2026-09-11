@@ -80,8 +80,12 @@ def test_empty_body_raises(tmp_path):
 
 def test_real_article_1():
     """The actual article this system will run against first."""
+    from pathlib import Path
+    repo_root = Path(__file__).resolve().parent.parent
+    if repo_root.name == "mutants":  # mutmut sandbox: articles aren't copied
+        repo_root = repo_root.parent
     a = load_article(
-        "src/content/posts/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/index.mdx"
+        repo_root / "src/content/posts/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/index.mdx"
     )
     assert a.title.startswith("Paper #1, Part 1")
     assert "'See'" in a.title  # apostrophes survived

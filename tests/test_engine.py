@@ -254,3 +254,50 @@ def test_history_records_stance_and_votes_per_round():
     rec = c.history[0]
     assert rec["round"] == 1 and rec["stance"] == "DEFEND"
     assert {v["model"] for v in rec["votes"]} == {"r1", "r2"}
+
+
+# --- tests added to kill surviving mutants (mutation-testing pass) -----------
+
+def test_negotiate_majority_reject_stays_open():
+    """Kills `accepted OR stance==NEGOTIATE`: a rejected negotiation must NOT
+    become AGREED — without this test, that mutation survives the suite."""
+    c = claim()
+    eng = DebateEngine([c], REVIEWERS)
+    eng.start_round()
+    eng.apply_stances([stance("c001", "NEGOTIATE", fix="rejected middle ground")])
+    eng.apply_votes([rvote("c001", "r1", "REJECT"),
+                     rvote("c001", "r2", "REJECT"),
+                     rvote("c001", "r3", "ACCEPT")])
+    assert c.status == ClaimStatus.OPEN.value
+    assert c.resolution_fix is None
+    assert c.rounds == 1
+
+
+def test_conceded_this_round_excludes_prior_rounds_and_contested():
+    """Kills the and->or mutants in conceded_this_round's condition chain."""
+    c1, c2 = claim("c001"), claim("c002")
+    eng = DebateEngine([c1, c2], REVIEWERS)
+
+    eng.start_round()  # round 1
+    eng.apply_stances([stance("c001", "CONCEDE", fix="f"),
+                       stance("c002", "DEFEND")])
+    # contested c002 (OPEN, history round == current) must NOT appear
+    assert eng.conceded_this_round() == [c1]
+    eng.apply_votes([rvote("c002", "r1", "REJECT"), rvote("c002", "r2", "REJECT")])
+
+    eng.start_round()  # round 2
+    eng.apply_stances([stance("c002", "DEFEND")])
+    # c001 was conceded in ROUND 1 — must not reappear in round 2's poll
+    assert eng.conceded_this_round() == []
+
+
+def test_conceded_this_round_tolerates_agreed_claim_with_no_history():
+    """Kills `history AND ...` -> `history OR ...`: an AGREED claim restored
+    from a checkpoint with empty history must not crash the poll."""
+    pre_agreed = claim("c001")
+    pre_agreed.status = ClaimStatus.AGREED.value  # e.g. restored state
+    live = claim("c002")
+    eng = DebateEngine([pre_agreed, live], REVIEWERS)
+    eng.start_round()
+    eng.apply_stances([stance("c002", "DEFEND")])
+    assert eng.conceded_this_round() == []  # no IndexError, no false positive
