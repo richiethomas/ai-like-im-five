@@ -47,6 +47,7 @@ class FactCheckFinding:
     claim: str
     issue: str
     severity: int  # 1-10
+    dimension: str = "CORRECTNESS"  # which review dimension
     suggested_fix: Optional[str] = None
     model_id: Optional[str] = None
     round_number: int = 0
@@ -77,14 +78,14 @@ class FactCheckOrchestrator:
         # Build model list based on available API keys
         self.models = []
         if os.getenv("ANTHROPIC_API_KEY"):
-            self.models.append("claude-3-5-sonnet-20241022")
+            self.models.append("claude-sonnet-5")  # Latest Claude model
         if os.getenv("OPENAI_API_KEY"):
             self.models.append("gpt-4o-mini")
         if os.getenv("DEEPSEEK_API_KEY"):
             self.models.append("deepseek-chat")
         if os.getenv("GEMINI_API_KEY"):
             self.models.append("gemini-2.0-flash")
-        if os.getenv("GROQ_API_KEY") or os.getenv("TOGETHER_API_KEY"):
+        if os.getenv("GROQ_API_KEY"):
             self.models.append("llama-3-70b")
 
         if not self.models:
@@ -169,31 +170,35 @@ Article: {title}
 Content:
 {content[:3000]}...
 
-Review dimensions (in order of importance):
-1. CORRECTNESS: Factual accuracy. Are claims true?
-2. CLARITY: Is the explanation clear and not misleading?
-3. COMPLETENESS: Are important caveats or nuances missing?
-4. CONSISTENCY: Are there internal contradictions?
-5. PEDAGOGY: Is the explanation appropriate for non-technical readers?
+MANDATORY: Check ALL six dimensions before responding. You must scan for issues in each category, not just correctness.
+
+Review dimensions:
+1. CORRECTNESS: Factual accuracy. Are claims true? Are definitions correct?
+2. CLARITY: Is the explanation clear? Could it mislead readers? Are analogies apt?
+3. COMPLETENESS: Are important caveats missing? Are edge cases overlooked?
+4. CONSISTENCY: Does the article contradict itself? Are terms used consistently?
+5. PEDAGOGY: Is the explanation appropriate for non-technical readers? Too dense? Too simplified?
 6. CLICHÉS: Flag LLM clichés like "honest", "genuine", "load-bearing", "rides on", "shines for", "belt and suspenders", "it's a X worth Y-ing", "land" (as verb), generic praise.
 
-Your task: Identify the 3-5 most important issues across these dimensions. Focus ONLY on significant problems that would mislead or confuse readers. Ignore trivial nitpicks.
+Your task: Identify 3-5 most important issues across ALL dimensions (not just one). Prioritize by severity.
 
 For each issue found, respond with:
-CLAIM: [the specific claim or phrase]
-ISSUE: [what's wrong with it and which dimension]
+CLAIM: [the specific claim or phrase being criticized]
+DIMENSION: [CORRECTNESS | CLARITY | COMPLETENESS | CONSISTENCY | PEDAGOGY | CLICHÉS]
+ISSUE: [what's wrong with it]
 SEVERITY: [1-10, where 10 is most severe]
 FIX: [suggested correction]
 
 Instructions for your response:
+- Check each dimension systematically.
 - Be direct and specific. No filler.
-- Avoid clichés in your own response: don't use "honest", "genuine", "load-bearing", "rides on", "seams", "shines for", "belt and suspenders", generic praise phrases.
-- Do not include minor issues.
-- If you find no significant issues, respond with: "NO ISSUES FOUND"."""
+- Avoid clichés in your own response.
+- Do not include minor issues (severity must be >= 3 to be worth reporting).
+- If you find no significant issues across all dimensions, respond with: "NO ISSUES FOUND"."""
 
         findings = []
         try:
-            if model == "claude-3-5-sonnet-20241022":
+            if model == "claude-sonnet-5":
                 if not anthropic_client:
                     raise Exception("Claude client not initialized")
                 response = anthropic_client.messages.create(
@@ -279,11 +284,14 @@ Instructions for your response:
                 claim = lines[0].strip() if lines else ""
 
                 issue = ""
+                dimension = "CORRECTNESS"
                 severity = 5
                 fix = ""
 
                 for line in lines[1:]:
-                    if line.startswith("ISSUE:"):
+                    if line.startswith("DIMENSION:"):
+                        dimension = line.replace("DIMENSION:", "").strip()
+                    elif line.startswith("ISSUE:"):
                         issue = line.replace("ISSUE:", "").strip()
                     elif line.startswith("SEVERITY:"):
                         try:
@@ -299,13 +307,14 @@ Instructions for your response:
                         claim=claim,
                         issue=issue,
                         severity=severity,
+                        dimension=dimension,
                         suggested_fix=fix or None,
                         model_id=model,
                         round_number=1
                     ))
                     self.findings_by_claim[claim][model].append(
                         FactCheckFinding(claim=claim, issue=issue, severity=severity,
-                                       suggested_fix=fix, model_id=model, round_number=1)
+                                       dimension=dimension, suggested_fix=fix, model_id=model, round_number=1)
                     )
                     self.claim_round_counts[claim][model] += 1
             except:

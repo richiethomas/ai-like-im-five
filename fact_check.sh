@@ -23,12 +23,10 @@ if [ ! -d "$VENV_DIR" ]; then
     python3 -m venv "$VENV_DIR"
 fi
 
-# Activate venv and install deps
+# Activate venv and install/upgrade deps
 source "$VENV_DIR/bin/activate"
-if ! python3 -c "import anthropic, openai" 2>/dev/null; then
-    echo "📦 Installing dependencies into venv..."
-    pip install -q -r requirements_fact_check.txt
-fi
+echo "📦 Installing all dependencies..."
+pip install -q --upgrade -r requirements_fact_check.txt
 
 # Check API keys
 if [ -z "$ANTHROPIC_API_KEY" ] || [ -z "$OPENAI_API_KEY" ]; then
