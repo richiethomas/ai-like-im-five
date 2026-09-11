@@ -64,7 +64,7 @@ Let me give you CS231n's list of challenges. These are all real obstacles that c
 
 Much of image classification, in some sense, comes down to clever solutions to these seven problems.
 
-A naive approach — comparing the number grids directly — fails in general for exactly the seven reasons above, though it can still work in narrow, controlled cases like fixed-position barcode scanning. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
+A naive approach — comparing the number grids directly — fails in general for exactly the seven reasons above, though it can still work in narrow, controlled cases like matching a fixed logo photographed under identical lighting and angle every time. If you have a template image of a dog and you try to find other pictures of the same dog by looking for identical number grids, you'll fail constantly because of viewpoint, lighting, occlusion, and a hundred other reasons.
 
 We need methods that are robust to these variations — meaning the answer stays right even when the picture changes. Methods that say: "Yes, this is a dog," even when the dog is rotated, occluded, far away, or in shadow.
 
