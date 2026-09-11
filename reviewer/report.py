@@ -7,6 +7,7 @@ from .engine import DebateEngine
 from .schemas import (
     CONSENSUS_MODEL_COUNT,
     NITPICK_SEVERITY_CEILING,
+    PASS_BLOCK_SUPPORT_COUNT,
     Claim,
     ClaimStatus,
     ReportOutcome,
@@ -18,10 +19,12 @@ def outcome_for(claims: list[Claim], stopped: bool) -> str:
 
     - INCOMPLETE: the run was stopped (budget/round cap) with claims unresolved.
     - BLOCKED: at least one claim debated to deadlock.
-    - NEEDS_CHANGES: agreed changes above the nitpick ceiling are pending
-      (the system reviews, it doesn't apply fixes — severity>2 agreed items
-      mean the article isn't publishable as-is).
-    - PASS: nothing open, blocked, or agreed above severity 2.
+    - NEEDS_CHANGES: agreed changes above the nitpick ceiling with 2+ model
+      support (raisers plus endorsers) are pending. Single-model agreed items
+      are advisory — reported, but they don't gate PASS (user decision
+      2026-09-11: a lone model's concern isn't enough to hold an article).
+    - PASS: nothing open or blocked; no multi-supported agreed item above
+      severity 2.
     """
     statuses = {c.status for c in claims}
     if stopped or ClaimStatus.UNRESOLVED_BUDGET.value in statuses \
@@ -30,7 +33,9 @@ def outcome_for(claims: list[Claim], stopped: bool) -> str:
     if ClaimStatus.BLOCKED.value in statuses:
         return ReportOutcome.BLOCKED.value
     if any(c.status == ClaimStatus.AGREED.value
-           and c.aggregate_severity > NITPICK_SEVERITY_CEILING for c in claims):
+           and c.aggregate_severity > NITPICK_SEVERITY_CEILING
+           and c.supporter_count >= PASS_BLOCK_SUPPORT_COUNT
+           for c in claims):
         return ReportOutcome.NEEDS_CHANGES.value
     return ReportOutcome.PASS.value
 
@@ -52,6 +57,9 @@ def _claim_entry(c: Claim) -> dict:
         "issues": [{"model": f.model, "dimension": f.dimension,
                     "severity": f.severity, "issue": f.issue} for f in c.findings],
         "resolution_fix": c.resolution_fix,
+        "gates_pass": (c.status == ClaimStatus.AGREED.value
+                       and c.aggregate_severity > NITPICK_SEVERITY_CEILING
+                       and c.supporter_count >= PASS_BLOCK_SUPPORT_COUNT),
     }
 
 

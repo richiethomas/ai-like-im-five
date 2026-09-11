@@ -16,29 +16,49 @@ from conftest import FIXTURE_CACHE
 CHECKPOINT = FIXTURE_CACHE / "run_article1_checkpoint.json"
 
 
-def claim(cid, status, severity=5):
-    f = Finding(model="m1", dimension="CORRECTNESS", issue="i", severity=severity,
-                anchor=Anchor(kind="quote", quote="q", start=0, end=1))
-    return Claim(id=cid, anchor=Anchor(kind="quote", quote="q", start=0, end=1),
-                 dimension="CORRECTNESS", findings=[f], status=status.value)
+def claim(cid, status, severity=5, models=("m1",), endorsements=()):
+    findings = [Finding(model=m, dimension="CORRECTNESS", issue="i",
+                        severity=severity,
+                        anchor=Anchor(kind="quote", quote="q", start=0, end=1))
+                for m in models]
+    c = Claim(id=cid, anchor=Anchor(kind="quote", quote="q", start=0, end=1),
+              dimension="CORRECTNESS", findings=findings, status=status.value)
+    c.endorsements = list(endorsements)
+    return c
 
 
 # --- outcome logic -----------------------------------------------------------
+# PASS gate (user decision 2026-09-11): an agreed severity-3+ item blocks PASS
+# only with 2+ model support, where endorsements count as support.
 
 def test_outcome_pass():
     claims = [claim("c1", ClaimStatus.DISMISSED),
               claim("c2", ClaimStatus.RECORDED, severity=2),
-              claim("c3", ClaimStatus.AGREED, severity=2)]  # agreed nitpick ok
+              claim("c3", ClaimStatus.AGREED, severity=2,
+                    models=("m1", "m2", "m3"))]  # multi-model nitpick still ok
     assert outcome_for(claims, stopped=False) == "PASS"
 
 
-def test_outcome_needs_changes():
+def test_outcome_single_model_agreed_item_is_advisory():
+    # One model, no endorsers: severity 5 agreed but does NOT gate
     claims = [claim("c1", ClaimStatus.AGREED, severity=5)]
+    assert outcome_for(claims, stopped=False) == "PASS"
+
+
+def test_outcome_needs_changes_two_raisers():
+    claims = [claim("c1", ClaimStatus.AGREED, severity=5, models=("m1", "m2"))]
+    assert outcome_for(claims, stopped=False) == "NEEDS_CHANGES"
+
+
+def test_outcome_needs_changes_raiser_plus_endorser():
+    # Endorsement counts as support: 1 raiser + 1 endorser = 2 supporters
+    claims = [claim("c1", ClaimStatus.AGREED, severity=3,
+                    endorsements=("m4",))]
     assert outcome_for(claims, stopped=False) == "NEEDS_CHANGES"
 
 
 def test_outcome_blocked_beats_needs_changes():
-    claims = [claim("c1", ClaimStatus.AGREED, severity=5),
+    claims = [claim("c1", ClaimStatus.AGREED, severity=5, models=("m1", "m2")),
               claim("c2", ClaimStatus.BLOCKED, severity=4)]
     assert outcome_for(claims, stopped=False) == "BLOCKED"
 

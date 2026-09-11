@@ -43,8 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Outcome:        {report['outcome']}")
     print(f"Rounds:         {report['rounds_used']} "
           f"({report['debate_turns']} debate turns)")
+    gating = sum(1 for c in report["agreed_changes"] if c["gates_pass"])
     print(f"Agreed changes: {len(report['agreed_changes'])} "
-          f"({sum(1 for c in report['agreed_changes'] if c['severity'] > 2)} above severity 2)")
+          f"({gating} gate PASS: 2+ model support above severity 2; "
+          f"{len(report['agreed_changes']) - gating} advisory)")
     print(f"Blockers:       {len(report['blockers'])}")
     print(f"Dismissed:      {len(report['dismissed'])}")
     print(f"Nitpicks:       {len(report['recorded_nitpicks'])} (recorded, not debated)")
