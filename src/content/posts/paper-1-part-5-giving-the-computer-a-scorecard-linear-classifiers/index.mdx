@@ -13,7 +13,7 @@ tags: ["linear classifiers", "weights and biases"]
 
 Nearest neighbor failed because it relies on pixel-level similarity. What if we try something different: instead of comparing images directly, we compute a *score* for each possible label, then pick the label with the highest score.
 
-This is the idea behind **linear classifiers**.
+This is the idea behind **linear classifiers**, called "linear" because the score is just a weighted sum of the pixel values, with no curves and no combinations between pixels.
 
 ## The Scorecard Metaphor
 
@@ -51,7 +51,7 @@ score_cat = w1*pixel1 + w2*pixel2 + ... + w3072*pixel3072 + bias_cat
 
 Where `w1, w2, ..., w3072` are the learned weights and `bias_cat` is a constant bonus/penalty for the "cat" label.
 
-Each weight scales one number in the image (say, the red value at one spot): a large positive weight means a high value there pushes the score toward "cat," a negative weight pushes it away from "cat."
+Each weight multiplies one number in the image (say, the red value at one spot): a large positive weight means a high value there pushes the score toward "cat," a negative weight pushes it away from "cat."
 
 (The bias is like a tiebreaker: even if the image has no distinctive features, you might favor "cat" if you've seen more cat images in training.)
 
@@ -81,7 +81,7 @@ The "dog" weights tend to form a smudgy dog-like shape: areas of positive weight
 
 So the classifier has learned a single template per class. The weights roughly say: "how much does this image, pixel for pixel, resemble the average dog?" and the same for cat.
 
-But here's the limitation: because each class gets just one weighted template, a linear classifier can't hold more than one visual pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't match all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
+But here's the limitation: because each class gets just one weighted template over the raw pixel values, a linear classifier can't hold more than one visual pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't match all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
 
 That single-template limit is why a linear classifier does far better on simple, consistent images than on messy real-world ones, where the same object turns up in many poses, sizes, and lighting conditions.
 
