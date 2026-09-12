@@ -23,7 +23,7 @@ For example:
 - Is this a photograph of a car, a bike, or a truck?
 - Does this X-ray show a broken bone: yes or no?
 
-Your brain does this instantly and without effort. For a computer it is genuinely hard, hard enough that the seven challenges below are the reason simply comparing grids of numbers fails on real-world photos.
+Your brain does this instantly and without effort. For a computer it is hard, hard enough that the seven challenges below are the reason simply comparing grids of numbers fails on real-world photos.
 
 ## The Seven Things That Make It Hard
 
@@ -45,11 +45,11 @@ CS231n, formally titled "Convolutional Neural Networks for Visual Recognition," 
 
 ## Why This Matters
 
-Much of image classification, in some sense, comes down to clever solutions to these seven problems.
+Many image-classification methods are designed specifically to handle these seven kinds of variation.
 
 A naive approach, comparing the number grids directly, fails in general for exactly the seven reasons above, though it can still work in narrow, controlled cases like matching a fixed logo photographed under identical lighting and angle every time. If you have a reference picture of a dog and you go looking for other pictures with identical numbers, you'll fail constantly: viewpoint, lighting, occlusion, and a hundred other things will have changed the grid.
 
-We need methods that are robust to these variations, meaning the answer stays right even when the picture changes. Methods that say "yes, this is a dog" even when the dog is rotated, occluded, far away, or in shadow.
+We need methods whose predicted label stays correct even when the picture changes. Methods that say "yes, this is a dog" even when the dog is rotated, occluded, far away, or in shadow.
 
 This is what CS231n teaches us to build, one idea per post: first nearest neighbor (guess by finding the most similar stored example), then linear classifiers (score each possible label with a simple weighted recipe), then the convolutional networks that tackle all seven challenges.
 
@@ -70,7 +70,7 @@ Now open their number files side by side with the original:
 - [dog-moved.ppm.txt](/experiments/classification/dog-moved.ppm.txt): the dog only shifted position, yet **more than half the numbers in the file changed**. Every pixel the dog moved onto, and every pixel it moved off of, has new values.
 - [dog-fence.ppm.txt](/experiments/classification/dog-fence.ppm.txt): scan for the stripes of `140 140 140`. Those gray columns replaced whole stretches of dog numbers.
 
-To you, all three pictures are obviously the same dog. To a program comparing numbers, they barely agree. A classifier has to answer "dog" for all three anyway. Each of the seven challenges is one more way the numbers can change while the dog stays the same.
+To you, all three pictures show the same dog. To a program comparing numbers, they barely agree. A classifier has to answer "dog" for all three anyway. Each of the seven challenges is one more way the numbers can change while the dog stays the same.
 
 ## What's Next
 

@@ -27,7 +27,7 @@ So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.
 
 When you scroll through your photos, your phone is shuffling around millions of numbers. And when you compress an image for email (that is, when you shrink its file size so it uploads faster and takes up less storage), you're playing one of two tricks with those numbers:
 
-- **Write the repeats as shorthand.** A clear blue sky means the same three numbers repeated thousands of times in a row. A format can store that as, in effect, "sky color, five thousand times" instead of writing it out five thousand times. Unpacking the shorthand gives back every original number exactly. This is called lossless compression, and it's what PNG files do.
+- **Write the repeats as shorthand.** A clear blue sky means the same three numbers repeated thousands of times in a row. A format can store that as, in effect, "sky color, five thousand times" instead of writing it out five thousand times. Reversing the shorthand gives back every original number exactly. This is a simplified version of what is called "lossless compression": real formats like PNG use a more elaborate method (called DEFLATE), but the idea of storing repeats compactly is the same.
 - **Throw away detail your eye won't miss.** A format can also smooth over tiny differences between neighboring pixels and store the simpler result. The numbers that come back are close to the originals, but not identical. This is called lossy compression, it's what JPEG files do, and it's why JPEGs are so small.
 
 Either way, compressing a picture is just doing arithmetic on a grid of numbers.

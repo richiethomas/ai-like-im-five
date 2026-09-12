@@ -23,13 +23,13 @@ That's it. That's the entire algorithm.
 
 If you're trying to classify a new photo of a dog, you find the training photo that's most similar to it (pixel by pixel), and you guess "dog" because that's what the training photo is labeled.
 
-In machine learning, this is called **nearest neighbor** or **kNN** (k-nearest neighbors). It's the baseline algorithm that everyone learns first because it's trivially easy to explain.
+In machine learning, copying the single closest match is called **nearest neighbor**. The general version, where you look at the *k* closest matches and take a majority vote of their labels, is called **k-nearest neighbors (kNN)**. It's a common first algorithm to learn, because it's easy to explain.
 
 ## How Do You Measure "Similarity"?
 
 The catch is: how do you define which images are similar?
 
-Remember from Part 1: an image is just numbers. An 800 × 600 RGB image is 1.44 million numbers. Two images look similar to a human if they show the same thing from similar angles in similar lighting. But how do you turn that fuzzy human intuition into a mathematical definition?
+Remember from Part 1: an image is just numbers. An 800 × 600 RGB image is 1.44 million numbers. Two images look similar to a human if they show the same thing from similar angles in similar lighting. But how do you turn that rough human sense of "looks similar" into a precise rule a computer can follow?
 
 The simplest approach: **compare the numbers directly**.
 
@@ -88,4 +88,4 @@ This is where the rest of CS231n comes in. Every technique we'll learn (linear c
 
 ## What's Next
 
-In the next post, we'll talk about something crucial that every machine learning system needs: how to test yourself without cheating. Because once you've built a classifier, you need to know if it actually works, and there's a right way and a wrong way to check.
+In the next post, we'll look at how to test a classifier without cheating. Once you've built one, you need to know if it actually works, and there's a careful way to check and a misleading one. We'll cover both.
