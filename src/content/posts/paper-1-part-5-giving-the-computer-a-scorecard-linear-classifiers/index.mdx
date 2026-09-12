@@ -59,17 +59,17 @@ The same computation happens for "dog" with different weights. Whichever score i
 
 ## The Key Insight: Weights Are Learnable
 
-The trick is that the weights aren't hand-coded. The computer *learns* them from the training data.
+The trick is that the weights aren't hand-coded. The computer *learns* them from the training data. By "learns" I mean it starts from random numbers and repeatedly nudges them based on its mistakes, slowly improving.
 
-Here's the learning process at a high level (we'll dive deeper soon):
+Here's that process at a high level (Parts 6 and 7 unpack it):
 
 1. Start with random weights
 2. Run the classifier on a training image
 3. Compute the score for each label
-4. Check if the score is wrong (the highest score wasn't the correct label)
-5. Adjust the weights slightly so the correct label scores higher next time
+4. Measure how wrong the scores were: not just whether the top score was the right label, but how far off the numbers were (Part 6 covers exactly how this is measured)
+5. Adjust the weights slightly so the correct label scores a little higher next time
 6. Repeat on the next training image
-7. After seeing all training images many times, the weights have learned to recognize patterns
+7. After passing through all the training images many times, the weights settle into values that score most images correctly
 
 This is fundamentally different from nearest neighbor, which doesn't adjust any settings during training. Nearest neighbor stores the training images as-is and compares each new image against all of them.
 
