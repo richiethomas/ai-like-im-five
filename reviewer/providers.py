@@ -217,6 +217,14 @@ class GeminiProvider(Provider):
     # for Schema: minimum").
     _UNSUPPORTED_KEYS = {"minimum", "maximum", "additionalProperties", "$schema", "strict"}
 
+    # Gemini 3.5 Flash is a reasoning model: its "thinking" tokens are drawn
+    # from max_output_tokens BEFORE any visible answer. Observed: at a 4000
+    # cap it spends ~3,800 thinking and truncates the JSON with ~140 tokens
+    # left (finish_reason MAX_TOKENS). Given generous headroom it self-limits
+    # its thinking and completes. So we add a fixed thinking budget on top of
+    # whatever the caller asked for the actual answer.
+    _THINKING_HEADROOM = 8192
+
     def __init__(self, name: str, model: str, api_key_env: str,
                  ledger: CostLedger | None = None):
         super().__init__(name, ledger)
@@ -245,12 +253,12 @@ class GeminiProvider(Provider):
 
     def structured(self, prompt: str, schema: dict, max_tokens: int,
                    label: str = "") -> dict:
-        """Gemini's response_schema mode intermittently returns EMPTY text
-        while still billing output tokens (observed live: two scan attempts,
-        ~145 output tokens each, zero characters delivered). Its plain-text
-        mode has never failed, and every structured prompt already spells out
-        the JSON shape — so on a parse failure, fall back to text mode and
-        parse leniently."""
+        """Schema-less fallback: if a structured (response_schema) call still
+        fails to parse after the base class's truncation retry, retry once in
+        plain-text mode and parse leniently. The structured schema and the
+        prompt both describe the JSON shape, so text mode reliably produces
+        valid JSON. This is a safety net; the usual cause of failure
+        (thinking-token truncation) is handled by _THINKING_HEADROOM below."""
         try:
             return super().structured(prompt, schema, max_tokens, label)
         except json.JSONDecodeError:
@@ -258,9 +266,23 @@ class GeminiProvider(Provider):
             self._record(raw, f"{label}:schemaless")
             return parse_json_lenient(raw.text or "")
 
+    @staticmethod
+    def _is_truncated(finish) -> bool:
+        # finish_reason arrives as the enum MAX_TOKENS, which stringifies as
+        # "FinishReason.MAX_TOKENS" or, in some SDK builds, the bare int 2.
+        if finish is None:
+            return False
+        try:
+            if int(finish) == 2:  # MAX_TOKENS
+                return True
+        except (TypeError, ValueError):
+            pass
+        return "MAX_TOKENS" in str(finish)
+
     def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
         model = self._get_model()
-        config: dict = {"max_output_tokens": max_tokens}
+        # Reserve room for thinking on top of the requested answer length.
+        config: dict = {"max_output_tokens": max_tokens + self._THINKING_HEADROOM}
         if schema is not None:
             config["response_mime_type"] = "application/json"
             config["response_schema"] = self.adapt_schema(schema)
@@ -269,13 +291,24 @@ class GeminiProvider(Provider):
         finish = None
         if response.candidates:
             finish = getattr(response.candidates[0], "finish_reason", None)
-        # finish_reason MAX_TOKENS is enum value 2 in this SDK; compare by name
-        truncated = str(finish).endswith("MAX_TOKENS")
+        truncated = self._is_truncated(finish)
+        # response.text raises if the (truncated) candidate has no complete
+        # part; fall back to empty so the caller's salvage/fallback path runs.
+        try:
+            text = response.text
+        except Exception:  # noqa: BLE001
+            text = ""
+        # Thinking tokens are billed but reported outside candidates_token_count,
+        # so bill on total-minus-prompt to capture them.
+        prompt_toks = getattr(usage, "prompt_token_count", 0) or 0
+        total_toks = getattr(usage, "total_token_count", 0) or 0
+        billed_out = max(getattr(usage, "candidates_token_count", 0) or 0,
+                         total_toks - prompt_toks)
         return RawResponse(
-            text=response.text,
+            text=text,
             data=None,
-            input_tokens=getattr(usage, "prompt_token_count", 0) or 0,
-            output_tokens=getattr(usage, "candidates_token_count", 0) or 0,
+            input_tokens=prompt_toks,
+            output_tokens=billed_out,
             truncated=truncated,
         )
 

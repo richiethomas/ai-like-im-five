@@ -179,3 +179,15 @@ def test_gemini_healthy_structured_response_skips_fallback():
     p = ScriptedGemini([ok('{"findings": []}')])
     assert p.structured("prompt", {"type": "object"}, 4000) == {"findings": []}
     assert p.calls == [(4000, True)]                     # no second call
+
+
+# --- Gemini truncation detection (the int-2 finish_reason bug) ---------------
+
+def test_gemini_is_truncated_handles_int_and_name():
+    # SDK returns MAX_TOKENS as the bare int 2 in some builds, an enum repr in
+    # others. Both must read as truncated; STOP (1) and None must not.
+    assert GeminiProvider._is_truncated(2) is True
+    assert GeminiProvider._is_truncated("FinishReason.MAX_TOKENS") is True
+    assert GeminiProvider._is_truncated(1) is False
+    assert GeminiProvider._is_truncated("FinishReason.STOP") is False
+    assert GeminiProvider._is_truncated(None) is False
