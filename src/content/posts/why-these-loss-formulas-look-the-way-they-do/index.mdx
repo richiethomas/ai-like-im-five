@@ -85,7 +85,7 @@ So `max(0, 1 + wrong_score - correct_score)` reads, in full: "zero penalty if th
 
 ## Softmax loss, one symbol at a time
 
-Different goal: **treat the scores as evidence for a probability, then charge the model for however much probability it withheld from the correct answer.**
+Different goal: **turn the scores into a probability for each label, then penalize the model by how little probability it assigned to the correct label.** The less probability on the correct label, the bigger the penalty.
 
 **Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one. (More on why `exp` specifically, and not some other way of forcing positivity, in the next section.)
 
