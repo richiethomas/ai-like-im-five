@@ -13,22 +13,7 @@ tags: ["loss functions", "hinge loss", "softmax"]
 
 This is a side note to [Part 6](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/), not the next step in the series. You can skip it and go straight to [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/) (gradient descent) without missing anything you need. It's here because Part 6 took both loss formulas as given without saying where they come from.
 
-Here they are again. Hinge loss:
-
-```
-loss = max(0, 1 + wrong_score - correct_score)
-```
-
-And softmax loss:
-
-```
-probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
-
-# cat is the correct label in this example, so the loss uses probability_cat
-loss = -log(probability_cat)
-```
-
-Part 6 never says where the formulas came from. Why the `max`? Why add `1`? Why raise `e` to a power instead of just taking an absolute value or squaring the score? Without those answers, the formulas can look like they were pulled out of a hat.
+Why the `max`? Why add `1`? Why raise `e` to a power instead of just taking an absolute value or squaring the score? Without those answers, the formulas can look like they were pulled out of a hat.
 
 Each one is built backward from a goal. Every piece does a specific job. Here's what each piece is for.
 
@@ -46,7 +31,13 @@ Lots of formulas satisfy these three requirements. Hinge and softmax are two of 
 
 ## Hinge loss, one symbol at a time
 
-The goal behind hinge loss: **make the correct label's score beat the wrong label's score by a comfortable buffer.** Here's what each part of the formula does.
+The goal behind hinge loss: **make the correct label's score beat the wrong label's score by a comfortable buffer.**
+
+```
+loss = max(0, 1 + wrong_score - correct_score)
+```
+
+Here's what each part does.
 
 **Why a difference (`wrong_score - correct_score`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
 
@@ -86,6 +77,13 @@ So `max(0, 1 + wrong_score - correct_score)` reads, in full: "zero penalty if th
 ## Softmax loss, one symbol at a time
 
 Different goal: **turn the scores into a probability for each label, then penalize the model by how little probability it assigned to the correct label.** The less probability on the correct label, the bigger the penalty.
+
+```
+probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
+
+# cat is the correct label in this example, so the loss uses probability_cat
+loss = -log(probability_cat)
+```
 
 **Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one. (More on why `exp` specifically, and not some other way of forcing positivity, in the next section.)
 
