@@ -71,17 +71,15 @@ Here's the learning process at a high level (we'll dive deeper soon):
 6. Repeat on the next training image
 7. After seeing all training images many times, the weights have learned to recognize patterns
 
-This is fundamentally different from nearest neighbor, which doesn't learn any weights. Nearest neighbor just stores the training images and compares each new image against all of them.
+This is fundamentally different from nearest neighbor, which doesn't adjust any settings during training. Nearest neighbor stores the training images as-is and compares each new image against all of them.
 
 ## What Weights Represent
 
-After training, you can actually visualize what the weights have learned. For image classification, if you arrange the weights back into a 32×32 image, you often see something recognizable.
+After training, you can arrange each label's 3,072 weights back into a 32×32 color image and look at them. What you see is a rough, often blurry template.
 
-For the "dog" weights, you might see a dog-shaped template emerge: bright pixels where dogs typically are (snouts, ears) and dark pixels where dogs typically aren't.
+The "dog" weights tend to form a smudgy dog-like shape: areas of positive weight roughly where dogs' snouts and ears usually sit, and negative weight where they usually don't. The "cat" template looks similar but with its own arrangement, like pointier ear regions. These are not crisp pictures; they're an averaged blur of every dog (or cat) the classifier trained on.
 
-For the "cat" weights, you'd see a cat-shaped template: pointy ears and a smaller snout.
-
-The classifier has learned feature detectors. The weights are telling you: "Look for this dog-shaped pattern" or "Look for this cat-shaped pattern."
+So the classifier has learned a single template per class. The weights roughly say: "how much does this image, pixel for pixel, resemble the average dog?" and the same for cat.
 
 But here's the limitation: linear classifiers can only look for one pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't catch all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
 
