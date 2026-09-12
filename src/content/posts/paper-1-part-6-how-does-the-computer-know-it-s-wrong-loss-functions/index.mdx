@@ -56,8 +56,8 @@ Let's walk through this:
 **If you're confident and correct:**
 
 ```
-S_correct = 10
-S_wrong = -5
+S_correct = 10    # the correct label's score
+S_wrong = -5      # the highest-scoring wrong label
 
 loss = max(0, 1 + (-5) - 10)
      = max(0, -14) = 0
