@@ -91,6 +91,12 @@ You pay a penalty of 6. The more confidently wrong you were, the higher the pena
 
 The formula is saying: "I want the correct label's score to be higher than the wrong label's score, by at least a margin of 1. If it's not, penalize me."
 
+The name "hinge loss" comes from the shape of that rule when you graph it. Put the margin (how much the correct score beats the wrong score) on the horizontal axis and the loss on the vertical axis. Once the margin reaches 1, the loss is flat at zero. Below a margin of 1, the loss rises as a straight sloped line: the smaller the margin, the bigger the penalty. Those two pieces meet at a corner, and a flat part joined to a sloped part at a bend looks like a door hinge.
+
+![Graph of hinge loss: a sloped line falling to zero at a margin of 1, then flat at zero for larger margins, with the corner labeled the hinge](/experiments/loss-functions/hinge-loss-shape.svg)
+
+That corner at margin = 1 is where the loss switches from "penalty" to "no penalty." It's also why the earlier examples behave the way they do: everything to the right of the corner pays nothing, and everything to the left pays more the further left it goes.
+
 ## Softmax Loss
 
 Another approach, called **softmax loss** (or cross-entropy loss), comes from probability theory.

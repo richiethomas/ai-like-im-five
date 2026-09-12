@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 420" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <!-- white card so the figure reads on any page theme -->
+  <rect x="0" y="0" width="680" height="420" rx="10" fill="#ffffff"/>
+
+  <!-- axes -->
+  <!-- y-axis -->
+  <line x1="80" y1="340" x2="80" y2="45" stroke="#94a3b8" stroke-width="1.5"/>
+  <polygon points="80,40 76,50 84,50" fill="#94a3b8"/>
+  <!-- x-axis (this line is also loss = 0) -->
+  <line x1="80" y1="340" x2="620" y2="340" stroke="#94a3b8" stroke-width="1.5"/>
+  <polygon points="626,340 616,336 616,344" fill="#94a3b8"/>
+
+  <!-- y tick labels -->
+  <text x="68" y="344" text-anchor="end" font-size="13" fill="#475569">0</text>
+  <text x="68" y="228" text-anchor="end" font-size="13" fill="#475569">1</text>
+  <text x="68" y="112" text-anchor="end" font-size="13" fill="#475569">2</text>
+
+  <!-- x tick labels (margin values) -->
+  <text x="80"  y="360" text-anchor="middle" font-size="13" fill="#475569">-1</text>
+  <text x="196" y="360" text-anchor="middle" font-size="13" fill="#475569">0</text>
+  <text x="311" y="360" text-anchor="middle" font-size="13" fill="#475569">1</text>
+  <text x="427" y="360" text-anchor="middle" font-size="13" fill="#475569">2</text>
+  <text x="542" y="360" text-anchor="middle" font-size="13" fill="#475569">3</text>
+
+  <!-- dashed marker at margin = 1 (the corner) -->
+  <line x1="311" y1="340" x2="311" y2="120" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="318" y="116" font-size="13" fill="#64748b">margin = 1</text>
+
+  <!-- the hinge loss curve: sloped line, then a corner, then flat -->
+  <polyline points="80,108 311,340 600,340" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- corner (hinge) point -->
+  <circle cx="311" cy="340" r="5" fill="#2563eb"/>
+  <text x="322" y="332" font-size="13" fill="#2563eb" font-weight="600">the hinge</text>
+
+  <!-- region annotations -->
+  <text x="120" y="150" font-size="13" fill="#475569">penalty rises as the</text>
+  <text x="120" y="168" font-size="13" fill="#475569">margin shrinks</text>
+  <text x="440" y="322" font-size="13" fill="#475569">no penalty (loss = 0)</text>
+
+  <!-- axis titles -->
+  <text x="350" y="392" text-anchor="middle" font-size="14" fill="#334155">margin  =  S_correct - S_wrong</text>
+  <text x="26" y="195" text-anchor="middle" font-size="14" fill="#334155" transform="rotate(-90 26 195)">loss</text>
+</svg>
