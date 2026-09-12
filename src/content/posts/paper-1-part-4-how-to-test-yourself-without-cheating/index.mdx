@@ -1,6 +1,6 @@
 ---
 title: "Paper #1, Part 4: How to Test Yourself Without Cheating"
-excerpt: "Before you can tell whether your classifier works, you have to measure it. The obvious way to measure has a trap in it, one the CS231n notes warn about. Here's the trap and the standard fix, as I understand them."
+excerpt: "Before you can tell whether your classifier works, you have to measure it. The obvious way to measure has a trap in it, one the CS231n notes warn about. Here's the trap and the fix the course recommends."
 category: "Fundamentals"
 date: 2023-09-07T23:59:59Z
 author:
@@ -40,11 +40,11 @@ Machine learning has the exact same trap.
 
 ## The Split
 
-The mistake looks like this: train your classifier on some images, then test it on those same images. Even the nearest neighbor classifier from Part 3 gets 100% accuracy this way, because the closest image to any training image is itself. Perfect score! You're a genius!
+The mistake looks like this: train your classifier on some images, then test it on those same images. Even the nearest neighbor classifier from Part 3 gets 100% accuracy this way, because the closest image to any training image is itself. That looks like a perfect score.
 
-Except you've learned nothing. Your classifier would fail spectacularly on images it hasn't seen.
+But it tells you nothing. The classifier would still fail on images it hasn't seen.
 
-The standard fix is to split your data into three groups:
+The fix CS231n recommends is to split your data into three groups:
 
 **Training set** (typically 60-70% of your data): the images your classifier learns from. Nearest neighbor simply memorizes them. The classifiers we'll build later adjust internal settings, called weights, to fit these examples. (Separately, some settings are chosen by hand rather than learned, like how many neighbors nearest neighbor should check. These are called hyperparameters, and they get tuned on the validation set below, not the training set.)
 

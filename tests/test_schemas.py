@@ -97,7 +97,8 @@ def test_supporter_count_unions_raisers_and_endorsers():
 
 def test_dimensions_wire_values():
     assert "CLICHÉS" in DIMENSIONS
-    assert len(DIMENSIONS) == 6
+    assert "VOICE" in DIMENSIONS
+    assert len(DIMENSIONS) == 7
 
 
 def test_dimension_soft_classes():
@@ -105,6 +106,8 @@ def test_dimension_soft_classes():
     assert same_dimension_class("CORRECTNESS", "COMPLETENESS")
     assert not same_dimension_class("CLARITY", "CORRECTNESS")
     assert same_dimension_class("CLICHÉS", "CLICHÉS")
+    assert same_dimension_class("CLICHÉS", "VOICE")  # both style/tone
+    assert not same_dimension_class("VOICE", "CORRECTNESS")
 
 
 def test_status_and_outcome_enums():

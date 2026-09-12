@@ -1,4 +1,4 @@
-"""Reviewer scans: one structured call per reviewer covering ALL six dimensions.
+"""Reviewer scans: one structured call per reviewer covering ALL seven dimensions.
 
 (The old system scanned once per dimension — 6x the cost for the same coverage.)
 """
@@ -24,14 +24,16 @@ Article body:
 {article.body}
 ---
 
-Review ALL six dimensions:
+Review ALL seven dimensions:
 1. CORRECTNESS — factual accuracy: are claims true, definitions right?
 2. CLARITY — could a passage mislead or confuse? are analogies apt?
 3. COMPLETENESS — missing caveats, absent context a reader needs
 4. CONSISTENCY — self-contradictions, terms used inconsistently
 5. PEDAGOGY — appropriate for non-technical readers? too dense or too thin? Flag a proper noun or technical term ONLY if its first use has NO inline plain-language explanation at all. A term that already carries any gloss at first use is settled: do not demand a longer or different gloss (rate such wishes severity 2 at most), and never flag later mentions of an already-glossed term.
-   VOICE: the author is a self-described learner writing a public learning log, NOT an expert. Flag sentences that overclaim authority the author cannot have: field-wide empirical claims ("almost everyone does this", "the most common mistake", "everyone knows"), or verdicts stated as personal decree ("the right way and the wrong way", "here's what NOT to do"). The fix is to attribute the judgment to its real source (the CS231n notes, named experts, the field's standard practice) or to reframe as what the author has personally laid out and observed. Quoting experts is fine; claiming their vantage point is not.
 6. CLICHÉS — vague filler and LLM clichés ("honest", "genuine", "game-changer", "rides on", "shines for", "land" as a verb). Also flag grandiose totalizing frames ("X is the entire problem/point/story of Y", "this is what it's all about") and metaphor flourishes that state no mechanism ("the ways the gap opens up"): rewrite as a direct statement of the underlying fact. ANY use of an em-dash (—) is a violation: report every occurrence, severity 3, with a fix that rewrites the sentence using a period, comma, colon, or parentheses.
+7. VOICE — the author is a self-described learner writing a public learning log for non-technical readers, NOT an expert. Two things to flag:
+   (a) Overclaimed authority: field-wide empirical claims the author cannot have observed ("almost everyone does this", "the most common mistake", "everyone knows"), or verdicts stated as personal decree ("the right way and the wrong way", "here's what NOT to do"). Fix: attribute the judgment to its real source (the CS231n notes, named experts, standard practice), or reframe as what the author has personally laid out and observed. Quoting experts is fine; claiming their vantage point is not.
+   (b) Tone that doesn't fit a humble learner: snark, sarcasm, condescension, forced jokiness, or hype ("Perfect score! You're a genius!", "it's that simple", "buckle up"). Fix: rewrite plainly.
 
 Severity calibration:
 - 9-10: factually wrong or seriously misleading
@@ -50,7 +52,7 @@ For each finding choose the anchor type:
 Return JSON:
 {{"findings": [{{"anchor_type": "quote", "quote": "<verbatim>", "dimension": "CORRECTNESS", "issue": "<what is wrong, max 40 words>", "severity": 5, "suggested_fix": "<concrete correction, max 40 words>"}}, ...]}}
 
-Keep "issue" and "suggested_fix" each under 40 words. A careful review of an explainer this length typically surfaces several severity-3+ issues across the six dimensions — report each one you find. Do not pad with nitpicks to hit a count."""
+Keep "issue" and "suggested_fix" each under 40 words. A careful review of an explainer this length typically surfaces several severity-3+ issues across the seven dimensions. Report each one you find. Do not pad with nitpicks to hit a count."""
 
 
 def run_scans(article: Article, providers: list[Provider],

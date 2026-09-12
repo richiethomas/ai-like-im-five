@@ -22,16 +22,19 @@ class Dimension(str, Enum):
     CONSISTENCY = "CONSISTENCY"
     PEDAGOGY = "PEDAGOGY"
     CLICHES = "CLICHÉS"  # wire value keeps the accent used in prompts/old data
+    VOICE = "VOICE"      # persona/tone: learner voice, no overclaimed authority, no snark
 
 
 DIMENSIONS = [d.value for d in Dimension]
 
 # Soft equivalence classes for alignment: a dimension mismatch across these
 # groups argues against merging two findings; within a group it does not.
+# VOICE and CLICHÉS are both style/tone, so a claim raised under one by one
+# model and the other by another is likely the same underlying issue.
 DIMENSION_CLASSES = [
     {Dimension.CLARITY.value, Dimension.PEDAGOGY.value},
     {Dimension.CORRECTNESS.value, Dimension.CONSISTENCY.value, Dimension.COMPLETENESS.value},
-    {Dimension.CLICHES.value},
+    {Dimension.CLICHES.value, Dimension.VOICE.value},
 ]
 
 
