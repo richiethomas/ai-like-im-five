@@ -67,7 +67,7 @@ The key rule: **once you've used the test set to measure accuracy, you cannot us
 
 This distinction matters. Testing on held-out data tells you whether a classifier works on new images; testing on training data only shows what it memorized.
 
-When you train on training data and test on training data, you're measuring something called **training accuracy**. This number is almost always better than real performance, sometimes wildly so.
+When you train on training data and test on training data, you're measuring something called **training accuracy**. It tends to look better than performance on new images, because the classifier has already seen every answer.
 
 When you test on held-out validation/test data, you're measuring **generalization accuracy**: how well your classifier handles images it's never seen. This is what matters in the real world.
 
