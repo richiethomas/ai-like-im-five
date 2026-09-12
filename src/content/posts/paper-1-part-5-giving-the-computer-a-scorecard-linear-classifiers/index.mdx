@@ -81,6 +81,12 @@ The "dog" weights tend to form a smudgy dog-like shape: areas of positive weight
 
 So the classifier has learned a single template per class. The weights roughly say: "how much does this image, pixel for pixel, resemble the average dog?" and the same for cat.
 
+Here is what this actually looks like. I trained a linear classifier on CIFAR-10 (a standard set of small photos in 10 categories) and turned each category's weights back into a 32×32 image:
+
+![Ten blurry weight templates, one per CIFAR-10 category, each a 32 by 32 image](/experiments/linear-classifiers/cifar10-linear-weights.png)
+
+None of these are sharp pictures, exactly as described above: each is a blurry average of thousands of training photos. But you can still make out real structure. "Ship" has blue along the bottom (water) and "airplane" has blue along the top (sky). "Frog" has a green blob in the middle. "Automobile" shows a reddish car-body shape. Look closely at "horse" and you can see what looks like a two-headed animal: the training set has horses facing both left and right, and a single template has to average them into one smear.
+
 But here's the limitation: a linear classifier uses just one set of weights per class, one weight for each pixel value, so it can only look for one pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't match all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
 
 That single-template limit is why a linear classifier tends to do better on simple, consistent images than on messy real-world ones, where the same object turns up in many poses, sizes, and lighting conditions.
