@@ -167,7 +167,19 @@ The numbers differ from hinge loss, but the ranking is the same: the confident c
 
 Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned weights. There's no universal "right" answer; it depends on your problem and your preference.
 
-Softmax has become more popular in deep learning for a couple of reasons. First, it outputs a full set of probabilities (one per label, all adding up to 1), which is often useful on its own. A probability is a confidence figure on a fixed 0-to-1 scale, so you can act on it: send anything below, say, 0.9 to a human to double-check; weigh a costly mistake against a cheap one (flag a possible tumor even at 30% likelihood); or present a ranked list like "70% cat, 25% dog, 5% bird." Raw scores can't support any of that, because their size carries no consistent meaning. Second, softmax keeps giving a gentle learning signal even when a prediction is already correct, nudging the scores a little further apart, while hinge loss stops entirely once the correct label wins by the margin (that's the flat part of the graph above). A loss that keeps offering feedback is a little easier to train with. Hinge loss is still interpretable and useful in some contexts, such as traditional SVM classifiers.
+Softmax has become more popular in deep learning for a couple of reasons.
+
+First, it outputs a full set of probabilities (one per label, all adding up to 1), which is often useful on its own. A probability is a confidence figure on a fixed 0-to-1 scale, so you can act on it:
+
+- Send anything below, say, 0.9 to a human to double-check.
+- Weigh a costly mistake against a cheap one: flag a possible tumor even at 30% likelihood.
+- Present a ranked list like "70% cat, 25% dog, 5% bird."
+
+Raw scores can't support any of that, because their size carries no consistent meaning.
+
+Second, softmax keeps giving a gentle learning signal even when a prediction is already correct, nudging the scores a little further apart, while hinge loss stops entirely once the correct label wins by the margin (that's the flat part of the graph above). A loss that keeps offering feedback is a little easier to train with.
+
+Hinge loss is still interpretable and useful in some contexts, such as traditional SVM classifiers.
 
 The main point isn't which one you choose; it's that you *need* a loss function to:
 
