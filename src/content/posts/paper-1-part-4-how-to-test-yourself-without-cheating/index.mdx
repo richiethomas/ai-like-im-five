@@ -52,7 +52,7 @@ Here's what TO do: split your data into three groups:
 
 **Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
 
-The key rule: **Once you've used the test set to measure accuracy, you cannot go back and retrain or tweak anything.** That would be cheating. You'd be using the test set to make decisions, and a test score only means something if it comes from data your classifier's design was never adjusted to fit.
+The key rule: **once you've used the test set to measure accuracy, you cannot use that score to change the classifier's design.** Peeking at the test result and then tweaking a feature or hyperparameter to improve it is cheating. You'd be using the test set to make decisions, and a test score only means something if it comes from data your classifier's design was never adjusted to fit.
 
 ## Why This Matters
 
@@ -82,7 +82,7 @@ The metaphor: instead of one final exam, you take five quizzes on different mate
 
 ## The Rule You'll See Everywhere
 
-In CS231n and every serious machine learning project, you'll see this written somewhere:
+In CS231n (Stanford's computer vision course this series works through) and every serious machine learning project, you'll see this written somewhere:
 
 "The test set should never be used to make any decisions."
 
