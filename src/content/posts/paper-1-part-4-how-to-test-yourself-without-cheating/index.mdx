@@ -86,7 +86,7 @@ In CS231n and every serious machine learning project, you'll see this written so
 
 "The test set should never be used to make any decisions."
 
-This sounds obvious until you've been staring at a low test accuracy for hours and you're tempted to "just tweak one parameter and see." Don't. That's cheating. If you do that, you need a *new* held-out test set that hasn't seen your tweaks.
+This sounds obvious until you've been staring at a low test accuracy for hours and you're tempted to "just tweak one parameter and see." Don't. Tweaking is what the validation set is for; the test set is only for the final score. If you do tune against the test set, you need a *new* held-out test set that hasn't seen your tweaks.
 
 The only time you look at test accuracy is at the very end, when you're reporting your final results.
 
