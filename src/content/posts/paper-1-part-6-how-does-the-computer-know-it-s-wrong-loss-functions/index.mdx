@@ -106,6 +106,12 @@ Instead of just comparing two scores, it asks: "If I treat the scores as probabi
 First, convert scores to probabilities using the softmax function (this is a standard trick in statistics):
 
 ```
+# exp(x) = e (about 2.718) raised to the power x.
+# It turns any score, positive or negative, into a positive number.
+#   exp(0) = 1
+#   exp(1) = 2.718
+#   exp(2) = 7.389
+#   exp(-5) = 0.0067
 probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
 ```
 
