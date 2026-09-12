@@ -19,7 +19,7 @@ The answer is **loss functions**.
 
 ## Wrongness as a Number
 
-A naive approach: a prediction is either right or wrong. Binary. You get 1 point or 0 points. This seems logical, but it's too coarse.
+A naive approach: a prediction is either right or wrong. Binary. You get 1 point or 0 points. This seems logical, and it's fine for reporting a final accuracy score, but it's too coarse to guide learning: it can only tell the computer whether it was right or wrong, not how to improve.
 
 Imagine two scenarios:
 
@@ -41,9 +41,9 @@ Both get full credit if you only count right/wrong, but Scenario B is objectivel
 
 A loss function measures not just whether the guess was right, but *how right*. If you got it wrong, how badly? If you got it right, how confident were you?
 
-## Hinge Loss (Used in SVM)
+## Hinge Loss
 
-Here's one approach called **hinge loss**:
+Here's one approach called **hinge loss**. It's the loss function used by Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning.
 
 If the correct label has score `S_correct` and the highest wrong label has score `S_wrong`, the loss is:
 
@@ -57,13 +57,13 @@ Let's walk through this:
 - S_correct = 10, S_wrong = -5
 - loss = max(0, 1 + (-5) - 10) = max(0, -14) = 0
 
-You pay no penalty. Good job.
+You pay no penalty.
 
-**If you're close and correct:**
-- S_correct = 10, S_wrong = 9
-- loss = max(0, 1 + 9 - 10) = max(0, 0) = 0
+**If you're correct but not by enough:**
+- S_correct = 10, S_wrong = 9.5
+- loss = max(0, 1 + 9.5 - 10) = max(0, 0.5) = 0.5
 
-You still pay 0, but just barely. You were too close for comfort.
+You pay a small penalty of 0.5. You were correct, but the correct score beat the wrong score by only 0.5, less than the margin of 1 that hinge loss demands, so it still nudges you to separate them further.
 
 **If you got it wrong:**
 - S_correct = 5, S_wrong = 10
@@ -99,7 +99,7 @@ The logarithm means: penalize low-probability predictions harshly, reward high-p
 
 Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned weights. There's no universal "right" answer; it depends on your problem and your preference.
 
-Softmax has become more popular in deep learning because it's differentiable (smooth), which makes the learning process easier. Hinge loss is interpretable and useful in some contexts.
+Softmax has become more popular in deep learning for a couple of reasons: it outputs a full set of probabilities (one per label, all adding up to 1), and small changes to the weights produce small, smooth changes in the loss, which makes the weights easier to adjust a little at a time. (Hinge loss has this smoothness almost everywhere too, so smoothness alone isn't the whole story; the probability output is the bigger draw.) Hinge loss is still interpretable and useful in some contexts.
 
 The key insight isn't which one you choose; it's that you *need* a loss function to:
 
@@ -109,15 +109,15 @@ The key insight isn't which one you choose; it's that you *need* a loss function
 
 ## The Learning Loop
 
-Now the picture comes together:
+Here's the full loop:
 
 1. Compute scores (Part 5)
 2. Measure loss (this post)
 3. Adjust weights to reduce loss (next post: gradient descent)
 4. Repeat
 
-The loss function is the signal that drives learning. It's how the computer knows which direction to adjust the weights.
+The loss function measures how wrong the classifier is. The next post covers gradient descent, which reads that loss to work out which direction to adjust the weights, and by how much.
 
 ## What's Next
 
-We have scores. We have a measure of wrongness. Now we need the algorithm that adjusts the weights to make that wrongness smaller. That's gradient descent, the most important optimization idea in machine learning.
+We have scores. We have a measure of wrongness. Now we need the algorithm that adjusts the weights to make that wrongness smaller. That's gradient descent, a central optimization method used throughout machine learning.
