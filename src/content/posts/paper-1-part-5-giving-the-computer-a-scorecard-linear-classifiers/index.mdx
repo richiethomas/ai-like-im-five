@@ -99,7 +99,7 @@ That single-template limit is why a linear classifier tends to do better on simp
 
 The fix the field actually adopted is not more whole-dog templates. It's to learn small, reusable pattern detectors, things like edges, textures, and parts, that combine to recognize a dog in any pose. A single "ear" detector helps no matter where the ear is. That idea is what neural networks (Part 9) and later convolutional networks (Part 12 onward) are built on, and it's where the rest of this series is headed.
 
-## The Pieces Are Coming Together
+## The Missing Piece: How the Weights Get Learned
 
 But before we fix that limitation, we need to understand the learning process itself. How does the computer know which direction to adjust the weights? How much should it adjust? What's the measure of "wrongness" that guides the learning?
 
