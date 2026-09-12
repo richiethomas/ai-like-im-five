@@ -101,7 +101,7 @@ Hinge loss (SVM) and softmax loss are different, and they lead to slightly diffe
 
 Softmax has become more popular in deep learning for a couple of reasons: it outputs a full set of probabilities (one per label, all adding up to 1), and small changes to the weights produce small, smooth changes in the loss, which makes the weights easier to adjust a little at a time. (Hinge loss has this smoothness almost everywhere too, so smoothness alone isn't the whole story; the probability output is the bigger draw.) Hinge loss is still interpretable and useful in some contexts.
 
-The key insight isn't which one you choose; it's that you *need* a loss function to:
+The main point isn't which one you choose; it's that you *need* a loss function to:
 
 1. Measure wrongness as a continuous number (not just right/wrong)
 2. Give you a signal to optimize: "Make this number smaller"
