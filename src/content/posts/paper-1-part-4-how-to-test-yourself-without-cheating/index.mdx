@@ -46,13 +46,13 @@ Except you've learned nothing. Your classifier would fail spectacularly on image
 
 Here's what TO do: split your data into three groups:
 
-**Training set** (typically 60-70% of your data): You show these images to your classifier while it's learning. It adjusts its internal settings (weights, hyperparameters) based on these examples.
+**Training set** (typically 60-70% of your data): You show these images to your classifier while it's learning. It adjusts its internal settings, called weights, based on these examples. (There's a second kind of setting, called a hyperparameter, that you choose by hand rather than learn from the data, like how many neighbors nearest neighbor should check. Those get tuned on the validation set below, not the training set.)
 
 **Validation set** (typically 15-20%): You don't touch these while training. But after you've built several classifiers, you test each one on this set to see which one is best. You use the validation set to make decisions: "Should I use this feature? Should I adjust this parameter?"
 
 **Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
 
-The key rule: **Once you've used the test set to measure accuracy, you cannot go back and retrain or tweak anything.** That would be cheating. You'd be using the test set to make decisions, which means it's no longer a true test.
+The key rule: **Once you've used the test set to measure accuracy, you cannot go back and retrain or tweak anything.** That would be cheating. You'd be using the test set to make decisions, and a test score only means something if it comes from data your classifier's design was never adjusted to fit.
 
 ## Why This Matters
 
