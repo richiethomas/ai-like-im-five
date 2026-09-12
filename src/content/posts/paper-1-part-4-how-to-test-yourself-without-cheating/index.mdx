@@ -52,7 +52,14 @@ The fix CS231n recommends is to split your data into three groups:
 
 **Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
 
-Weights and hyperparameters are the two kinds of setting I mentioned, and they're easy to mix up. Think of baking a cake. You set a few dials yourself: the oven temperature, the timer, the pan size. Inside, as it bakes, thousands of tiny chemical bonds form and set the crumb, far too many to arrange by hand. The dials are **hyperparameters**, the handful of choices you make before baking. The crumb is the **weights**, the many internal values the classifier sets for itself while it learns. You choose the hyperparameters; the training data sets the weights. (Nearest neighbor is an odd case: its one hyperparameter is k, how many neighbors to check, chosen up front like a pan size, and it has no weights at all, because it only memorizes.) And just as you'd bake another cake at a new temperature if the first came out flat, you try different hyperparameters and keep whichever works best. That is what the validation set is for.
+Weights and hyperparameters are the two kinds of setting I mentioned, and they're easy to mix up. Think of baking a cake. You set a few dials yourself: the oven temperature, the timer, the pan size. Inside, as it bakes, thousands of tiny chemical bonds form and set the crumb, far too many to arrange by hand.
+
+- **The dials are hyperparameters**: the handful of choices you make before baking.
+- **The crumb is the weights**: the many internal values the classifier sets for itself while it learns.
+
+You choose the hyperparameters; the training data sets the weights. (Nearest neighbor is an odd case: its one hyperparameter is k, how many neighbors to check, chosen up front like a pan size, and it has no weights at all, because it only memorizes.)
+
+And just as you'd bake another cake at a new temperature if the first came out flat, you try different hyperparameters and keep whichever works best. That is what the validation set is for.
 
 The key rule: **once you've used the test set to measure accuracy, you cannot use that score to change the classifier's design.** Peeking at the test result and then tweaking a feature or hyperparameter to improve it is cheating. You'd be using the test set to make decisions, and a test score only means something if it comes from data your classifier's design was never adjusted to fit.
 
