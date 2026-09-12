@@ -70,7 +70,9 @@ without max:  1 + 1 - 100 = -98   (a big negative "reward" for being right)
 with max:     max(0, -98)  = 0    (no reward, no penalty: nothing left to do)
 ```
 
-**Why the `1`?** That's the size of the buffer. Without it, the loss would drop to zero the moment the correct score edged ahead of the wrong score by any amount at all, even 0.0001. That's fragile: a speck of noise flips the answer. The `1` demands the correct score win by a clear margin, not barely. Scenario A from Part 6 (a close call, cat = 10, dog = 9.5) shows the difference:
+**Why the `1`?** That's the size of the buffer. Without it, the loss would drop to zero the moment the correct score edged ahead of the wrong score by any amount at all, even 0.0001. That's fragile: a speck of noise flips the answer. The `1` demands the correct score win by a clear margin, not barely.
+
+Scenario A from Part 6 (a close call, cat = 10, dog = 9.5) shows the difference:
 
 ```
 without the 1:  max(0, 9.5 - 10)     = 0     (a hair ahead already counts as fine)
