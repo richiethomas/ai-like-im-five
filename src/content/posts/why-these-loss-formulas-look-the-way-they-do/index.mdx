@@ -99,7 +99,13 @@ The expression has two parts, the `log` and the minus sign in front. Here's what
 
 **Why take the `log`?** To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). Maximizing a giant product is unwieldy, but `log` has a property that turns a product into a sum: `log(a × b) = log(a) + log(b)`. So taking the log lets you add up one loss per example instead of multiplying, which is far easier to work with.
 
-**Why the minus sign?** Training makes the loss as small as possible, so a worse prediction needs to produce a bigger loss. `log(probability)` does the opposite: it's 0 for a perfect prediction and goes more and more negative as the prediction gets worse (if the correct label gets a probability of 0.1, `log(0.1)` is about -2.3; at 0.2, about -1.6; and so on). Flipping the sign turns that around: `-log(probability)` is 0 for a perfect prediction and grows as the prediction gets worse. Now a worse prediction means a bigger loss, and shrinking the loss means improving the prediction.
+**Why the minus sign?** Training makes the loss as small as possible, so a worse prediction needs to produce a bigger loss. `log(probability)` does the opposite. It's 0 for a perfect prediction and goes more and more negative as the correct label's probability shrinks:
+
+- correct label at 1.0: `log(1.0)` = 0
+- correct label at 0.2: `log(0.2)` is about -1.6
+- correct label at 0.1: `log(0.1)` is about -2.3
+
+Flipping the sign turns that around: `-log(probability)` is 0 for a perfect prediction and grows as the prediction gets worse. Now a worse prediction means a bigger loss, and shrinking the loss means improving the prediction.
 
 ## Why `exp` and not just absolute value, or squaring?
 
