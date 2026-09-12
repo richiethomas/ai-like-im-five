@@ -63,7 +63,7 @@ correct_score - wrong_score = 3 - 10 = -7   (negative: useless as a penalty)
 
 **Why `max(0, ...)`?** This is the piece that gives hinge loss its name and its behavior. Suppose you dropped the `max` and just used `1 + wrong_score - correct_score`. Then a prediction that's already correct by a wide margin would produce a large negative loss, and the training process would keep trying to drive that margin even wider, spending effort on examples that are already fine. The `max(0, ...)` says: "once you clear the required margin, your loss is exactly zero." It caps the demand at good-enough. That threshold, past which an example is satisfied and contributes nothing, is what the `max` is for.
 
-Scenario B from Part 6 (a confident, correct guess, cat = 100, dog = 1) is where this bites:
+Scenario B from Part 6 (a confident, correct guess, cat = 100, dog = 1) shows what the `max` does:
 
 ```
 without max:  1 + 1 - 100 = -98   (a big negative "reward" for being right)
