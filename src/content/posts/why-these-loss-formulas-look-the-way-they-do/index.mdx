@@ -91,7 +91,9 @@ loss = -log(probability_cat)
 
 **Why `-log(probability of the correct label)`?** Two reasons:
 
-- The penalty rises as the correct answer's probability falls. When the probability of a correct guess is 1, that means `-log(1)` is 0, which means the penalty is zero. That's what we want: a penalty of zero for a "correct-guess" probability of 1. As the probability drops toward 0, `-log` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
+- The penalty rises as the correct answer's probability falls. When the probability of a correct guess is 1, that means `-log(1)` is 0, which means the penalty is zero. That's what we want: a penalty of zero for a "correct-guess" probability of 1.
+
+  As the probability drops toward 0, `-log` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
 - The `log` is what makes it trainable. To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). Maximizing a giant product is unwieldy, but `log` has a property that turns a product into a sum: `log(a × b) = log(a) + log(b)`. So taking the log lets you add up one loss per example instead of multiplying, which is far easier to work with. The minus sign is only there because probabilities are at most 1, so their logs come out negative, and we flip the sign to get a positive number to drive downward.
 
 ## Why `exp` and not just absolute value, or squaring?
