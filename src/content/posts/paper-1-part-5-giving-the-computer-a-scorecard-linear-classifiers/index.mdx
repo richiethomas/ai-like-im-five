@@ -39,9 +39,9 @@ You "look at" the image (scan through its pixel values), tally up the points for
 
 ## How It Actually Works
 
-In practice, a linear classifier doesn't hand-code features like "pointy ears." Instead, it assigns a weight to *every single pixel* in the image.
+In practice, a linear classifier doesn't hand-code features like "pointy ears." Instead, it assigns a weight to *every single input number* in the image.
 
-For a 32×32 image with 3 color channels (RGB), that's 3,072 pixels. The classifier has 3,072 weights for the "cat" label and 3,072 weights for the "dog" label.
+A 32×32 color image has 1,024 pixels, and each pixel is 3 numbers (red, green, blue), so 3,072 numbers in total (this is the grid of numbers from Part 1). The classifier has one weight per number: 3,072 weights for the "cat" label and another 3,072 for the "dog" label.
 
 The score for "cat" is computed as:
 
