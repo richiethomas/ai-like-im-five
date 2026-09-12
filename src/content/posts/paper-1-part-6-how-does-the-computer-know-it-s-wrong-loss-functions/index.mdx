@@ -56,8 +56,11 @@ Let's walk through this:
 **If you're confident and correct:**
 
 ```
-S_correct = 10, S_wrong = -5
-loss = max(0, 1 + (-5) - 10) = max(0, -14) = 0
+S_correct = 10
+S_wrong = -5
+
+loss = max(0, 1 + (-5) - 10)
+     = max(0, -14) = 0
 ```
 
 You pay no penalty.
@@ -65,8 +68,11 @@ You pay no penalty.
 **If you're correct but not by enough:**
 
 ```
-S_correct = 10, S_wrong = 9.5
-loss = max(0, 1 + 9.5 - 10) = max(0, 0.5) = 0.5
+S_correct = 10
+S_wrong = 9.5
+
+loss = max(0, 1 + 9.5 - 10)
+     = max(0, 0.5) = 0.5
 ```
 
 You pay a small penalty of 0.5. You were correct, but the correct score beat the wrong score by only 0.5, less than the margin of 1 that hinge loss demands, so it still nudges you to separate them further.
@@ -74,8 +80,11 @@ You pay a small penalty of 0.5. You were correct, but the correct score beat the
 **If you got it wrong:**
 
 ```
-S_correct = 5, S_wrong = 10
-loss = max(0, 1 + 10 - 5) = max(0, 6) = 6
+S_correct = 5
+S_wrong = 10
+
+loss = max(0, 1 + 10 - 5)
+     = max(0, 6) = 6
 ```
 
 You pay a penalty of 6. The more confidently wrong you were, the higher the penalty.
