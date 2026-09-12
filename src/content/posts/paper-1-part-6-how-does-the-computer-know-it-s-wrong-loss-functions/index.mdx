@@ -125,7 +125,8 @@ Then the loss is:
 #   -log(0.9) = 0.1    (small loss, good)
 #   -log(0.1) = 2.3    (large loss, bad)
 
-loss = -log(probability_correct_label)
+# cat is the correct label in this example, so the loss uses probability_cat
+loss = -log(probability_cat)
 ```
 
 So the logarithm penalizes low-probability predictions harshly and rewards high-probability predictions gently.
