@@ -52,10 +52,10 @@ A loss function measures not just whether the guess was right, but *how* right, 
 
 Here's one approach called **hinge loss**. It's the loss function used by Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning.
 
-For each scenario, take two numbers: the correct label's score (`S_correct`) and the highest wrong label's score (`S_wrong`). (Using just the single highest wrong score keeps this simple; some versions add up a penalty across every wrong label instead.) The loss is:
+For each scenario, take two numbers: the correct label's score (`correct_score`) and the highest wrong label's score (`wrong_score`). (Using just the single highest wrong score keeps this simple; some versions add up a penalty across every wrong label instead.) The loss is:
 
 ```
-loss = max(0, 1 + S_wrong - S_correct)
+loss = max(0, 1 + wrong_score - correct_score)
 ```
 
 Here `max(a, b)` just means "take the larger of the two." Here's what that gives for the three scenarios above.

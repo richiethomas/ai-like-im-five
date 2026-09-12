@@ -16,7 +16,7 @@ This is a side note to [Part 6](/post/paper-1-part-6-how-does-the-computer-know-
 Here they are again. Hinge loss:
 
 ```
-loss = max(0, 1 + S_wrong - S_correct)
+loss = max(0, 1 + wrong_score - correct_score)
 ```
 
 And softmax loss:
@@ -48,17 +48,32 @@ Lots of formulas satisfy these three requirements. Hinge and softmax are two of 
 
 The goal behind hinge loss: **make the correct label's score beat the wrong label's score by a comfortable buffer.** Here's what each part of the formula does.
 
-**Why a difference (`S_wrong - S_correct`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
+**Why a difference (`wrong_score - correct_score`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
 
-**Why `S_wrong - S_correct` and not `S_correct - S_wrong`?** Because a loss has to get bigger when the prediction gets worse, and only one of the two orderings does that. `S_wrong - S_correct` is positive exactly when a wrong label beats the correct one, which is the bad case, so it works as a penalty: large and positive when things are bad, zero or negative when they're fine. The reverse, `S_correct - S_wrong`, is large when things are good, since it measures how far the correct label is *ahead*. That quantity has a name, the margin, and it's the natural thing to plot on a graph, but it's the wrong sign to hand to a penalty. The formula flips it back anyway: `1 + S_wrong - S_correct` is the same as `1 - (S_correct - S_wrong)`, or `1 - margin`. The two orderings are just negatives of each other, and hinge loss uses the one that already grows in the bad direction.
+**Why `wrong_score - correct_score` and not `correct_score - wrong_score`?** Because a loss has to get bigger when the prediction gets worse, and only one of the two orderings does that. `wrong_score - correct_score` is positive exactly when a wrong label beats the correct one, which is the bad case, so it works as a penalty: large and positive when things are bad, zero or negative when they're fine. The reverse, `correct_score - wrong_score`, is large when things are good, since it measures how far the correct label is *ahead*. That quantity has a name, the margin, and it's the natural thing to plot on a graph, but it's the wrong sign to hand to a penalty. The formula flips it back anyway: `1 + wrong_score - correct_score` is the same as `1 - (correct_score - wrong_score)`, or `1 - margin`. The two orderings are just negatives of each other, and hinge loss uses the one that already grows in the bad direction. Scenario C from Part 6 (a wrong guess, cat = 3, dog = 10) shows why the sign matters:
 
-**Why `max(0, ...)`?** This is the piece that gives hinge loss its name and its behavior. Suppose you dropped the `max` and just used `1 + S_wrong - S_correct`. Then a prediction that's already correct by a wide margin would produce a large negative loss, and the training process would keep trying to drive that margin even wider, spending effort on examples that are already fine. The `max(0, ...)` says: "once you clear the required margin, your loss is exactly zero." It caps the demand at good-enough. That threshold, past which an example is satisfied and contributes nothing, is what the `max` is for.
+```
+wrong_score - correct_score = 10 - 3 = +7   (positive: works as a penalty)
+correct_score - wrong_score = 3 - 10 = -7   (negative: useless as a penalty)
+```
 
-**Why the `1`?** That's the size of the buffer. Without it, the loss would drop to zero the moment the correct score edged ahead of the wrong score by any amount at all, even 0.0001. That's fragile: a speck of noise flips the answer. The `1` demands the correct score win by a clear margin, not barely.
+**Why `max(0, ...)`?** This is the piece that gives hinge loss its name and its behavior. Suppose you dropped the `max` and just used `1 + wrong_score - correct_score`. Then a prediction that's already correct by a wide margin would produce a large negative loss, and the training process would keep trying to drive that margin even wider, spending effort on examples that are already fine. The `max(0, ...)` says: "once you clear the required margin, your loss is exactly zero." It caps the demand at good-enough. That threshold, past which an example is satisfied and contributes nothing, is what the `max` is for. Scenario B from Part 6 (a confident, correct guess, cat = 100, dog = 1) is where this bites:
+
+```
+without max:  1 + 1 - 100 = -98   (a big negative "reward" for being right)
+with max:     max(0, -98)  = 0    (no reward, no penalty: nothing left to do)
+```
+
+**Why the `1`?** That's the size of the buffer. Without it, the loss would drop to zero the moment the correct score edged ahead of the wrong score by any amount at all, even 0.0001. That's fragile: a speck of noise flips the answer. The `1` demands the correct score win by a clear margin, not barely. Scenario A from Part 6 (a close call, cat = 10, dog = 9.5) shows the difference:
+
+```
+without the 1:  max(0, 9.5 - 10)     = 0     (a hair ahead already counts as fine)
+with the 1:     max(0, 1 + 9.5 - 10) = 0.5   (still penalized until the gap reaches 1)
+```
 
 **But why 1 specifically, and not 3 or 0.5?** Because the scores have no fixed scale. The classifier can multiply all its weights up or down, which scales all its scores up or down, so it can make a margin of "1" mean whatever it needs. Pick any positive number and you get an equivalent classifier with rescaled weights. The `1` is just a convention that pins down the scale. Its exact value doesn't matter, because the weights adjust around it.
 
-So `max(0, 1 + S_wrong - S_correct)` reads, in full: "zero penalty if the correct score beats the wrong score by at least 1; otherwise the penalty grows in proportion to how far short you fell."
+So `max(0, 1 + wrong_score - correct_score)` reads, in full: "zero penalty if the correct score beats the wrong score by at least 1; otherwise the penalty grows in proportion to how far short you fell."
 
 **Where it came from.** Hinge loss is the algebra of a family of models called Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning. The starting idea was geometric: separate the two classes with the *widest possible gap* between them. Hinge loss is just the penalty you write down when you say "charge me for anything sitting inside that gap." The margin idea came first; the formula is its consequence. So it wasn't guessed, it was derived.
 
