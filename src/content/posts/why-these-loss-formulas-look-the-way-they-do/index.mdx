@@ -83,8 +83,6 @@ with the 1:     max(0, 1 + 9.5 - 10) = 0.5   (still penalized until the gap reac
 
 So `max(0, 1 + wrong_score - correct_score)` reads, in full: "zero penalty if the correct score beats the wrong score by at least 1; otherwise the penalty grows in proportion to how far short you fell."
 
-**Where it came from.** Hinge loss is the algebra of a family of models called Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning. The starting idea was geometric: separate the two classes with the *widest possible gap* between them. Hinge loss is just the penalty you write down when you say "charge me for anything sitting inside that gap." The margin idea came first; the formula is its consequence. So it wasn't guessed, it was derived.
-
 ## Softmax loss, one symbol at a time
 
 Different goal: **treat the scores as evidence for a probability, then charge the model for however much probability it withheld from the correct answer.**
@@ -97,8 +95,6 @@ Different goal: **treat the scores as evidence for a probability, then charge th
 
 - It has the right shape. Give the correct answer a probability of 1 and `-log(1) = 0`, no penalty. As the probability drops toward 0, `-log` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
 - The `log` is what makes it trainable. To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). Maximizing a giant product is unwieldy, but `log` has a property that turns a product into a sum: `log(a × b) = log(a) + log(b)`. So taking the log lets you add up one loss per example instead of multiplying, which is far easier to work with. The minus sign is only there because probabilities are at most 1, so their logs come out negative, and we flip the sign to get a positive number to drive downward.
-
-**Where it came from.** This is the maximum-likelihood idea: pick the weights that make the labels you actually saw in training as probable as possible. If you write that goal down for a linear classifier, the math that falls out *is* softmax loss. Again, derived from a goal, not invented.
 
 ## Why `exp` and not just absolute value, or squaring?
 
