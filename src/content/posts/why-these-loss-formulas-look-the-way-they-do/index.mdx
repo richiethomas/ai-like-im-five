@@ -89,7 +89,7 @@ loss = -log(probability_cat)
 
 **Why divide by the sum of all the `exp` values?** Dividing each positive number by their total forces the results to add up to 1, which is the defining property of a set of probabilities. That step just turns a handful of positive numbers into proportions.
 
-**Why `-log(probability of the correct label)`?** The penalty rises as the correct answer's probability falls.
+The last piece is the loss itself, `-log(probability of the correct label)`. The penalty rises as the correct answer's probability falls.
 
 When the probability of a correct guess is 1, that means `-log(1)` is 0, which means the penalty is zero. That's what we want: a penalty of zero for a "correct-guess" probability of 1.
 
