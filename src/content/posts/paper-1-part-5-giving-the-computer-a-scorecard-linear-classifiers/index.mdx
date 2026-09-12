@@ -66,7 +66,7 @@ Here's that process at a high level (Parts 6 and 7 explain each step in detail):
 1. Start with random weights
 2. Run the classifier on a training image
 3. Compute the score for each label
-4. Measure how wrong the scores were: not just whether the top score was the right label, but how far off the numbers were (Part 6 covers exactly how this is measured)
+4. Measure how wrong the scores were: not just whether the highest score belonged to the correct label, but how far the correct label's score was from where it should be, which is highest, ideally by a clear margin (Part 6 covers exactly how this is measured)
 5. Adjust the weights slightly so the correct label scores a little higher next time
 6. Repeat on the next training image
 7. After passing through all the training images many times, the weights settle into values that make fewer mistakes on the training data (though, as we'll see, a single linear template only goes so far)
