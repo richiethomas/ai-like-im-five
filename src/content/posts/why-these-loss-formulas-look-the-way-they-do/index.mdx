@@ -97,7 +97,7 @@ Conversely, as the probability of our guess drops toward 0, `-log(probability_of
 
 The expression has two parts, the `log` and the minus sign in front. Here's what each is for.
 
-**Why take the `log`?** To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). Maximizing a giant product is unwieldy, but `log` has a property that turns a product into a sum: `log(a × b) = log(a) + log(b)`. So taking the log lets you add up one loss per example instead of multiplying, which is far easier to work with.
+**Why take the `log`?** To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). But every probability is below 1, and multiplying thousands of them together shrinks the result so fast it underflows to zero on a computer, wiping out the information. `log` avoids this because it turns a product into a sum: `log(a × b) = log(a) + log(b)`. So instead of multiplying thousands of tiny probabilities, you add up one manageable number per example (`log(0.1)` is about -2.3, so a thousand of them sum to about -2,300, which a computer stores fine).
 
 **Why the minus sign?** Training makes the loss as small as possible, so a worse prediction needs to produce a bigger loss. `log(probability)` does the opposite. It's 0 for a perfect prediction and goes more and more negative as the correct label's probability shrinks:
 
