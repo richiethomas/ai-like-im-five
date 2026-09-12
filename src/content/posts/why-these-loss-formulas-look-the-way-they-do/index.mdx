@@ -1,0 +1,146 @@
+---
+title: "Why Do Hinge Loss and Softmax Look the Way They Do?"
+excerpt: "In Part 6 I took hinge loss and softmax as given. But why these formulas and not some other arbitrary ones? Why the max? Why the '+1'? Why raise e to a power instead of just taking absolute values? Here's what I found when I stopped and asked."
+category: "Fundamentals"
+date: 2023-09-10T12:00:00Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["loss functions", "hinge loss", "softmax"]
+---
+
+This is a side note to [Part 6](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/), not the next step in the series. You can skip it and go straight to Part 7 (gradient descent) without missing anything you need. It's here because when I first read Part 6, the two loss formulas bothered me.
+
+Here they are again. Hinge loss:
+
+```
+loss = max(0, 1 + S_wrong - S_correct)
+```
+
+And softmax loss:
+
+```
+probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
+
+loss = -log(probability_correct_label)
+```
+
+My problem was this: I could follow the arithmetic, but I had no idea where the formulas came from. Why the `max`? Why add `1`? Why raise `e` to a power instead of just taking an absolute value or squaring the score? Since I couldn't have arrived at any of it on my own, the whole thing felt arbitrary, like the formulas were pulled out of a hat.
+
+They aren't. Each one is built backward from a goal, and every piece does a specific job. Here's what each piece is for.
+
+## What any loss function has to do
+
+Before any specific formula, a loss has to satisfy three things:
+
+1. It's small (ideally zero) when the prediction is good.
+2. It grows when the prediction is bad.
+3. You can push it downward by nudging the weights.
+
+That third one is the requirement I kept forgetting. The entire point of a loss is to be made *smaller* by the training process (that's what Part 7 covers). So the formula has to respond to weight changes in a way that points toward better weights.
+
+Lots of formulas satisfy these three requirements. Hinge and softmax are two that satisfy them and also come from a clean starting idea. So they aren't the only possible choices. They're two well-worn options, each derived from a goal.
+
+## Hinge loss, one symbol at a time
+
+The goal behind hinge loss: **make the correct label's score beat the wrong label's score by a comfortable buffer.** Watch each symbol earn its place.
+
+**Why a difference (`S_wrong - S_correct`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
+
+**Why `max(0, ...)`?** This is the piece that gives hinge loss its name and its behavior. Suppose you dropped the `max` and just used `1 + S_wrong - S_correct`. Then a prediction that's already correct by a wide margin would produce a large negative loss, and the training process would keep trying to drive that margin even wider, pouring effort into examples that are already fine. The `max(0, ...)` says: "once you clear the required margin, your loss is exactly zero and I stop bothering you." It caps the demand at good-enough. That threshold, past which an example is satisfied and contributes nothing, is the whole idea.
+
+**Why the `1`?** That's the size of the buffer. Without it, the target would just be `S_correct > S_wrong`, meaning "correct by any tiny amount," even 0.0001. That's fragile: a speck of noise flips the answer. The `1` demands the correct score win by a margin, not barely.
+
+**But why 1 specifically, and not 3 or 0.5?** Because the scores have no fixed scale. The classifier can multiply all its weights up or down, which scales all its scores up or down, so it can make a margin of "1" mean whatever it needs. Pick any positive number and you get an equivalent classifier with rescaled weights. The `1` is just a convention that pins down the scale. Its exact value doesn't matter, because the weights adjust around it.
+
+So `max(0, 1 + S_wrong - S_correct)` reads, in full: "zero penalty if the correct score beats the wrong score by at least 1; otherwise the penalty grows in proportion to how far short you fell." Nothing in it is decoration.
+
+**Where it came from.** Hinge loss is the algebra of a family of models called Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning. The starting idea was geometric: separate the two classes with the *widest possible gap* between them. Hinge loss is just the penalty you write down when you say "charge me for anything sitting inside that gap." The margin idea came first; the formula is its consequence. So it wasn't guessed, it was derived.
+
+## Softmax loss, one symbol at a time
+
+Different goal: **treat the scores as evidence for a probability, then charge the model for however much probability it withheld from the correct answer.**
+
+**Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp` turns any number into a positive one. (More on why `exp` specifically, and not some other way of forcing positivity, in the next section, because that was the part that confused me most.)
+
+**Why divide by the sum of all the `exp` values?** Pure bookkeeping. Dividing each positive number by their total forces the results to add up to 1, which is the defining property of a set of probabilities. That step just turns a handful of positive numbers into proportions.
+
+**Why `-log(probability of the correct label)`?** Two jobs in one:
+
+- It has the right shape. Give the correct answer a probability of 1 and `-log(1) = 0`, no penalty. As the probability drops toward 0, `-log` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
+- The `log` is what makes it trainable. To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). Maximizing a giant product is unwieldy, but `log` has a property that turns a product into a sum: `log(a × b) = log(a) + log(b)`. So taking the log lets you add up one loss per example instead of multiplying, which is far easier to work with. The minus sign is only there because probabilities are at most 1, so their logs come out negative, and we flip the sign to get a positive number to drive downward.
+
+**Where it came from.** This is the maximum-likelihood idea: pick the weights that make the labels you actually saw in training as probable as possible. If you write that goal down for a linear classifier, the math that falls out *is* softmax loss. Again, derived from a goal, not invented.
+
+## Why `exp` and not just absolute value, or squaring?
+
+This was the question I got most stuck on. If all you want is to turn negative numbers positive, absolute value does that. `|-5| = 5`. And if you want bigger scores to count for more, squaring does that. `(-5)² = 25`. So why reach for `exp`, which needs a special constant and a power?
+
+The answer is that "make it positive" is too weak a description of what softmax needs. The real requirement is **positive *and* order-preserving, including across negative numbers.** A probability assignment has to keep the classifier's ranking intact: if the classifier scored cat higher than dog, then cat must come out with more probability than dog. Always.
+
+Test the candidates against that with real numbers. Say the scores are:
+
+```
+cat  =  3     # the correct label
+dog  = -5
+bird =  1
+```
+
+The classifier clearly likes cat most and dog least. Watch what each function does.
+
+**exp:**
+
+```
+exp(3) = 20.09,  exp(-5) = 0.0067,  exp(1) = 2.72     (sum = 22.82)
+
+P(cat)  = 20.09 / 22.82 = 0.880
+P(dog)  = 0.0067 / 22.82 = 0.0003
+P(bird) = 2.72 / 22.82 = 0.119
+```
+
+Sensible. Cat dominates, dog is almost zero.
+
+**absolute value:**
+
+```
+|3| = 3,  |-5| = 5,  |1| = 1     (sum = 9)
+
+P(cat)  = 3/9 = 0.333
+P(dog)  = 5/9 = 0.556
+P(bird) = 1/9 = 0.111
+```
+
+**Dog now has the highest probability**, even though the classifier scored it lowest. Absolute value threw away the sign, so the strongly-rejected class (score -5) became the strongly-preferred one. Broken.
+
+**squaring:**
+
+```
+3² = 9,  (-5)² = 25,  1² = 1     (sum = 35)
+
+P(cat)  = 9/35  = 0.257
+P(dog)  = 25/35 = 0.714
+P(bird) = 1/35  = 0.029
+```
+
+Same failure, worse. Dog wins again, because squaring also ignores the sign.
+
+Both absolute value and squaring are symmetric around zero: they treat +5 and -5 as the same. But in a classifier, +5 means "probably this class" and -5 means "probably not this class." Any function that maps those to the same output is unusable. `exp` is the natural function that always increases as its input increases, over every number including negative ones, so it never scrambles the ranking. That single fact rules out both alternatives.
+
+There's a second thing `exp` does that the others don't: it turns *differences* in score into *ratios* in probability. If cat scores 2 higher than dog, cat ends up about 7.4 times more probable (because `exp(2)` is about 7.4), no matter what the baseline scores are. A useful consequence is that adding the same amount to every score changes nothing, because the shift cancels out in the division. That matches the fact that only the gaps between scores carry meaning, not their absolute values.
+
+And the deepest reason, the one that makes `exp` not just "a" choice but "the" choice: softmax is built on treating the score as the *logarithm* of an unnormalized probability. If you accept that framing, then to recover the probability you have to undo the logarithm, and the function that undoes `log` is `exp`. It's forced, not chosen. Why would a score naturally be a log-probability? Because a linear classifier adds up weighted pixel contributions, and adding in log-space is the same as multiplying in probability-space, which is how independent pieces of evidence combine. So `exp` and `log` are the bridge between "add up scores" and "multiply probabilities."
+
+**One last footnote: why `e`, and not 2 or 10?** For correctness, any base bigger than 1 works. `2^score` or `10^score` would give a valid ranking too, because changing the base only rescales the scores by a fixed amount that the weights can absorb during training. So the requirement is really "an exponential function." `e` (about 2.718, a fixed constant the way π is) gets picked because it gives the cleanest math when you work out how the loss responds to weight changes. "Raise `e` to the power" is convention; "use an exponential" is the actual necessity.
+
+## The takeaway
+
+Neither formula is the one right answer. Each is the written-down form of a goal:
+
+- **Hinge loss** = "give me the widest buffer between the correct score and the wrong ones." The `max` caps the demand at good-enough; the `1` sets the buffer.
+- **Softmax loss** = "make the correct label as probable as possible." The `exp` turns scores into positive, correctly-ordered probability weights; the `log` turns a product of probabilities into a sum you can add up and minimize.
+
+People do invent other valid losses for other purposes. But once you know the goal each of these two starts from, the formulas stop looking arbitrary, and you can very nearly re-derive them yourself. That's the part I was missing.
+
+Back to the series: [Part 7 covers gradient descent](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/), the method that actually reads the loss and adjusts the weights to make it smaller.
