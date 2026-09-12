@@ -47,7 +47,7 @@ Lots of formulas satisfy these three requirements. Hinge and softmax are two tha
 
 The goal behind hinge loss: **make the correct label's score beat the wrong label's score by a comfortable buffer.** Here's what each part of the formula does.
 
-**Why a difference (`S_wrong - S_correct`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
+**Why a difference (`S_wrong - S_correct`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
 
 **Why `max(0, ...)`?** This is the piece that gives hinge loss its name and its behavior. Suppose you dropped the `max` and just used `1 + S_wrong - S_correct`. Then a prediction that's already correct by a wide margin would produce a large negative loss, and the training process would keep trying to drive that margin even wider, pouring effort into examples that are already fine. The `max(0, ...)` says: "once you clear the required margin, your loss is exactly zero and I stop bothering you." It caps the demand at good-enough. That threshold, past which an example is satisfied and contributes nothing, is the whole idea.
 
