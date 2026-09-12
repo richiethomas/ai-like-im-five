@@ -40,15 +40,15 @@ Machine learning has the exact same trap.
 
 ## The Split
 
-Here's what NOT to do: train your classifier on some images, then test it on the same images. If you build a classifier that's so powerful it simply memorizes every training image, it will get 100% accuracy on those images. Perfect score! You're a genius!
+Here's what NOT to do: train your classifier on some images, then test it on the same images. Even the nearest neighbor classifier from Part 3 gets 100% accuracy this way, because the closest image to any training image is itself. Perfect score! You're a genius!
 
 Except you've learned nothing. Your classifier would fail spectacularly on images it hasn't seen.
 
 Here's what TO do: split your data into three groups:
 
-**Training set** (typically 60-70% of your data): You show these images to your classifier while it's learning. It adjusts its internal settings, called weights, based on these examples. (There's a second kind of setting, called a hyperparameter, that you choose by hand rather than learn from the data, like how many neighbors nearest neighbor should check. Those get tuned on the validation set below, not the training set.)
+**Training set** (typically 60-70% of your data): the images your classifier learns from. Nearest neighbor simply memorizes them. The classifiers we'll build later adjust internal settings, called weights, to fit these examples. (Separately, some settings are chosen by hand rather than learned, like how many neighbors nearest neighbor should check. These are called hyperparameters, and they get tuned on the validation set below, not the training set.)
 
-**Validation set** (typically 15-20%): You don't touch these while training. But after you've built several classifiers, you test each one on this set to see which one is best. You use the validation set to make decisions: "Should I use this feature? Should I adjust this parameter?"
+**Validation set** (typically 15-20%): you don't train on these, but you do use them to make decisions. After building several classifiers (or one classifier with several hyperparameter settings), you check each on this set to see which does best: "Should I use this feature? How many neighbors should I check?"
 
 **Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
 
