@@ -52,13 +52,13 @@ A loss function measures not just whether the guess was right, but *how* right, 
 
 Here's one approach called **hinge loss**. It's the loss function used by Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning.
 
-For each scenario, take two numbers: the correct label's score (`S_correct`) and the highest wrong label's score (`S_wrong`). The loss is:
+For each scenario, take two numbers: the correct label's score (`S_correct`) and the highest wrong label's score (`S_wrong`). (Using just the single highest wrong score keeps this simple; some versions add up a penalty across every wrong label instead.) The loss is:
 
 ```
 loss = max(0, 1 + S_wrong - S_correct)
 ```
 
-Here's what that gives for the three scenarios above.
+Here `max(a, b)` just means "take the larger of the two." Here's what that gives for the three scenarios above.
 
 **Scenario B (confident and correct):** correct = cat = 100, highest wrong = dog = 1.
 
@@ -167,7 +167,7 @@ The numbers differ from hinge loss, but the ranking is the same: the confident c
 
 Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned weights. There's no universal "right" answer; it depends on your problem and your preference.
 
-Softmax has become more popular in deep learning for a couple of reasons: it outputs a full set of probabilities (one per label, all adding up to 1), and small changes to the weights produce small, smooth changes in the loss, which makes the weights easier to adjust a little at a time. (Hinge loss has this smoothness almost everywhere too, so smoothness alone isn't the whole story; the probability output is the bigger draw.) Hinge loss is still interpretable and useful in some contexts.
+Softmax has become more popular in deep learning for a couple of reasons. First, it outputs a full set of probabilities (one per label, all adding up to 1), which is often useful on its own. Second, softmax keeps giving a gentle learning signal even when a prediction is already correct, nudging the scores a little further apart, while hinge loss stops entirely once the correct label wins by the margin (that's the flat part of the graph above). A loss that keeps offering feedback is a little easier to train with. Hinge loss is still interpretable and useful in some contexts, such as traditional SVM classifiers.
 
 The main point isn't which one you choose; it's that you *need* a loss function to:
 
@@ -184,11 +184,11 @@ Here's the full loop:
 3. Adjust weights to reduce loss (next post: gradient descent)
 4. Repeat
 
-The loss function measures how wrong the classifier is. The next post covers gradient descent, which reads that loss to work out which direction to adjust the weights, and by how much.
+Gradient descent, in the next post, reads that loss to work out which direction to adjust each weight, and by how much.
 
 ## A side note, if you're curious
 
-I took both formulas as given above. If you're wondering where they actually come from, why the `max`, why the `+1`, why raise `e` to a power instead of just taking an absolute value, I wrote a separate side note that works through each piece: [Why Do Hinge Loss and Softmax Look the Way They Do?](/post/why-these-loss-formulas-look-the-way-they-do/) It's optional and not part of the main sequence, so you can skip straight to gradient descent below.
+I took both formulas as given above. If you're wondering where they actually come from, why the `max`, why the `+1`, why raise `e` to a power instead of just taking an absolute value, I wrote a separate side note that works through each piece: [Why Do Hinge Loss and Softmax Look the Way They Do?](/post/why-these-loss-formulas-look-the-way-they-do/) It's optional and not part of the main sequence, so you can skip straight to the next post.
 
 ## What's Next
 
