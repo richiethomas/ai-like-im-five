@@ -85,7 +85,9 @@ probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_
 loss = -log(probability_cat)
 ```
 
-**Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one. (More on why `exp` specifically, and not some other way of forcing positivity, in the next section.)
+**Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one.
+
+**Why not just take the absolute value, then?** Absolute value turns numbers positive too, but it treats +5 and -5 the same, so a label the classifier strongly rejected (a big negative score) would come out with a high probability, scrambling the ranking. `exp` always grows as its input grows, so it keeps the ranking intact. The section "Why `exp` and not just absolute value, or squaring?" further down works through the numbers.
 
 **Why divide by the sum of all the `exp` values?** Dividing each positive number by their total forces the results to add up to 1, which is the defining property of a set of probabilities. That step just turns a handful of positive numbers into proportions.
 
@@ -165,7 +167,11 @@ There's a second thing `exp` does that the others don't: it turns *differences* 
 
 And the deepest reason, the one that explains why it's `exp` and not something else: softmax is built on treating the score as the *logarithm* of an unnormalized probability. If you accept that framing, then to recover the probability you have to undo the logarithm, and the function that undoes `log` is `exp`. Within that framing it isn't a free choice; `exp` is the only thing that undoes the `log`. Why would a score behave like a log-probability? A linear classifier works by adding up weighted pixel values. Separately, the rule from probability is that when independent clues combine, you *multiply* their probabilities, not add them. Logarithms are the tool that connects those two: add two logarithms together and you have multiplied the original numbers. So a classifier that adds up scores is, in effect, multiplying probabilities without showing it, and `exp` and `log` are the translation between "add up scores" and "multiply probabilities."
 
-**One last footnote: why `e`, and not 2 or 10?** For correctness, any base bigger than 1 works. `2^score` or `10^score` would give a valid ranking too, because changing the base only rescales the scores by a fixed amount that the weights can absorb during training. So the requirement is really "an exponential function." `e` (about 2.718, a fixed constant the way π is) gets picked because the rate of change of `e^x` is just `e^x` itself, with no extra multiplier, which keeps the later formulas simpler. "Raise `e` to the power" is convention; "use an exponential" is the actual necessity.
+**One last footnote: why `e`, and not 2?** The digits of `e` (2.718...) look arbitrary, and 2 looks clean, so it's natural to think 2 would be the *less* arbitrary choice. It's the other way around. Any base bigger than 1 gives a valid ranking (`2^score` works fine; switching bases just rescales the scores by a fixed amount the weights absorb during training), so the requirement is only "an exponential." What makes `e` special is how it behaves, not how it's spelled.
+
+Training constantly measures how fast a quantity changes as you nudge a weight (its slope, covered in Part 7). `e^x` has a unique property: its slope at any point equals its own value, with nothing extra attached. `2^x` doesn't; its slope is `2^x` times a fixed but awkward factor (about 0.693) that then tags along through every later calculation. `e` is defined as exactly the base that makes that factor 1.
+
+So 2 buys you nice-looking digits but a messier slope, while `e` buys you ugly digits but the cleanest slope. Since the math cares about the slope and not about how pretty the constant looks, `e` wins. "Raise `e` to the power" is convention; "use an exponential" is the actual necessity.
 
 ## The takeaway
 
