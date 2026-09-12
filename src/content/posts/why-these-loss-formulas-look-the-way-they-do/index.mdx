@@ -93,7 +93,7 @@ loss = -log(probability_cat)
 
 When the probability of a correct guess is 1, that means `-log(1)` is 0, which means the penalty is zero. That's what we want: a penalty of zero for a "correct-guess" probability of 1.
 
-Conversely, as the probability of our guess drops toward 0, `-log(our_guess)` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
+Conversely, as the probability of our guess drops toward 0, `-log(probability_of_our_guess)` climbs toward infinity. So confidently correct costs nothing and confidently wrong costs a lot.
 
 The expression has two parts, the `log` and the minus sign in front. Here's what each is for.
 
