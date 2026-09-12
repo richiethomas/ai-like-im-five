@@ -87,9 +87,17 @@ Here is what this actually looks like. I trained a linear classifier on CIFAR-10
 
 None of these are sharp pictures, exactly as described above: each is a blurry average of thousands of training photos. But you can still make out real structure. "Ship" has blue along the bottom (water) and "airplane" has blue along the top (sky). "Frog" has a green blob in the middle. "Automobile" shows a reddish car-body shape. Look closely at "horse" and you can see what looks like a two-headed animal: the training set has horses facing both left and right, and a single template has to average them into one smear.
 
-But here's the limitation: a linear classifier uses just one set of weights per class, one weight for each pixel value, so it can only look for one pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't match all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
+But here's the limitation: a linear classifier uses just one set of weights per class, one weight for each pixel value, so it can only look for one pattern per class. A single dog template won't match every dog, and this is where the seven challenges from Part 2 come back. A dog seen from the side, a dog far away and tiny, a dog in shadow, a Chihuahua versus a Great Dane: each produces a different grid of numbers, and a single template, being the average of all of them, matches each one only poorly.
 
-That single-template limit is why a linear classifier tends to do better on simple, consistent images than on messy real-world ones, where the same object turns up in many poses, sizes, and lighting conditions.
+You might think: fine, just use more templates. One for "side view dog," one for "front view dog," one for "small dog," one for "dog in shadow." That does help, up to a point. But it runs into two walls.
+
+The first is a combinatorial explosion. You don't need one extra template per challenge; you need one for every *combination* of them: small-and-dark-and-side-view dog, large-and-bright-and-front-view dog, and so on across all seven axes at once. That is not seven or seventy templates, it is millions, and you would need enough labeled photos to learn each one.
+
+The second is that two of the challenges don't yield to more templates at all. Background clutter is different in every photo, so a template, which has one fixed value per pixel position, has no consistent background it can match. And a dog can be occluded (partly hidden) in endless ways, so there's no single "occluded dog" to memorize.
+
+That single-template limit is why a linear classifier tends to do better on simple, consistent images than on messy real-world ones.
+
+The fix the field actually adopted is not more whole-dog templates. It's to learn small, reusable pattern detectors, things like edges, textures, and parts, that combine to recognize a dog in any pose. A single "ear" detector helps no matter where the ear is. That idea is what neural networks (Part 9) and later convolutional networks (Part 12 onward) are built on, and it's where the rest of this series is headed.
 
 ## The Pieces Are Coming Together
 
