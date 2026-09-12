@@ -24,6 +24,8 @@ And softmax loss:
 ```
 probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
 
+# probability_correct_label is whichever of these is the right answer,
+# e.g. probability_cat when the correct label is "cat"
 loss = -log(probability_correct_label)
 ```
 
