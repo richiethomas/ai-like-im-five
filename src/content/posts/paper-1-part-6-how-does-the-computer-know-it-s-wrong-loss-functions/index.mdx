@@ -118,13 +118,19 @@ probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_
 
 This converts any scores into numbers between 0 and 1 that sum to 1 (like probabilities).
 
-Then the loss is: `loss = -log(probability_correct_label)`
+Then the loss is:
 
-If the correct label has probability 0.9, the loss is -log(0.9) ≈ 0.1 (small loss, good).
+```
+# log(x) is the reverse of exp: it undoes it, so log(exp(x)) = x.
+# The minus sign makes a low probability cost a lot and a high one cost little.
+#   -log(1)   = 0      (perfectly confident and correct: no loss)
+#   -log(0.9) = 0.1    (small loss, good)
+#   -log(0.1) = 2.3    (large loss, bad)
 
-If the correct label has probability 0.1, the loss is -log(0.1) ≈ 2.3 (large loss, bad).
+loss = -log(probability_correct_label)
+```
 
-The logarithm means: penalize low-probability predictions harshly, reward high-probability predictions gently.
+So the logarithm penalizes low-probability predictions harshly and rewards high-probability predictions gently.
 
 ## Which Loss Function Is Right?
 
