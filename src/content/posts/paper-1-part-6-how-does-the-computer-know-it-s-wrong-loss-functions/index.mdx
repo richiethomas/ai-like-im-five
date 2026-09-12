@@ -21,73 +21,71 @@ The answer is **loss functions**.
 
 A naive approach: a prediction is either right or wrong. Binary. You get 1 point or 0 points. This seems logical, and it's fine for reporting a final accuracy score, but it's too coarse to guide learning: it can only tell the computer whether it was right or wrong, not how to improve.
 
-Imagine two scenarios:
+Imagine three scenarios. In each, the correct label is "cat," and the classifier has produced a score for every label.
 
-**Scenario A:** The correct label is "cat" and the scores are:
+**Scenario A (a close call):**
 - cat: 10
-- dog: 9
+- dog: 9.5
 - bird: 8
 
-The classifier picks "cat" (correct), but it was close. Dog was nearly as high. This feels uncertain.
+The classifier picks "cat" (correct), but dog was nearly as high. This feels uncertain.
 
-**Scenario B:** The correct label is "cat" and the scores are:
+**Scenario B (a confident call):**
 - cat: 100
 - dog: 1
 - bird: 0.5
 
-The classifier picks "cat" (correct), and dog was far behind. This feels confident.
+The classifier picks "cat" (correct), and the others are far behind. This feels confident.
 
-Both get full credit if you only count right/wrong, but Scenario B is objectively better. The classifier was more sure.
+**Scenario C (a mistake):**
+- cat: 3
+- dog: 10
+- bird: 1
 
-A loss function measures not just whether the guess was right, but *how right*. If you got it wrong, how badly? If you got it right, how confident were you?
+The classifier picks "dog" (wrong). Cat, the correct answer, scored well below it.
+
+If you only count right or wrong, A and B both score 1 (correct) and C scores 0 (wrong). That misses two things: it can't tell the confident B apart from the shaky A, and it can't say whether C was a near miss or a wild miss.
+
+A loss function measures not just whether the guess was right, but *how* right, or *how* wrong. We'll compute two common loss functions, hinge loss and softmax loss, on these same three scenarios.
 
 ## Hinge Loss
 
 Here's one approach called **hinge loss**. It's the loss function used by Support Vector Machines (SVMs), a traditional type of classifier that predates deep learning.
 
-If the correct label has score `S_correct` and the highest wrong label has score `S_wrong`, the loss is:
+For each scenario, take two numbers: the correct label's score (`S_correct`) and the highest wrong label's score (`S_wrong`). The loss is:
 
 ```
 loss = max(0, 1 + S_wrong - S_correct)
 ```
 
-Let's walk through this:
+Here's what that gives for the three scenarios above.
 
-**If you're confident and correct:**
-
-```
-S_correct = 10    # the correct label's score
-S_wrong = -5      # the highest-scoring wrong label
-
-loss = max(0, 1 + (-5) - 10)
-     = max(0, -14) = 0
-```
-
-You pay no penalty.
-
-**If you're correct but not by enough:**
+**Scenario B (confident and correct):** correct = cat = 100, highest wrong = dog = 1.
 
 ```
-S_correct = 10
-S_wrong = 9.5
+loss = max(0, 1 + 1 - 100)
+     = max(0, -98) = 0
+```
 
+No penalty. Cat beat every other label by far more than the margin of 1, so the `max` clips the negative result up to zero.
+
+**Scenario A (correct, but not by enough):** correct = cat = 10, highest wrong = dog = 9.5.
+
+```
 loss = max(0, 1 + 9.5 - 10)
      = max(0, 0.5) = 0.5
 ```
 
-You pay a small penalty of 0.5. You were correct, but the correct score beat the wrong score by only 0.5, less than the margin of 1 that hinge loss demands, so it still nudges you to separate them further.
+A small penalty. Cat won, but by only 0.5, less than the margin of 1 that hinge loss demands, so it still nudges the scores further apart.
 
-**If you got it wrong:**
+**Scenario C (wrong):** correct = cat = 3, highest wrong = dog = 10.
 
 ```
-S_correct = 5
-S_wrong = 10
-
-loss = max(0, 1 + 10 - 5)
-     = max(0, 6) = 6
+loss = max(0, 1 + 10 - 3)
+     = max(0, 8) = 8
 ```
 
-You pay a penalty of 6. The more confidently wrong you were, the higher the penalty.
+A big penalty. Dog beat cat by 7, and the further the correct label falls behind, the bigger the penalty.
 
 The formula is saying: "I want the correct label's score to be higher than the wrong label's score, by at least a margin of 1. If it's not, penalize me."
 
@@ -131,6 +129,39 @@ loss = -log(probability_correct_label)
 ```
 
 So the logarithm penalizes low-probability predictions harshly and rewards high-probability predictions gently.
+
+Now run the same three scenarios through it.
+
+**Scenario B (confident):** cat = 100, dog = 1, bird = 0.5. `exp(100)` is astronomically larger than the other two, so nearly all the probability lands on cat:
+
+```
+P(cat) ≈ 1.00
+loss = -log(1.00) ≈ 0
+```
+
+**Scenario A (close):** cat = 10, dog = 9.5, bird = 8.
+
+```
+exp(10) = 22026,  exp(9.5) = 13360,  exp(8) = 2981   (sum = 38367)
+
+P(cat) = 22026 / 38367 = 0.57
+loss = -log(0.57) = 0.56
+```
+
+Cat wins, but because dog is close, cat gets only 57% of the probability, so there's a real penalty.
+
+**Scenario C (wrong):** cat = 3, dog = 10, bird = 1.
+
+```
+exp(3) = 20,  exp(10) = 22026,  exp(1) = 2.7   (sum = 22049)
+
+P(cat) = 20 / 22049 = 0.0009
+loss = -log(0.0009) = 7.0
+```
+
+Cat gets almost none of the probability, so the loss is large.
+
+The numbers differ from hinge loss, but the ranking is the same: the confident call pays about nothing, the close call pays a little, the mistake pays a lot.
 
 ## Which Loss Function Is Right?
 
