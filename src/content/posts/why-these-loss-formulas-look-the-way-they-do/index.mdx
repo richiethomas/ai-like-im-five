@@ -89,7 +89,7 @@ Different goal: **turn the scores into a probability for each label, then penali
 
 **Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one. (More on why `exp` specifically, and not some other way of forcing positivity, in the next section.)
 
-**Why divide by the sum of all the `exp` values?** Pure bookkeeping. Dividing each positive number by their total forces the results to add up to 1, which is the defining property of a set of probabilities. That step just turns a handful of positive numbers into proportions.
+**Why divide by the sum of all the `exp` values?** Dividing each positive number by their total forces the results to add up to 1, which is the defining property of a set of probabilities. That step just turns a handful of positive numbers into proportions.
 
 **Why `-log(probability of the correct label)`?** Two jobs in one:
 
