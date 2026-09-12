@@ -51,7 +51,7 @@ score_cat = w1*pixel1 + w2*pixel2 + ... + w3072*pixel3072 + bias_cat
 
 Where `w1, w2, ..., w3072` are the learned weights and `bias_cat` is a constant bonus/penalty for the "cat" label.
 
-Each weight is a number that says how strongly one pixel pushes the score toward "cat": a large positive weight means "this pixel being bright is evidence for cat," a negative weight means "this pixel being bright is evidence against cat."
+Each weight scales one number in the image (say, the red value at one spot): a large positive weight means a high value there pushes the score toward "cat," a negative weight pushes it away from "cat."
 
 (The bias is like a tiebreaker: even if the image has no distinctive features, you might favor "cat" if you've seen more cat images in training.)
 
@@ -59,9 +59,9 @@ The same computation happens for "dog" with different weights. Whichever score i
 
 ## The Key Insight: Weights Are Learnable
 
-The trick is that the weights aren't hand-coded. The computer *learns* them from the training data. By "learns" I mean it starts from random numbers and repeatedly nudges them based on its mistakes, slowly improving.
+The key difference is that these weights aren't set by hand: the computer learns them from the training data. By "learns" I mean it starts from random numbers and repeatedly adjusts them slightly based on its mistakes, improving over time.
 
-Here's that process at a high level (Parts 6 and 7 unpack it):
+Here's that process at a high level (Parts 6 and 7 explain each step in detail):
 
 1. Start with random weights
 2. Run the classifier on a training image
@@ -69,7 +69,7 @@ Here's that process at a high level (Parts 6 and 7 unpack it):
 4. Measure how wrong the scores were: not just whether the top score was the right label, but how far off the numbers were (Part 6 covers exactly how this is measured)
 5. Adjust the weights slightly so the correct label scores a little higher next time
 6. Repeat on the next training image
-7. After passing through all the training images many times, the weights settle into values that score most images correctly
+7. After passing through all the training images many times, the weights settle into values that make fewer mistakes on the training data (though, as we'll see, a single linear template only goes so far)
 
 This is fundamentally different from nearest neighbor, which doesn't adjust any settings during training. Nearest neighbor stores the training images as-is and compares each new image against all of them.
 
@@ -81,7 +81,7 @@ The "dog" weights tend to form a smudgy dog-like shape: areas of positive weight
 
 So the classifier has learned a single template per class. The weights roughly say: "how much does this image, pixel for pixel, resemble the average dog?" and the same for cat.
 
-But here's the limitation: linear classifiers can only look for one pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't catch all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
+But here's the limitation: because each class gets just one weighted template, a linear classifier can't hold more than one visual pattern per class. A dog can appear in many orientations, sizes, and poses. A single dog-shaped template won't match all of them. You'd need a separate template for "side view dog" and "front view dog" and "sitting dog," etc.
 
 That single-template limit is why a linear classifier does far better on simple, consistent images than on messy real-world ones, where the same object turns up in many poses, sizes, and lighting conditions.
 
