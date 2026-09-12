@@ -24,9 +24,8 @@ And softmax loss:
 ```
 probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
 
-# probability_correct_label is whichever of these is the right answer,
-# e.g. probability_cat when the correct label is "cat"
-loss = -log(probability_correct_label)
+# cat is the correct label in this example, so the loss uses probability_cat
+loss = -log(probability_cat)
 ```
 
 Part 6 never says where the formulas came from. Why the `max`? Why add `1`? Why raise `e` to a power instead of just taking an absolute value or squaring the score? Without those answers, the formulas can look like they were pulled out of a hat.
