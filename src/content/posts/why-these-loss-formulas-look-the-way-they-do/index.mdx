@@ -41,9 +41,9 @@ Here's what each part does.
 
 **Why a difference (`wrong_score - correct_score`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
 
-**Why `wrong_score - correct_score` and not `correct_score - wrong_score`?** Because a loss has to get bigger when the prediction gets worse, and only one of the two orderings does that. `wrong_score - correct_score` is positive exactly when a wrong label beats the correct one, which is the bad case, so it works as a penalty: large and positive when things are bad, zero or negative when they're fine.
+**Why `wrong_score - correct_score` and not `correct_score - wrong_score`?** Because a loss has to get bigger when the prediction gets worse, and `wrong_score - correct_score` does exactly that, while `correct_score - wrong_score` decreases instead. `wrong_score - correct_score` is positive exactly when a wrong label beats the correct one, which is the bad case, so it works as a penalty: large and positive when things are bad, zero or negative when they're fine.
 
-The reverse, `correct_score - wrong_score`, is large when things are good, since it measures how far the correct label is *ahead*. That quantity has a name, the margin, and it's the natural thing to plot on a graph, but it's the wrong sign to hand to a penalty. The formula flips it back anyway: `1 + wrong_score - correct_score` is the same as `1 - (correct_score - wrong_score)`, or `1 - margin`. The two orderings are just negatives of each other, and hinge loss uses the one that already grows in the bad direction.
+The reverse, `correct_score - wrong_score`, is large when things are good, since it measures how far the correct label is *ahead*. That quantity has a name, the margin, and it's the natural thing to plot on a graph showing how confidently correct or wrong a prediction is, but it's the wrong sign to hand to a penalty. The formula flips it back anyway: `1 + wrong_score - correct_score` is the same as `1 - (correct_score - wrong_score)`, or `1 - margin`. The two orderings are just negatives of each other, and hinge loss uses the one that already grows in the bad direction.
 
 Scenario C from Part 6 (a wrong guess, cat = 3, dog = 10) shows why the sign matters:
 
@@ -76,7 +76,7 @@ So `max(0, 1 + wrong_score - correct_score)` reads, in full: "zero penalty if th
 
 ## Softmax loss, one symbol at a time
 
-Different goal: **turn the scores into a probability for each label, then penalize the model by how little probability it assigned to the correct label.** The less probability on the correct label, the bigger the penalty.
+Different goal: **turn the scores into a probability for each label. Then penalize the model by how little probability it assigned to the correct label.** The less probability on the correct label, the bigger the penalty.
 
 ```
 probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_bird))
@@ -140,7 +140,7 @@ dog  = -5
 bird =  1
 ```
 
-The classifier clearly likes cat most and dog least. Watch what each function does.
+The classifier clearly likes cat most and dog least.
 
 **exp:**
 
@@ -152,7 +152,9 @@ P(dog)  = 0.0067 / 22.82 = 0.0003
 P(bird) = 2.72 / 22.82 = 0.119
 ```
 
-Sensible. Cat dominates, dog is almost zero.
+Cat keeps the highest probability and dog the lowest, matching the score ranking.
+
+The next two aren't used in any real classifier; they're here only to show why keeping the ranking matters when scores can be negative.
 
 **absolute value:**
 
@@ -182,7 +184,7 @@ Both absolute value and squaring are symmetric around zero: they treat +5 and -5
 
 **`exp` turns score gaps into probability ratios.** If cat scores 2 higher than dog, cat ends up about 7.4 times more probable (because `exp(2)` is about 7.4), no matter what the baseline scores are. A useful consequence is that adding the same amount to every score changes nothing, because the shift cancels out in the division. That matches the fact that only the gaps between scores carry meaning, not their absolute values.
 
-**The deepest reason: adding scores is the same as multiplying probabilities.** This is the part that makes `exp` the natural choice, not just any positive-making function. It comes down to a mismatch between how the classifier builds a score and how probabilities combine.
+**The structural reason: adding scores is the same as multiplying probabilities.** This is the part that makes `exp` the natural choice, not just any positive-making function. It comes down to a mismatch between how the classifier builds a score and how probabilities combine.
 
 A linear classifier builds each score by **adding**: it adds up a weighted amount from every pixel. Adding is its whole operation.
 
