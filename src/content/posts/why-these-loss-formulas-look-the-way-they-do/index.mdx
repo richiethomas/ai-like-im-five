@@ -99,7 +99,24 @@ Conversely, as the probability of our guess drops toward 0, `-log(probability_of
 
 The expression has two parts, the `log` and the minus sign in front. Here's what each is for.
 
-**Why take the `log`?** To do well across many examples, you want the *product* of all their correct-answer probabilities to be high (probabilities of independent events multiply together). But every probability is below 1, and multiplying thousands of them together shrinks the result so fast it underflows to zero on a computer, wiping out the information. `log` avoids this because it turns a product into a sum: `log(a × b) = log(a) + log(b)`. So instead of multiplying thousands of tiny probabilities, you add up one manageable number per example (`log(0.1)` is about -2.3, so a thousand of them sum to about -2,300, which a computer stores fine).
+**Why take the `log`?** A single guess gives one probability for the correct label, and `-log` of it is one number. The reason for the `log` shows up only when training combines many guesses across the whole training set.
+
+To fit the whole set, you want the model to get image 1 right *and* image 2 right *and* so on, and probabilities of independent events multiply. So the quantity you want to be high is the product of every guess's correct-label probability. Say the model gives the correct label a probability of 0.7 on one image and 0.2 on another:
+
+```
+product of both = 0.7 × 0.2 = 0.14
+
+loss on image 1 = -log(0.7) = 0.357
+loss on image 2 = -log(0.2) = 1.609
+total loss      = 0.357 + 1.609 = 1.966
+```
+
+That total, 1.966, is exactly `-log(0.14)`, the log of the product, because `log(a × b) = log(a) + log(b)`. So adding the per-guess losses gives the same answer as taking the log of the whole product. That equivalence is the whole point of the `log`:
+
+- Without it, combining guesses means multiplying their probabilities, and multiplying thousands of numbers below 1 underflows to zero on a computer, wiping out the information.
+- With it, combining guesses means adding one number per guess, which stays a normal, representable number (a thousand values around 2.3 sum to about 2,300, which a computer stores fine).
+
+So the `log` lives inside a single guess's loss, but its payoff is that summing those losses over many guesses stands in for the product across all of them.
 
 **Why the minus sign?** Training makes the loss as small as possible, so a worse prediction needs to produce a bigger loss. `log(probability)` does the opposite. It's 0 for a perfect prediction and goes more and more negative as the correct label's probability shrinks:
 
