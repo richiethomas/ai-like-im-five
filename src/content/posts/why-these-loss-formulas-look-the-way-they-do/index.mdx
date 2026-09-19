@@ -85,7 +85,7 @@ probability_cat = exp(score_cat) / (exp(score_cat) + exp(score_dog) + exp(score_
 loss = -log(probability_cat)
 ```
 
-**Why exponentiate (`exp(score)`)?** Scores can be any number, negative or positive, but probabilities can't be negative. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one.
+**Why exponentiate (`exp(score)`)?** A natural way to turn a set of numbers into probabilities is to divide each by the total, the way the chance of drawing a red ball from a bucket is (red balls) / (all balls). That's the divide step below, and it works for ball counts because counts are never negative. Scores can be negative, though, and dividing them directly breaks: with cat = 10, dog = -5, bird = 1 (sum 6), you'd get cat = 1.67 (above 1) and dog = -0.83 (negative), which aren't probabilities. So the scores have to be made positive first. `exp(x)` means the fixed number `e` (about 2.718, a constant the way π is about 3.14159) raised to the power `x`, and it turns any number into a positive one while keeping the ranking. Then dividing by the total works.
 
 **Why not just take the absolute value, then?** Absolute value turns numbers positive too, but it treats +5 and -5 the same, so a label the classifier strongly rejected (a big negative score) would come out with a high probability, scrambling the ranking. `exp` always grows as its input grows, so it keeps the ranking intact. The section "Why `exp` and not just absolute value, or squaring?" further down works through the numbers.
 
