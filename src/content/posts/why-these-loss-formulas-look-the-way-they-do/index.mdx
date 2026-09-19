@@ -39,6 +39,8 @@ loss = max(0, 1 + wrong_score - correct_score)
 
 Here's what each part does.
 
+(With more than two labels, like the cat/dog/bird examples below, `wrong_score` is the highest-scoring wrong label. Some versions instead sum a penalty over every wrong label; using just the single highest keeps this simple.)
+
 **Why a difference (`wrong_score - correct_score`) instead of the raw scores?** Because the absolute size of the scores is meaningless; only the gap between them matters. A classifier scoring cat = 1000, dog = 999 is barely better than a coin flip. One scoring cat = 5, dog = -5 is more confident. What separates them is the gap, so the loss depends on the gap, not the raw numbers.
 
 **Why `wrong_score - correct_score` and not `correct_score - wrong_score`?** Because a loss has to get bigger when the prediction gets worse, and `wrong_score - correct_score` does exactly that, while `correct_score - wrong_score` decreases instead. `wrong_score - correct_score` is positive exactly when a wrong label beats the correct one, which is the bad case, so it works as a penalty: large and positive when things are bad, zero or negative when they're fine.
@@ -116,7 +118,7 @@ That total, 1.966, is exactly `-log(0.14)`, the log of the product, because `log
 - Without it, combining guesses means multiplying their probabilities, and multiplying thousands of numbers below 1 underflows to zero on a computer, wiping out the information.
 - With it, combining guesses means adding one number per guess, which stays a normal, representable number (a thousand values around 2.3 sum to about 2,300, which a computer stores fine).
 
-So the `log` lives inside a single guess's loss, but its payoff is that summing those losses over many guesses stands in for the product across all of them.
+So the `log` is computed per guess, but adding those per-guess losses is the same as taking the log of all the raw probabilities multiplied together.
 
 **Why the minus sign?** Training makes the loss as small as possible, so a worse prediction needs to produce a bigger loss. `log(probability)` does the opposite. It's 0 for a perfect prediction and goes more and more negative as the correct label's probability shrinks:
 
