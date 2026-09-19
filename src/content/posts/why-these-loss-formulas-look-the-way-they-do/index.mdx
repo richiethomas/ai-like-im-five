@@ -184,9 +184,15 @@ Both absolute value and squaring are symmetric around zero: they treat +5 and -5
 
 `exp` turns *differences* in score into *ratios* in probability: if cat scores 2 higher than dog, cat ends up about 7.4 times more probable (because `exp(2)` is about 7.4), no matter what the baseline scores are. A useful consequence is that adding the same amount to every score changes nothing, because the shift cancels out in the division. That matches the fact that only the gaps between scores carry meaning, not their absolute values.
 
-### The deepest reason: the score is a log-probability
+### The deepest reason: adding scores is the same as multiplying probabilities
 
-Softmax is built on treating the score as the *logarithm* of an unnormalized probability. If you accept that framing, then to recover the probability you have to undo the logarithm, and the function that undoes `log` is `exp`. Within that framing it isn't a free choice; `exp` is the only thing that undoes the `log`. Why would a score behave like a log-probability? A linear classifier works by adding up weighted pixel values. Separately, the rule from probability is that when independent clues combine, you *multiply* their probabilities, not add them. Logarithms are the tool that connects those two: add two logarithms together and you have multiplied the original numbers. So a classifier that adds up scores is, in effect, multiplying probabilities without showing it, and `exp` and `log` are the translation between "add up scores" and "multiply probabilities."
+This is the part that makes `exp` the natural choice, not just any positive-making function. It comes down to a mismatch between how the classifier builds a score and how probabilities combine.
+
+A linear classifier builds each score by **adding**: it adds up a weighted amount from every pixel. Adding is its whole operation.
+
+Probabilities combine by **multiplying**. If one thing has a 1-in-2 chance, and a separate, independent thing also has a 1-in-2 chance, the chance of both happening is 1/2 × 1/2 = 1/4. You multiply the chances, you don't add them.
+
+So the classifier speaks in adding and probability speaks in multiplying, and `exp` and `log` are the translators between the two. They can be, because of one fact: adding the logs of two numbers gives the same answer as multiplying the numbers themselves, and `exp` reverses `log`. Since the score was built by adding, `exp` is exactly the tool that turns it back into the multiplying world of probabilities. Any other positive-making function (like absolute value) would break that match. `exp` is the one that fits how the score was made.
 
 **One last footnote: why `e`, and not 2?** The digits of `e` (2.718...) look arbitrary, and 2 looks clean, so it's natural to think 2 would be the *less* arbitrary choice. It's the other way around. Any base bigger than 1 gives a valid ranking (`2^score` works fine; switching bases just rescales the scores by a fixed amount the weights absorb during training), so the requirement is only "an exponential." What makes `e` special is how it behaves, not how it's spelled.
 
