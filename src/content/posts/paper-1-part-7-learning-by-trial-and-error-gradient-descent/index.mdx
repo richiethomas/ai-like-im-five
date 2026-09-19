@@ -15,17 +15,17 @@ We have a loss function that measures how wrong we are. We want to make that num
 
 How?
 
-**Gradient descent** is the algorithm that adjusts the weights to reduce loss. It's simple and powerful, and it's the foundation for training almost every machine learning model.
+**Gradient descent** is the algorithm that adjusts the weights to reduce loss. It's the optimizer behind most neural networks, including the ones in this series, though other kinds of machine learning models (like decision trees) are trained in different ways.
 
 ## The Downhill Metaphor
 
-Imagine you're on a foggy mountain. You can't see the valley, but you can feel the slope of the ground beneath your feet.
+Imagine you're on a foggy mountain. You can't see the valley, but you can feel the slope of the ground beneath your feet. Unlike a real mountain, this landscape can have many separate valleys, and you only ever feel the slope right under your feet, not the whole terrain.
 
 Your goal: reach the lowest point.
 
 Strategy: repeatedly take a step downhill. Feel the slope, step in the direction that goes down, repeat.
 
-Eventually, you'll reach the bottom.
+If all goes well, each step takes you a little lower, and eventually you settle into a valley, though maybe not the lowest one on the whole mountain.
 
 That's gradient descent.
 
@@ -33,35 +33,35 @@ Replace "mountain slope" with "loss function" and "step downhill" with "adjust w
 
 ## How It Works: The Gradient
 
-In mathematics, the **gradient** of a function tells you the slope at any point. It points in the direction of steepest increase.
+In mathematics, the **gradient** of a function is the collection of its slopes, one for each input, and together they point in the direction of steepest increase.
 
 If you want to go downhill, you go in the *opposite* direction of the gradient.
 
-For a loss function with thousands of weights, you compute the gradient with respect to each weight. This tells you: "If I increase weight #1 slightly, does the loss go up or down? By how much?"
+For a loss function with thousands of weights, you compute one slope for each weight, the loss's *partial derivative* with respect to that weight. All these slopes together make up the gradient. Each one tells you: "If I increase this weight slightly, does the loss go up or down? By how much?"
 
 Then you adjust each weight a tiny bit in the direction that reduces loss.
 
-Repeat this thousands of times, and the weights gradually improve.
+Repeat this thousands of times, and the weights gradually improve, as long as each step is the right size.
 
 ## Learning Rate: Step Size
 
 There's a critical parameter: how much should you adjust each weight?
 
-If you take huge steps, you might overshoot the valley and end up on the other side of the mountain, even higher than before.
+If you take huge steps, you might overshoot the valley and end up on the other side, higher than before. In loss terms, the loss goes up instead of down: the new weights are worse than the old ones.
 
 If you take tiny steps, you're safe but it takes forever to reach the bottom.
 
-The **learning rate** is the step size. It's something you have to choose by trial and error.
+The **learning rate** is the step size. You don't guess it blindly; people usually start from common defaults like 0.01 or 0.001 and adjust from there.
 
 ```
 new_weight = old_weight - learning_rate * gradient
 ```
 
-If the learning rate is too high, training is unstable and the loss bounces around.
+If the learning rate is too high, training is unstable: the loss bounces around, and in the worst case it grows without bound instead of settling, a failure called divergence.
 
 If the learning rate is too low, training is slow but stable.
 
-This is one of the first hyperparameters you tune when training a model.
+In most practical guides, the learning rate is one of the first hyperparameters (settings you pick before training, unlike the weights the model learns on its own) that people tune.
 
 ## A Concrete Example
 
@@ -100,20 +100,20 @@ The loss is decreasing: 25 → 16 → 10.24. We're moving downhill. After many i
 
 ## Why This Works
 
-Gradient descent works because:
+Training a model comes down to a search for the weight values that make the loss as small as possible. Gradient descent is the search strategy, and it works because:
 
 1. **Local information guides global movement:** You don't need to see the whole valley. Just look at the slope beneath your feet.
 
-2. **Repeated small steps add up:** Even if each step is small, thousands of steps cover large distances.
+2. **Repeated small steps add up:** Even if each step is small, thousands of steps can cover a lot of ground, though how fast you get there depends on the learning rate and the shape of the loss.
 
-3. **Automatic feedback:** The loss number automatically tells you if you're improving or getting worse.
+3. **Automatic feedback:** The loss number tells you how wrong you currently are, though it can rise or wobble temporarily even when training is improving overall.
 
 4. **Generalizes to thousands of weights:** The same algorithm works whether you have 1 weight or 1 million weights.
 
-The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might get stuck in a valley when a deeper valley exists elsewhere. This is a real problem in deep learning, but it turns out local minima are often good enough in practice.
+The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might settle into a valley when a deeper valley exists elsewhere. This is a known problem in deep learning, but in large networks with many weights, most local minima tend to have similarly low loss, so the valley you land in is usually good enough, and finding the single deepest one isn't necessary.
 
 ## What's Next
 
 Gradient descent adjusts weights by computing the gradient. But how do you compute the gradient for a complex function with thousands of weights?
 
-That's **backpropagation**: a clever algorithm that efficiently computes gradients by working backwards through the function. It's the next post, and it's the workhorse of deep learning.
+That's **backpropagation**: an algorithm that computes gradients efficiently by working backwards through the function, using the chain rule from calculus to get every weight's slope in a single pass. It's the next post.
