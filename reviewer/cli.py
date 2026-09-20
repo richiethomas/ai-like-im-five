@@ -24,10 +24,21 @@ def main(argv: list[str] | None = None) -> int:
                         help=f"USD budget for the run (default {BUDGET_USD})")
     parser.add_argument("--out-dir", default=None,
                         help="artifact directory (default review-runs/<article-slug>)")
+    parser.add_argument("--experiments", action="store_true",
+                        help="instead of a review, generate try-it-yourself "
+                             "experiment ideas (roundtable propose/merge/score)")
     args = parser.parse_args(argv)
 
     # Keys come from repo-root .env; shell env still wins if already set.
     load_dotenv(Path(__file__).parent.parent / ".env")
+
+    if args.experiments:
+        from .experiments import main as experiments_main
+        cli_args = [args.article]
+        if args.out_dir:
+            cli_args += ["--out-dir", args.out_dir]
+        cli_args += ["--budget", str(args.budget)]
+        return experiments_main(cli_args)
 
     result = run_review(args.article, out_dir=args.out_dir,
                         budget_usd=args.budget)
