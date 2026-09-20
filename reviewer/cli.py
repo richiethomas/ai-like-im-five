@@ -27,6 +27,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--experiments", action="store_true",
                         help="instead of a review, generate try-it-yourself "
                              "experiment ideas (roundtable propose/merge/score)")
+    parser.add_argument("--metaphors", action="store_true",
+                        help="instead of a review, propose metaphors for the "
+                             "article's abstract concepts (roundtable "
+                             "propose/merge/score)")
+    parser.add_argument("--min-score", type=float, default=None,
+                        help="with --metaphors: surface metaphors scoring this "
+                             "or higher, out of 15")
     args = parser.parse_args(argv)
 
     # Keys come from repo-root .env; shell env still wins if already set.
@@ -39,6 +46,16 @@ def main(argv: list[str] | None = None) -> int:
             cli_args += ["--out-dir", args.out_dir]
         cli_args += ["--budget", str(args.budget)]
         return experiments_main(cli_args)
+
+    if args.metaphors:
+        from .metaphors import main as metaphors_main
+        cli_args = [args.article]
+        if args.out_dir:
+            cli_args += ["--out-dir", args.out_dir]
+        cli_args += ["--budget", str(args.budget)]
+        if args.min_score is not None:
+            cli_args += ["--min-score", str(args.min_score)]
+        return metaphors_main(cli_args)
 
     result = run_review(args.article, out_dir=args.out_dir,
                         budget_usd=args.budget)
