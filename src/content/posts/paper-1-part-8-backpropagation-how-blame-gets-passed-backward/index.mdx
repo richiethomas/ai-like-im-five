@@ -21,7 +21,15 @@ loss = (w - 5)² + (z + 2)⁴ - (a + 6)⁵
 
 Each weight sits in its own separate term. The slope for `w` is just `2(w - 5)`, from the first term; the slope for `z` is `4(z + 2)³`, from the second. Every weight is independent, and computing all their slopes is quick. If a network's loss looked like this, we wouldn't need anything clever.
 
-But a network's loss isn't a tidy sum like that. Its weights are all tangled together: nudge one weight early on, and its effect passes through every layer after it before reaching the loss. You can't read each weight's slope off its own little term, because it doesn't have one.
+But a network's loss isn't a tidy sum like that. Its weights are all tangled together: nudge one weight early on, and its effect passes through every layer after it before reaching the loss.
+
+Picture a short chain, where the input is multiplied by one weight, then that result by the next weight, then that by the next. Starting from an input of 2:
+
+```
+2  →  ×3  →  6  →  ×4  →  24  →  ×5  →  120
+```
+
+Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, which turns the 24 into 24.8, which turns the final 120 into 124. That one small change moved the final answer, because everything downstream depended on it. You can't read each weight's slope off its own little term, because it doesn't have one.
 
 You can still work out every slope with calculus. The catch is that doing it one weight at a time repeats a huge amount of the same work, since all those weights share the same path forward to the loss. For a network with millions of weights, that's hopeless.
 
