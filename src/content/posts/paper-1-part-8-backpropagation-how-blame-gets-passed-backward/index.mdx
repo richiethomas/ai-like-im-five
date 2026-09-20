@@ -182,14 +182,14 @@ But our classifier is still a single weighted sum, and that has a hard limit. Pi
 
 The easiest case is when the two groups are cleanly split: all the cats over here, all the dogs over there. Then a single straight line does the job, and a weighted sum can draw that straight line.
 
-![A graph with dog points clustered in the lower left and cat points clustered in the upper right, cleanly separated by a single straight diagonal line.](/experiments/decision-boundary/clean-split.svg)
+<img src="/experiments/decision-boundary/clean-split.svg" alt="A graph with dog points clustered in the lower left and cat points clustered in the upper right, cleanly separated by a single straight diagonal line." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "340px" }} />
 
 Real data is messier. Here the dogs cluster in the middle and the cats surround them, and no straight line can separate the two: wherever you draw it, some dogs or some cats end up on the wrong side.
 
-![A straight line across a graph of dog points clustered in the center with cat points surrounding them; the line leaves cats on both sides and cannot separate the two groups.](/experiments/decision-boundary/straight-line.svg)
+<img src="/experiments/decision-boundary/straight-line.svg" alt="A straight line across a graph of dog points clustered in the center with cat points surrounding them; the line leaves cats on both sides and cannot separate the two groups." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "340px" }} />
 
 Which is why we need a curve, not a straight line. A curved boundary can wrap around the dog cluster, putting every dog on the inside and every cat on the outside.
 
-![The same graph, now with a curved circular boundary that encloses all the dog points and leaves all the cat points outside.](/experiments/decision-boundary/curved-boundary.svg)
+<img src="/experiments/decision-boundary/curved-boundary.svg" alt="The same graph, now with a curved circular boundary that encloses all the dog points and leaves all the cat points outside." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "340px" }} />
 
 But a plain weighted sum can only ever draw straight lines. To bend the boundary, you keep the weighted sums and add a non-linear step after each one; stacking many such layers is what lets the boundary curve. That's a neural network, and it's where the series goes next.
