@@ -13,7 +13,7 @@ tags: ["data preprocessing", "normalization"]
 
 Neural networks are sensitive to the scale of their inputs, and pixels come in a wide range: 0 to 255.
 
-Recall from Part 8 that how much a weight gets adjusted scales with the input feeding it: the bigger the input, the bigger the adjustment. So a pixel of 255 pushes its weights far harder than a pixel of 1. Feed raw 0-to-255 values straight into a network and the updates come out large and erratic, which makes training unstable and slow.
+Recall from Part 8 that the size of the input feeding a weight is one of the things that sets how much that weight gets adjusted: bigger inputs tend to mean bigger adjustments. Raw pixels run all the way up to 255, big enough to make those adjustments large and erratic, so training is unstable and slow.
 
 The fix: **normalize** the inputs, shrinking them to a small, consistent range.
 
@@ -25,7 +25,7 @@ The simplest approach: divide every pixel by 255, so the values run from 0 to 1 
 normalized_pixel = raw_pixel / 255
 ```
 
-Now every input is between 0 and 1 instead of up to 255, so the updates those inputs drive are correspondingly smaller.
+Now every input is between 0 and 1 instead of up to 255: small, comparable numbers for the network to work with.
 
 A more thorough approach is **standardization**. Dividing by 255 only shrinks the numbers; standardization also re-centers them around zero.
 
@@ -33,13 +33,13 @@ A more thorough approach is **standardization**. Dividing by 255 only shrinks th
 standardized_value = (raw_value - average) / standard_deviation
 ```
 
-Subtract the average and divide by the **standard deviation** (a measure of how spread out the values are), both measured on your training data and then applied unchanged to any new data. This puts the values around zero with a comparable spread. Inputs that are centered and evenly scaled make the loss surface easier for gradient descent to walk, which the next section explains. Networks generally train more easily this way.
+Subtract the average and divide by the **standard deviation** (a measure of how spread out the values are), both measured on your training data and then applied unchanged to any new data. This puts the values around zero with a comparable spread. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
 
 ## Why This Matters
 
-Remember the downhill walk from Part 7: training rolls the loss downhill toward its lowest point. When inputs are on very different scales, that downhill surface gets stretched, steep in one direction and nearly flat in another. One step size can't suit both: make the step big enough to move along the flat direction and it overshoots the steep one; make it small enough for the steep direction and the flat one barely moves. Putting the inputs on a similar scale makes the surface more bowl-shaped, so each step makes even progress in every direction.
+Remember the downhill walk from Part 7: training rolls the loss downhill toward its lowest point. When the inputs are large or spread across very different scales, that downhill surface gets stretched, steep in one direction and nearly flat in another. One step size can't suit both: make the step big enough to move along the flat direction and it overshoots the steep one; make it small enough for the steep direction and the flat one barely moves. Putting the inputs on a small, similar scale makes the surface more bowl-shaped, so each step makes even progress in every direction.
 
-This is why normalizing inputs is a standard first step before training: a small, cheap change that makes training more stable and usually faster.
+That's the payoff: a small, cheap change to the inputs that makes training more stable and usually faster.
 
 ## Beyond Pixels
 
