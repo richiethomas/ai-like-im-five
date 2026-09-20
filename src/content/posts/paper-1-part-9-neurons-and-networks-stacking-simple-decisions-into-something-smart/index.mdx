@@ -13,7 +13,7 @@ tags: ["neural networks", "activation functions"]
 
 From Part 5: a linear classifier computes a weighted sum of pixels and picks the highest score.
 
-The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), you're stuck.
+The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), no straight-line boundary can tell them apart.
 
 The solution: **neural networks**. Stack multiple layers, add non-linearity between them, and you can learn curved boundaries and complex patterns.
 
@@ -65,20 +65,20 @@ By the time you reach the final layer, the network has often built up enough abs
 
 ## Why This Works
 
-With one linear layer, you can only draw straight lines to separate classes. Add a non-linear activation and the boundary can bend into curves; add more neurons and layers and it can bend into more and more intricate shapes. The flexibility comes from the non-linearity plus having enough neurons, not from any particular number of layers.
+With one linear layer, you can only draw straight lines to separate classes. Add a non-linear activation and the boundary can bend into curves; add more neurons and more layers, and it can take on more and more intricate shapes.
 
-More neurons and layers means more expressive power, but also more parameters to learn and more risk of overfitting (we'll cover this in Part 11).
+More capacity, whether from wider layers (more neurons) or deeper stacks (more layers), means more expressive power. It also means more parameters to learn and more risk of **overfitting**: the network memorizing quirks of the training data instead of the general pattern (more on that in Part 11).
 
 ## The Universal Approximation Theorem
 
-There's a mathematical result that says: a neural network with just one hidden layer, given enough neurons, can approximate any continuous function to any accuracy you want.
+There's a mathematical result, the **Universal Approximation Theorem**, that says a neural network with just one hidden layer, given enough neurons, can approximate any continuous function to any accuracy you want.
 
-That's a strong result. It means neural networks aren't limited by architecture; they're limited by:
+That's a strong statement, with a catch worth being careful about: it says such a network *can represent* the function, not that it will *learn* it. Getting there in practice still depends on:
 1. Having enough neurons
 2. Having enough data to learn the patterns
-3. Finding the right weights through gradient descent
+3. Finding the right weights through gradient descent (the training process from Part 7)
 
-It doesn't say you need just one hidden layer. Multiple layers often learn more efficiently and generalize better.
+And "one hidden layer is enough in principle" doesn't make depth pointless. In practice, stacking more layers usually captures complex patterns more efficiently, with fewer neurons, than one very wide layer, and the way the network is arranged (its architecture) strongly affects what it actually learns.
 
 ## What's Next
 
