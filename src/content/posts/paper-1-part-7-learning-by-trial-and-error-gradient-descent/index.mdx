@@ -35,7 +35,7 @@ Replace "mountain slope" with "loss function" and "step downhill" with "adjust w
 
 In mathematics, the **gradient** of a function points in the direction of steepest increase, the steepest uphill direction. To go downhill, you head the opposite way.
 
-Here's the part the mountain metaphor hides: at a single spot, the steepness isn't one number. It depends on which way you face. Step north and the ground might barely rise; step east and it might climb sharply. So a point has a slope for *every* direction you could move, and the gradient bundles those together to point at the single steepest one.
+At a single spot, the steepness isn't one number. It depends on which way you face. Step north and the ground might barely rise; step east and it might climb sharply. So a point has a slope for *every* direction you could move, and the gradient bundles those together to point at the single steepest one.
 
 A real mountain has two directions to weigh (north-south and east-west). A loss function has thousands, one for each weight. For each weight you measure its own slope, the loss's *partial derivative* with respect to that weight: "if I nudge this weight up a little, does the loss rise or fall, and by how much?" Those thousands of slopes together are the gradient.
 
