@@ -32,8 +32,11 @@ def main(argv: list[str] | None = None) -> int:
                              "article's abstract concepts (roundtable "
                              "propose/merge/score)")
     parser.add_argument("--min-score", type=float, default=None,
-                        help="with --metaphors: surface metaphors scoring this "
-                             "or higher, out of 15")
+                        help="surface metaphors scoring this or higher, out of "
+                             "15 (applies to --metaphors and the automatic pass)")
+    parser.add_argument("--no-metaphors", action="store_true",
+                        help="skip the metaphor-opportunity pass that otherwise "
+                             "runs automatically at the end of a review")
     args = parser.parse_args(argv)
 
     # Keys come from repo-root .env; shell env still wins if already set.
@@ -97,8 +100,34 @@ def main(argv: list[str] | None = None) -> int:
                   f"{v['agreed_raised']:>6d} {v['dismissed_raised']:>4d} "
                   f"{str(bias):>8s} ${v['cost_usd']:>7.4f} {cpa:>9s}")
 
+    # The metaphor-opportunity pass runs automatically after every review,
+    # writing into the same artifact directory. It is a cheap generative add-on
+    # (~$0.02), so a failure there must never sink a completed review.
+    metaphor_summary = None
+    if not args.no_metaphors:
+        from .metaphors import run_metaphors, DEFAULT_MIN_SCORE
+        min_score = (args.min_score if args.min_score is not None
+                     else DEFAULT_MIN_SCORE)
+        try:
+            metaphor_summary = run_metaphors(
+                args.article, out_dir=result.out_dir,
+                budget_usd=args.budget, min_score=min_score)
+        except Exception as exc:  # noqa: BLE001 — never fail a done review
+            print(f"\n(metaphor pass skipped: {exc})")
+
     print(f"\nArtifacts in {result.out_dir}/:")
-    print("  report.json, transcript.md, metrics.json, checkpoint.json")
+    artifacts = "  report.json, transcript.md, metrics.json, checkpoint.json"
+    if metaphor_summary is not None:
+        artifacts += ", metaphors.md, metaphors.json"
+    print(artifacts)
+
+    if metaphor_summary is not None:
+        surfaced = metaphor_summary["surfaced"]
+        print(f"\nMetaphor opportunities (strength >= "
+              f"{metaphor_summary['min_score']:g} of 15): {len(surfaced)}")
+        for e in surfaced:
+            sc = e.get("score", {})
+            print(f"  [{sc.get('strength', 0):>4}/15] {e.get('concept', '')}")
 
     return 0 if report["outcome"] == "PASS" else 1
 
