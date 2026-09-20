@@ -44,7 +44,7 @@ inner = x + 5
 y     = inner²
 ```
 
-`y` isn't written directly in terms of `x`. It's written in terms of `inner`, and `inner` is written in terms of `x`, one equation sitting inside the other. (A network is this same idea taken much further: layer inside layer inside layer.)
+`y` isn't written directly in terms of `x`. It's written in terms of `inner`, and `inner` is written in terms of `x`, one equation sitting inside the other. (A neural network, the kind of model behind tools like ChatGPT, is this same nesting taken much further: layer inside layer inside layer. It's where this series is headed next.)
 
 Our goal hasn't changed. We still want `dy/dx`, the slope: how much `y` changes when we nudge `x`. In the separable case that was one step. But the nesting gets in the way: `x` is buried inside `inner`, which is buried inside the squaring, so we can't read off how `y` responds to `x` in a single move.
 
