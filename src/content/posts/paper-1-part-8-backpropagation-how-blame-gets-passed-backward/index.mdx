@@ -163,10 +163,10 @@ The chain rule means: once you've computed blame at one layer, you can quickly c
 Backpropagation isn't magic. It's just:
 
 1. The chain rule from calculus
-2. Applied systematically to a layered function
+2. Applied step by step to a function built by nesting, one step inside another
 3. In reverse order (backward)
 
-What makes this work: each layer only needs to know its own local behavior (how its output depends on its input). It doesn't need to understand the entire function. The chain rule automatically propagates local information backward into global gradients.
+Each of those nested steps is a **layer** (like `inner = x + 5`, then the squaring after it). What makes this work is that each layer only needs to know its own local behavior, how its output depends on its input. It doesn't need to understand the whole function. The chain rule carries each layer's local information backward and combines it into the slope for every weight.
 
 This is why neural networks can have hundreds of layers. Each layer is independent and local. Backpropagation connects them all.
 
