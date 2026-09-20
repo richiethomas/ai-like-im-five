@@ -19,9 +19,29 @@ Here's the goal, in one sentence: everything in this series is aimed at building
 
 You met functions in high school. `y = mx + b` takes a number `x`, does some arithmetic, and hands back a number `y`: give it an input, get an output.
 
-What we're going to build is the same idea, just bigger. The input is a picture. The output is a guess about what the picture shows, like "dog". We find this function by showing it many pictures whose answers we already know and adjusting it until its guesses are usually right, so that it then works on new pictures it has never seen. The finished function is called a **model**.
+What we're going to build is the same idea, just bigger. The input, x, is a picture. The output, y, is a guess about what the picture shows, like "dog". We find this function by showing it many pictures whose answers we already know and adjusting it until its guesses are usually right, so that it then works on new pictures it has never seen. The finished function is called a **model**.
 
 That is all a model is: a picture goes in, a guess comes out, and in between is a function we built from examples. Everything else in this series (turning pictures into numbers, scoring them, measuring mistakes, improving the guesses) is detail in service of building that one function.
+
+To see what "adjusting it until its guesses are right" looks like, picture each example as a dot on a graph, blue for cats and orange for dogs, placed so that similar pictures sit near each other. The function is a line: it guesses "cat" on one side and "dog" on the other. A dot on the correct side is a right guess; a dot on the wrong side is a mistake.
+
+That line is just `y = mx + b` again. Training adjusts its two knobs, the slope `m` and the intercept `b` (also called the **bias**), to get more dots on the correct side.
+
+Slide the bias up or down, and the same-angle line separates the dots well or badly:
+
+<div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center", margin: "1.5rem 0" }}>
+  <img src="/experiments/model-is-a-function/bias-off.svg" alt="A graph with cat dots high and dog dots low; a horizontal line sits too low, so four dog dots fall above it on the cat side and are ringed in red." style={{ width: "100%", maxWidth: "300px" }} />
+  <img src="/experiments/model-is-a-function/bias-good.svg" alt="The same dots with the horizontal line raised to sit between the two groups, so every cat is above it and every dog below." style={{ width: "100%", maxWidth: "300px" }} />
+</div>
+
+Tilt the slope, and again it separates them well or badly:
+
+<div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center", margin: "1.5rem 0" }}>
+  <img src="/experiments/model-is-a-function/slope-off.svg" alt="The same dots with a steeply tilted line; two dogs on the left and one cat on the right end up on the wrong side, ringed in red." style={{ width: "100%", maxWidth: "300px" }} />
+  <img src="/experiments/model-is-a-function/slope-good.svg" alt="The same dots with a level line sitting between the groups, every dot on its correct side." style={{ width: "100%", maxWidth: "300px" }} />
+</div>
+
+Nudging those two knobs until more dots end up on the correct side is the whole job of training. Sorting labeled dots into their groups like this even has a name, **classification**, and it is what the next several posts are about.
 
 But before we build anything, we need to ask the most basic question: what does a computer actually receive when we hand it a picture?
 
