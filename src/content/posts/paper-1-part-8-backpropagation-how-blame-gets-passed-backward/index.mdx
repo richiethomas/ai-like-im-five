@@ -93,7 +93,7 @@ Backpropagation does exactly this for a neural network: it works out how much ea
 
 ## How Backpropagation Works
 
-A linear classifier is really just one step, multiply the pixels by weights and add the biases, followed by computing the loss:
+A linear classifier (such as our cat / dog / bird image classifier) is really just one step: for each class (i.e. "cat", "dog", "bird"), multiply every pixel by that class's weight *for that pixel*, add the results into a single score, then add a "bias" for that class on top. Then compute the loss:
 
 ```
 Input (pixels) → [multiply by weights, add biases] → [compute loss]
