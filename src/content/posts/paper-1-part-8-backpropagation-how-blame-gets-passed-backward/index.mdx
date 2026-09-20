@@ -98,10 +98,10 @@ A linear classifier (such as our cat / dog / bird image classifier) is really ju
 Then compute the loss:
 
 ```
-Input (pixels) → [multiply by weights, add biases] → [compute loss]
+pixels → [ multiply by weights, add biases ] → scores → [ compute loss ] → loss
 ```
 
-Each box is a "station" that produces an output from an input.
+Those two bracketed steps are the "stations" from the last section. The first takes the pixels in and puts out the three class scores; the second takes those scores in and puts out the loss (how wrong the guess was). The weights live inside that first station, so that's where the blame has to end up.
 
 Backpropagation works in two passes:
 
