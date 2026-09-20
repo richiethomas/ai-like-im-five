@@ -43,7 +43,7 @@ Squashes any input to a value between 0 and 1. It was the common choice in older
 ```
 f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
 ```
-Squashes to between -1 and 1. Roughly a shifted sigmoid.
+Squashes to between -1 and 1. A scaled, shifted version of the sigmoid.
 
 The key: without the activation function, stacking linear layers just gives you another linear layer (stacking straight-line steps only ever gives you another straight-line step). The activation function breaks this chain and lets the network learn curved, non-linear patterns.
 
@@ -61,13 +61,13 @@ Input (pixels)
 
 Each layer transforms the output of the layer before it. With images especially, the layers often end up capturing different levels of detail: early ones pick up low-level patterns like edges, later ones combine those into bigger pieces, and still later ones respond to higher-level concepts. How cleanly that happens depends on the data and the training.
 
-By the time you reach the final layer, the network has often built up enough abstraction to solve harder problems.
+The final layer then uses those built-up features to make the actual decision, like cat versus dog.
 
 ## Why This Works
 
 With one linear layer, you can only draw straight lines to separate classes. Add a non-linear activation and the boundary can bend into curves; add more neurons and more layers, and it can take on more and more intricate shapes.
 
-More capacity, whether from wider layers (more neurons) or deeper stacks (more layers), means more expressive power. It also means more parameters to learn and more risk of **overfitting**: the network memorizing quirks of the training data instead of the general pattern (more on that in Part 11).
+The more neurons and layers you add, whether as wider layers (more neurons) or deeper stacks (more layers), the more complex the boundaries the network can represent. It also means more numbers to learn (the weights and biases) and more risk of **overfitting**: the network memorizing quirks of the training data instead of the general pattern (more on that in Part 11).
 
 ## The Universal Approximation Theorem
 
