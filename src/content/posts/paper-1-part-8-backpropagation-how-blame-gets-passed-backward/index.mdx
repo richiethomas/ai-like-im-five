@@ -116,6 +116,34 @@ At each station, blame flows backward by multiplying two numbers:
 
 By the time you reach the weights, you know exactly how much each weight affects the final loss.
 
+## A Worked Example: A Confidently Wrong Guess
+
+Take the confidently-wrong case from Part 6: the true label is cat, but the scores come out cat 3, dog 10, bird 1. The classifier is sure it's a dog. Let's watch the blame flow backward.
+
+**Turn the scores into probabilities** (softmax, from Part 6):
+
+```
+P(cat)  = 0.0009   (should be 1)
+P(dog)  = 0.999    (should be 0)
+P(bird) = 0.0001   (should be 0)
+```
+
+The loss is high, because the correct label got almost none of the probability.
+
+**Blame on each score.** For this softmax-and-loss setup, the blame on each score works out to something remarkably simple: the probability the model gave, minus the probability it should have given (1 for the correct label, 0 for the rest).
+
+```
+blame on cat's score  = 0.0009 - 1 = -0.9991
+blame on dog's score  = 0.999  - 0 =  0.999
+blame on bird's score = 0.0001 - 0 =  0.0001
+```
+
+Read the signs: cat's blame is strongly negative (its score is far too low, push it up), dog's is strongly positive (far too high, push it down), and bird's is tiny (leave it alone). Exactly the correction a confidently-wrong guess deserves.
+
+**One step further back, to a weight.** Each score is a weighted sum of the pixels, so a weight's local effect on its score is just the pixel it multiplies. So blame on a weight = (blame on its score) × (that pixel's value), the same "incoming blame × local effect" from before. Dog's weights on the pixels that lit up this image get a large positive blame, and gradient descent will lower them, so dog scores lower on images like this next time.
+
+That's the whole backward pass: blame started at the loss, flowed to the three scores, then on to the weights, each step just a multiply.
+
 ## Why This Is Fast
 
 If you estimated the gradients numerically (nudge each weight a tiny bit, rerun, and see how much the loss changed), you'd need to:
