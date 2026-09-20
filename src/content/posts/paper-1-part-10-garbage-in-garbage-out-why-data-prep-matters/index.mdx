@@ -39,35 +39,35 @@ Subtract the average and divide by the **standard deviation** (a measure of how 
 
 Pixels all live on the same 0-to-255 scale, so a single division by 255 shrinks them into a small range together. It gets trickier when a model's features are on different scales from each other, because then no single divisor works for all of them.
 
-Here is that problem in numbers. Suppose a training example has two **features** (two of its input numbers, each multiplied by its own weight), one small and one large:
+Here it is in numbers. Say a model predicts a house's value, and one house has two features:
 
-- Feature A = 0.5
-- Feature B = 200
+- Bedrooms: 4
+- Square footage: 2500
 
-From Part 8, the gradient for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the feature it multiplies. Say the same blame, 1, reaches both weights:
-
-```
-weight A's gradient = 1 × 0.5 = 0.5
-weight B's gradient = 1 × 200 = 200
-```
-
-Weight B's gradient is 400 times bigger than weight A's, not because it is more wrong, but only because its feature is 400 times bigger. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, weight B moves 400 times as far as weight A on every step. Pick a rate small enough to keep B from overshooting and A barely budges; pick one big enough to move A and B flies past its target. One rate can't serve both, so training stalls or thrashes.
-
-This is exactly what standardization (from the start of the post) does: it scales each feature by its own size, a different divisor for each. Feature A (values around 0.5) is divided by about 0.5, and feature B (values around 200) by about 200. Dividing everything by the same number, the way we divided pixels by 255, wouldn't help here, because the two features are on different scales; each needs its own divisor. Both then come out around 1:
+From Part 8, the gradient for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the feature it multiplies. With the same blame, 1, reaching both weights:
 
 ```
-normalized A = 0.5 / 0.5 = 1
-normalized B = 200 / 200 = 1
+bedrooms weight's gradient       = 1 × 4    = 4
+square footage weight's gradient = 1 × 2500 = 2500
 ```
 
-Now the gradients are about the same size:
+The square-footage weight's gradient is over 600 times bigger, not because square footage matters more, but only because it is counted in bigger numbers than bedrooms. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, the square-footage weight lurches while the bedrooms weight barely moves. One rate can't serve both, so training stalls or thrashes.
+
+Standardization (from the start of the post) fixes this. For each feature it measures that feature's own average and spread (its standard deviation) across the data, then subtracts the average and divides by the spread. Suppose bedrooms average 3 with a spread of 1, and square footage averages 2000 with a spread of 1000:
 
 ```
-weight A's gradient = 1 × 1 = 1
-weight B's gradient = 1 × 1 = 1
+bedrooms standardized       = (4 - 3) / 1          = 1
+square footage standardized = (2500 - 2000) / 1000 = 0.5
 ```
 
-so the two weights move together, and a single learning rate works for both. That is the point of normalizing: put every input on a comparable scale, so no weight is updated wildly harder than another just because its input happened to be bigger.
+They both come out near 1 by design, not by coincidence: that is the whole job of standardization, pulling every feature onto a common scale no matter what size it started at. Dividing everything by one number, the way we divided pixels by 255, wouldn't do this, because bedrooms and square footage are on different scales; each needs its own average and spread. Now the gradients are comparable:
+
+```
+bedrooms weight's gradient       = 1 × 1   = 1
+square footage weight's gradient = 1 × 0.5 = 0.5
+```
+
+so the two weights move at similar rates, and a single learning rate works for both. That is the point of normalizing: put every input on a comparable scale, so no weight is updated wildly harder than another just because its input happened to be bigger.
 
 The difference shows up during training: with normalization the loss drops fast and smoothly; without, it falls slowly and wobbles as the mismatched updates fight each other.
 
@@ -78,7 +78,7 @@ The difference shows up during training: with normalization the loss drops fast 
 Normalization isn't only for pixels. Whenever your inputs arrive on very different scales, the same problem shows up and the same fix helps:
 
 - Financial data (prices from $1 to $10,000)
-- House data (number of bedrooms, 1 to 5, next to price in the hundreds of thousands)
+- Fitness data (daily step count in the thousands, next to hours of sleep, 0 to 12)
 
 Here each feature is standardized using its own average and standard deviation, so no single feature dominates just because its numbers happen to be bigger. (Inputs already on a small, similar scale need less of this.)
 
