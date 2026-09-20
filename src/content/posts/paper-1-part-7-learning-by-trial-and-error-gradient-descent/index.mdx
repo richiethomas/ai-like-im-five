@@ -122,6 +122,4 @@ The catch: gradient descent finds *local* minima, not necessarily the global min
 
 Every step of gradient descent needs the gradient: the slope for each weight. The update itself, taking a small step downhill, is the same whether you have one weight or a billion. But it assumes the slopes are already in hand.
 
-In our one-weight example we got the slope for free from simple calculus (`2(w - 5)`). A real network's loss is many layers of functions stacked together, and the slope for a weight buried deep inside isn't obvious. Getting it the crude way, nudging each weight and re-measuring the loss, would take a full pass through the network for every one of its billions of weights, on every step. That's hopeless.
-
-That's what **backpropagation** solves: an efficient way to compute the slope for every weight at once, working backwards through the network with the chain rule, in a single pass. It's the next post.
+Getting that slope was easy in the one-weight example above (`2(w - 5)`). With billions of weights, it gets much more complicated. The next post shows why, and how it's solved, with an algorithm called **backpropagation**.
