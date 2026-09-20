@@ -122,4 +122,4 @@ The catch: gradient descent finds *local* minima, not necessarily the global min
 
 Every step of gradient descent needs the gradient: the slope for each weight. The update itself, taking a small step downhill, is the same whether you have one weight or a billion. But it assumes the slopes are already in hand.
 
-Getting that slope was easy in the one-weight example above (`2(w - 5)`). With billions of weights, it gets much more complicated. The next post shows why, and how it's solved, with an algorithm called **backpropagation**.
+Getting that slope was easy in the one-weight example above: if you remember your high-school calculus, it's just the derivative of `(w - 5)²`, which comes out to `2(w - 5)`. With billions of weights, it gets much more complicated. The next post shows why, and how it's solved, with an algorithm called **backpropagation**.
