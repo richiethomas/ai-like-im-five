@@ -178,4 +178,8 @@ Now we have:
 - A way to find gradients (backpropagation)
 - A way to improve weights (gradient descent)
 
-The next step: our classifier so far is a single layer. What if we stack many layers, each applying a non-linear function instead of just a weighted sum? That's neural networks, and they're where the series goes from here.
+But our classifier is still a single weighted sum, and that has a hard limit. Picture each image as a dot on a graph, cats in one area, dogs in another. A weighted sum can only separate them with a straight line, and often no straight line works: wherever you draw it, some cats and some dogs land on the wrong side.
+
+![Two panels. On the left, a straight line fails to separate a central cluster of dog points from the cats surrounding them, leaving cats on both sides. On the right, a curved circular boundary cleanly encloses the dogs and leaves the cats outside.](/experiments/decision-boundary/straight-vs-curved.svg)
+
+A curved boundary can wrap around the clusters and get far more points right, but a plain weighted sum can only ever draw straight lines. To bend the boundary, you keep the weighted sums and add a non-linear step after each one; stacking many such layers is what lets the line curve. That's a neural network, and it's where the series goes next.

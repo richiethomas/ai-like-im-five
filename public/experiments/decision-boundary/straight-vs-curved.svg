@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="720" height="380" rx="10" fill="#ffffff"/>
+  <!-- legend -->
+  <circle cx="250" cy="22" r="5" fill="#ea580c"/><text x="260" y="26" font-size="13" fill="#334155">dog</text>
+  <circle cx="315" cy="22" r="5" fill="#2563eb"/><text x="325" y="26" font-size="13" fill="#334155">cat</text>
+  <!-- panel titles -->
+  <text x="190" y="52" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">A straight line</text>
+  <text x="530" y="52" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">A curved boundary</text>
+  <!-- panel frames -->
+  <rect x="50" y="60" width="280" height="280" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="390" y="60" width="280" height="280" fill="#f8fafc" stroke="#e2e8f0"/>
+  <!-- left: straight line -->
+  <line x1="50.0" y1="284.0" x2="330.0" y2="144.0" stroke="#334155" stroke-width="2.5"/>
+<circle cx="170.4" cy="194.4" r="5" fill="#ea580c"/>
+<circle cx="195.6" cy="216.8" r="5" fill="#ea580c"/>
+<circle cx="206.8" cy="191.6" r="5" fill="#ea580c"/>
+<circle cx="181.6" cy="183.2" r="5" fill="#ea580c"/>
+<circle cx="190.0" cy="200.0" r="5" fill="#ea580c"/>
+<circle cx="201.2" cy="205.6" r="5" fill="#ea580c"/>
+<circle cx="178.8" cy="211.2" r="5" fill="#ea580c"/>
+<circle cx="190.0" cy="96.4" r="5" fill="#2563eb"/>
+<circle cx="106.0" cy="186.0" r="5" fill="#2563eb"/>
+<circle cx="282.4" cy="200.0" r="5" fill="#2563eb"/>
+<circle cx="190.0" cy="300.8" r="5" fill="#2563eb"/>
+<circle cx="122.8" cy="121.6" r="5" fill="#2563eb"/>
+<circle cx="262.8" cy="127.2" r="5" fill="#2563eb"/>
+<circle cx="122.8" cy="267.2" r="5" fill="#2563eb"/>
+<circle cx="268.4" cy="261.6" r="5" fill="#2563eb"/>
+<circle cx="92.0" cy="228.0" r="5" fill="#2563eb"/>
+<circle cx="290.8" cy="158.0" r="5" fill="#2563eb"/>
+<circle cx="162.0" cy="99.2" r="5" fill="#2563eb"/>
+<circle cx="232.0" cy="295.2" r="5" fill="#2563eb"/>
+
+  <!-- right: curved (elliptical) boundary -->
+  <circle cx="530.0" cy="200.0" r="50.4" fill="none" stroke="#334155" stroke-width="2.5"/>
+<circle cx="510.4" cy="194.4" r="5" fill="#ea580c"/>
+<circle cx="535.6" cy="216.8" r="5" fill="#ea580c"/>
+<circle cx="546.8" cy="191.6" r="5" fill="#ea580c"/>
+<circle cx="521.6" cy="183.2" r="5" fill="#ea580c"/>
+<circle cx="530.0" cy="200.0" r="5" fill="#ea580c"/>
+<circle cx="541.2" cy="205.6" r="5" fill="#ea580c"/>
+<circle cx="518.8" cy="211.2" r="5" fill="#ea580c"/>
+<circle cx="530.0" cy="96.4" r="5" fill="#2563eb"/>
+<circle cx="446.0" cy="186.0" r="5" fill="#2563eb"/>
+<circle cx="622.4" cy="200.0" r="5" fill="#2563eb"/>
+<circle cx="530.0" cy="300.8" r="5" fill="#2563eb"/>
+<circle cx="462.8" cy="121.6" r="5" fill="#2563eb"/>
+<circle cx="602.8" cy="127.2" r="5" fill="#2563eb"/>
+<circle cx="462.8" cy="267.2" r="5" fill="#2563eb"/>
+<circle cx="608.4" cy="261.6" r="5" fill="#2563eb"/>
+<circle cx="432.0" cy="228.0" r="5" fill="#2563eb"/>
+<circle cx="630.8" cy="158.0" r="5" fill="#2563eb"/>
+<circle cx="502.0" cy="99.2" r="5" fill="#2563eb"/>
+<circle cx="572.0" cy="295.2" r="5" fill="#2563eb"/>
+
+</svg>
