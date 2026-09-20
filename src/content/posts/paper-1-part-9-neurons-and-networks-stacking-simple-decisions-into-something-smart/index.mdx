@@ -15,7 +15,7 @@ From Part 5: a linear classifier computes a weighted sum of pixels and picks the
 
 The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), you're stuck.
 
-The solution: **neural networks**. Stack multiple layers, add non-linearity between them, and suddenly you can learn curved boundaries and complex patterns.
+The solution: **neural networks**. Stack multiple layers, add non-linearity between them, and you can learn curved boundaries and complex patterns.
 
 ## The Neuron
 
@@ -25,19 +25,19 @@ A **neuron** is the basic unit. It takes inputs, multiplies them by weights, add
 output = activation( (w1*x1 + w2*x2 + ... + bias) )
 ```
 
-The activation function is non-linear. Common ones:
+The activation function is **non-linear**, meaning its output doesn't move in simple proportion to its input; it can bend or flatten instead of following a straight line. Common ones:
 
 **ReLU (Rectified Linear Unit):**
 ```
 f(x) = max(0, x)
 ```
-If the sum is positive, pass it through. If negative, zero it out. Dead simple and widely used.
+If the sum is positive, pass it through. If negative, zero it out. It's about as simple as an activation function gets, and per the CS231n notes, the most common choice in modern networks.
 
 **Sigmoid:**
 ```
 f(x) = 1 / (1 + e^(-x))
 ```
-Squashes any input to a value between 0 and 1. Historically popular.
+Squashes any input to a value between 0 and 1. It was the common choice in older networks.
 
 **Tanh:**
 ```
@@ -45,11 +45,11 @@ f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
 ```
 Squashes to between -1 and 1. Roughly a shifted sigmoid.
 
-The key: without the activation function, stacking linear layers just gives you another linear layer (linear of a linear is linear). The activation function breaks this chain and allows the network to learn non-linear patterns.
+The key: without the activation function, stacking linear layers just gives you another linear layer (stacking straight-line steps only ever gives you another straight-line step). The activation function breaks this chain and lets the network learn curved, non-linear patterns.
 
 ## Stacking Layers
 
-Here's the magic: stack multiple layers, each with its own weights and activation:
+The idea is to stack multiple layers, each with its own weights and activation:
 
 ```
 Input (pixels)
@@ -59,21 +59,21 @@ Input (pixels)
   → [Linear layer 4 - final scores]
 ```
 
-Each layer transforms the data. The first layer learns low-level patterns. The second layer learns combinations of those patterns. The third layer learns higher-level concepts.
+Each layer transforms the output of the layer before it. With images especially, the layers often end up capturing different levels of detail: early ones pick up low-level patterns like edges, later ones combine those into bigger pieces, and still later ones respond to higher-level concepts. How cleanly that happens depends on the data and the training.
 
-By the time you reach the final layer, you've built up enough abstraction to solve complex problems.
+By the time you reach the final layer, the network has often built up enough abstraction to solve harder problems.
 
 ## Why This Works
 
-With one linear layer, you can only draw straight lines to separate classes. With two layers plus activation, you can draw curves. With three layers, you can draw arbitrarily complex shapes.
+With one linear layer, you can only draw straight lines to separate classes. Add a non-linear activation and the boundary can bend into curves; add more neurons and layers and it can bend into more and more intricate shapes. The flexibility comes from the non-linearity plus having enough neurons, not from any particular number of layers.
 
-More layers = more expressive power. But also more parameters to learn and more risk of overfitting (we'll talk about this in Part 11).
+More neurons and layers means more expressive power, but also more parameters to learn and more risk of overfitting (we'll cover this in Part 11).
 
 ## The Universal Approximation Theorem
 
-There's a mathematical result that says: a neural network with just one hidden layer, given enough neurons, can approximate any continuous function.
+There's a mathematical result that says: a neural network with just one hidden layer, given enough neurons, can approximate any continuous function to any accuracy you want.
 
-This is powerful. It means neural networks aren't limited by architecture; they're limited by:
+That's a strong result. It means neural networks aren't limited by architecture; they're limited by:
 1. Having enough neurons
 2. Having enough data to learn the patterns
 3. Finding the right weights through gradient descent
