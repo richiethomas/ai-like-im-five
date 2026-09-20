@@ -39,11 +39,11 @@ You can still work out every slope with calculus. The catch is that doing it one
 
 Our goal hasn't changed: we still want to know how much `y` (our loss) changes when we nudge `x` (our weight). (That change in `y` with respect to `x` is referred to as `dy/dx`, and it's the same slope idea from before.) The `d` just means "a tiny change in," so `dy/dx` is a tiny change in `y` divided by the tiny change in `x` that caused it.
 
-In the separable example from the opening, that was easy: every term stood on its own, so each slope was a one-step calculation. A step closer to how machine learning actually works is a **nested** equation, one equation tucked inside another. The simplest example:
+In the separable example from the opening, that was easy: every term stood on its own, so each slope was a one-step calculation. A step closer to how machine learning actually works is a **nested** equation, one equation tucked inside another. For example:
 
 ```
-inner = x + 5
 y     = inner²
+inner = x³ + 5x
 ```
 
 `y` isn't written directly in terms of `x`. It's written in terms of `inner`, and `inner` is written in terms of `x`, one equation sitting inside the other. (A neural network, the kind of model behind tools like ChatGPT, is this same nesting taken much further: layer inside layer inside layer. It's where this series is headed next.)
@@ -57,18 +57,18 @@ The **chain rule** resolves this by going through the middle. To get how `y` cha
 
 For our example:
 
-- `y = inner²`, so `y` changes at a rate of `2 × inner` as `inner` changes, which is `2(x + 5)`.
-- `inner = x + 5`, so `inner` changes at a rate of `1` as `x` changes (nudge `x` a little, and `inner` moves by the same amount).
+- `y = inner²`, so `y` changes at a rate of `2 × inner` as `inner` changes, which is `2(x³ + 5x)`.
+- `inner = x³ + 5x`, so `inner` changes at a rate of `3x² + 5` as `x` changes.
 
 Multiply them:
 
 ```
-dy/dx = 2(x + 5) × 1 = 2(x + 5)
+dy/dx = 2(x³ + 5x) × (3x² + 5)
 ```
 
-The nesting is handled by chaining two simple, local rates of change through the middle.
+The nesting is handled by chaining two local rates of change through the middle.
 
-The rates above (why `inner²` changes at `2 × inner`, and `x + 5` at `1`) come from a part of calculus called **derivatives**. For a quick refresher on the specific rule used here, Math Is Fun has a short page on the [power rule](https://www.mathsisfun.com/calculus/power-rule.html). For a deeper, visual explanation of what derivatives are, 3Blue1Brown's [Essence of Calculus](https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr) is a great place to start.
+The rates above (why `inner²` changes at `2 × inner`, and `x³ + 5x` at `3x² + 5`) come from a part of calculus called **derivatives**. For a quick refresher on the specific rule used here, Math Is Fun has a short page on the [power rule](https://www.mathsisfun.com/calculus/power-rule.html). For a deeper, visual explanation of what derivatives are, 3Blue1Brown's [Essence of Calculus](https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr) is a great place to start.
 
 ## The Assembly Line Metaphor
 
@@ -166,7 +166,7 @@ Backpropagation isn't magic. It's just:
 2. Applied step by step to a function built by nesting, one step inside another
 3. In reverse order (backward)
 
-Each of those nested steps is a **layer** (like `inner = x + 5`, then the squaring after it). What makes this work is that each layer only needs to know its own local behavior, how its output depends on its input. It doesn't need to understand the whole function. The chain rule carries each layer's local information backward and combines it into the slope for every weight.
+Each of those nested steps is a **layer** (like `inner = x³ + 5x`, then the squaring after it). What makes this work is that each layer only needs to know its own local behavior, how its output depends on its input. It doesn't need to understand the whole function. The chain rule carries each layer's local information backward and combines it into the slope for every weight.
 
 This is why neural networks can stack hundreds of layers: each one contributes just a local calculation, and backpropagation chains them all together into the slope for every weight.
 
