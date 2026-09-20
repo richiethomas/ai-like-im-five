@@ -103,11 +103,13 @@ pixels → [ multiply by weights, add biases ] → scores → [ compute loss ] �
 
 Those two bracketed steps are the "stations" from the last section. The first takes the pixels in and puts out the three class scores; the second takes those scores in and puts out the loss (how wrong the guess was). The weights live inside that first station, so that's where the blame has to end up.
 
-Backpropagation works in two passes:
+Each training step has two passes, and backpropagation is the second one.
 
-**Forward pass:** Feed the input through the entire function, computing outputs at each station. Save the intermediate results.
+**Forward pass:** the ordinary run from Parts 5 and 6, feeding the input through the function to produce the scores and then the loss. Along the way, save the intermediate results at each station.
 
-**Backward pass:** Starting from the output loss, work out how much the loss would change if each station's output changed a little. That number is the station's "blame." Use the chain rule to propagate it backward through each layer.
+**Backward pass (this is backpropagation):** starting from the loss, work out how much the loss would change if each station's output changed a little. That number is the station's "blame." Using the values the forward pass just saved, apply the chain rule to propagate it backward through each layer.
+
+This forward-then-backward pair runs on every training step. The weights change after each step, so the next step reruns the forward pass and recomputes fresh intermediate results; they are never captured once and reused.
 
 At each station, blame flows backward by multiplying two numbers:
 - **Incoming blame:** how much the final loss changes if my output changes a little (say, 2.5).
