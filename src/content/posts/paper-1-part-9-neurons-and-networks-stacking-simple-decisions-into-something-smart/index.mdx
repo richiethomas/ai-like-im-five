@@ -75,13 +75,23 @@ The more neurons and layers you add, whether as wider layers (more neurons) or d
 
 ## Width and Depth
 
-The stacking diagram from earlier, one layer feeding the next and the next, is what **depth** means: a chain of layers, each working on the output of the one before it. That network is four layers deep.
+Here is that stacking diagram again:
+
+```
+Input (pixels)
+  → [Linear layer 1] → [ReLU]
+  → [Linear layer 2] → [ReLU]
+  → [Linear layer 3] → [ReLU]
+  → [Linear layer 4 - final scores]
+```
+
+Chaining one layer into the next like this, each working on the output of the one before it, is what **depth** means. That network is four layers deep. (The `[ReLU]` boxes aren't extra layers. Each just applies the activation to the linear layer right before it, the same activation built into every neuron. A linear box and its ReLU together make one layer.)
 
 What the diagram hides is what sits *inside* each box. A box labeled "Linear layer" is really a column of neurons side by side, and how many neurons fill that column is the layer's **width**:
 
 <img src="/experiments/neurons-and-networks/layer-width.svg" alt="A small network: three input nodes on the left connect to a vertical column of five neurons (one hidden layer) in the middle, which connect to a single output node on the right. A bracket labels the column 'width = 5 neurons'." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "420px" }} />
 
-So they are two separate choices. Depth is how many boxes you chain left to right; width is how many neurons are stacked inside a single box. A network can be deep and narrow, shallow and wide, or anything in between.
+So they are two separate choices. Depth is how many layers you chain one after another; width is how many neurons are packed inside a single layer. A network can be deep and narrow, shallow and wide, or anything in between.
 
 The theorem in the next section is about the shallow-and-wide extreme: a single hidden layer, made wide enough.
 
