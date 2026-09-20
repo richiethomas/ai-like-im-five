@@ -52,3 +52,6 @@ review-runs/
 mutants/
 mutation_survivors.txt
 .mutmut-cache
+
+# Private working notes, not for publication
+PROCESS-LOG.md
