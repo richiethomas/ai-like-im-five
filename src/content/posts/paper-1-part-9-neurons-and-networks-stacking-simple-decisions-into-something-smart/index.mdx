@@ -25,6 +25,8 @@ A **neuron** is the basic unit. It takes inputs, multiplies them by weights, add
 output = activation( (w1*x1 + w2*x2 + ... + bias) )
 ```
 
+That inner sum (`w1*x1 + w2*x2 + ... + bias`) is the same "score" a linear classifier produced in Part 5: weights times inputs, plus a bias. It's called the neuron's **pre-activation**, and it's what gets passed to the activation function.
+
 The activation function is **non-linear**, meaning its output doesn't move in simple proportion to its input; it can bend or flatten instead of following a straight line. Common ones:
 
 **ReLU (Rectified Linear Unit):**
