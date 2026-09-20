@@ -39,7 +39,13 @@ Subtract the average and divide by the **standard deviation** (a measure of how 
 
 Remember the downhill walk from Part 7: training rolls the loss downhill toward its lowest point. When the inputs are large or spread across very different scales, that downhill surface gets stretched, steep in one direction and nearly flat in another. One step size can't suit both: make the step big enough to move along the flat direction and it overshoots the steep one; make it small enough for the steep direction and the flat one barely moves. Putting the inputs on a small, similar scale makes the surface more bowl-shaped, so each step makes even progress in every direction.
 
-That's the payoff: a small, cheap change to the inputs that makes training more stable and usually faster.
+Here is that idea as a topographic map, the loss seen from above (each line connects points of equal loss, like a hiking map):
+
+<img src="/experiments/data-prep/loss-surface.svg" alt="Two topographic maps of the loss. Left, without normalization: stretched oval contours forming a narrow valley, with the gradient-descent path zig-zagging back and forth and crawling slowly toward the center. Right, with normalization: round concentric contours, with the path heading straight to the center." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "560px" }} />
+
+That's the payoff, and it shows up directly in the training loss: a small, cheap change to the inputs that makes training more stable and usually faster.
+
+<img src="/experiments/data-prep/training-curves.svg" alt="A line chart of training loss over steps. The without-normalization line falls slowly and wobbles up and down; the with-normalization line drops fast and smoothly to a low value." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "480px" }} />
 
 ## Beyond Pixels
 

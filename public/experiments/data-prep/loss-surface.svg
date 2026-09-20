@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="700" height="400" rx="10" fill="#ffffff"/>
+  <text x="180" y="52" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">Without normalization</text>
+  <rect x="50" y="70" width="260" height="260" fill="#f8fafc" stroke="#e2e8f0"/>
+  <clipPath id="clip180"><rect x="50" y="70" width="260" height="260"/></clipPath>
+  <g clip-path="url(#clip180)">
+    <ellipse cx="180" cy="200" rx="58.1" ry="13.0" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <ellipse cx="180" cy="200" rx="116.2" ry="26.0" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <ellipse cx="180" cy="200" rx="186.0" ry="41.6" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <ellipse cx="180" cy="200" rx="255.7" ry="57.2" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <ellipse cx="180" cy="200" rx="337.0" ry="75.4" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <polyline points="76.0,122.0 84.3,246.8 92.0,171.9 99.0,216.8 105.5,189.9 111.5,206.1 116.9,196.4 122.0,202.2 126.6,198.7 130.9,200.8 134.8,199.5 138.4,200.3 141.8,199.8 144.8,200.1 147.6,199.9 150.2,200.0 152.6,200.0" fill="none" stroke="#475569" stroke-width="2"/>
+    <circle cx="76.0" cy="122.0" r="3" fill="#475569"/>
+    <circle cx="84.3" cy="246.8" r="3" fill="#475569"/>
+    <circle cx="92.0" cy="171.9" r="3" fill="#475569"/>
+    <circle cx="99.0" cy="216.8" r="3" fill="#475569"/>
+    <circle cx="105.5" cy="189.9" r="3" fill="#475569"/>
+    <circle cx="111.5" cy="206.1" r="3" fill="#475569"/>
+    <circle cx="116.9" cy="196.4" r="3" fill="#475569"/>
+    <circle cx="122.0" cy="202.2" r="3" fill="#475569"/>
+    <circle cx="126.6" cy="198.7" r="3" fill="#475569"/>
+    <circle cx="130.9" cy="200.8" r="3" fill="#475569"/>
+    <circle cx="134.8" cy="199.5" r="3" fill="#475569"/>
+    <circle cx="138.4" cy="200.3" r="3" fill="#475569"/>
+    <circle cx="141.8" cy="199.8" r="3" fill="#475569"/>
+    <circle cx="144.8" cy="200.1" r="3" fill="#475569"/>
+    <circle cx="147.6" cy="199.9" r="3" fill="#475569"/>
+    <circle cx="150.2" cy="200.0" r="3" fill="#475569"/>
+    <circle cx="152.6" cy="200.0" r="3" fill="#475569"/>
+  </g>
+  <circle cx="180" cy="200" r="4.5" fill="#334155"/>
+  <text x="520" y="52" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">With normalization</text>
+  <rect x="390" y="70" width="260" height="260" fill="#f8fafc" stroke="#e2e8f0"/>
+  <clipPath id="clip520"><rect x="390" y="70" width="260" height="260"/></clipPath>
+  <g clip-path="url(#clip520)">
+    <circle cx="520" cy="200" r="18.2" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <circle cx="520" cy="200" r="39.0" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <circle cx="520" cy="200" r="59.8" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <circle cx="520" cy="200" r="80.6" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <circle cx="520" cy="200" r="101.4" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+    <polyline points="416.0,122.0 499.2,184.4 515.8,196.9 519.2,199.4 519.8,199.9 520.0,200.0 520.0,200.0 520.0,200.0 520.0,200.0" fill="none" stroke="#475569" stroke-width="2"/>
+    <circle cx="416.0" cy="122.0" r="3" fill="#475569"/>
+    <circle cx="499.2" cy="184.4" r="3" fill="#475569"/>
+    <circle cx="515.8" cy="196.9" r="3" fill="#475569"/>
+    <circle cx="519.2" cy="199.4" r="3" fill="#475569"/>
+    <circle cx="519.8" cy="199.9" r="3" fill="#475569"/>
+    <circle cx="520.0" cy="200.0" r="3" fill="#475569"/>
+    <circle cx="520.0" cy="200.0" r="3" fill="#475569"/>
+    <circle cx="520.0" cy="200.0" r="3" fill="#475569"/>
+    <circle cx="520.0" cy="200.0" r="3" fill="#475569"/>
+  </g>
+  <circle cx="520" cy="200" r="4.5" fill="#334155"/>
+  <text x="350" y="366" text-anchor="middle" font-size="12" fill="#334155">A topographic map of the loss: lines connect points of equal loss, the dot is the lowest point.</text>
+  <text x="350" y="384" text-anchor="middle" font-size="12" fill="#334155">The walking path is gradient descent. A stretched valley makes it zig-zag; a round bowl lets it head straight down.</text>
+</svg>
