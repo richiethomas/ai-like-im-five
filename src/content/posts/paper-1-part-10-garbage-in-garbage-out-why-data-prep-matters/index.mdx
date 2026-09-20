@@ -46,9 +46,9 @@ That's the payoff: a small, cheap change to the inputs that makes training more 
 Normalization isn't only for pixels. Whenever your inputs arrive on very different scales, the same problem shows up and the same fix helps:
 
 - Financial data (prices from $1 to $10,000)
-- Medical data (height in centimeters next to weight in kilograms)
+- House data (number of bedrooms, 1 to 5, next to price in the hundreds of thousands)
 
-Here each feature is standardized using its own average and standard deviation, so no feature dominates just because its numbers happen to be bigger. (Inputs already on a small, similar scale need less of this.)
+Here each **feature** (each individual input measurement, like one pixel or one house's bedroom count) is standardized using its own average and standard deviation, so no single feature dominates just because its numbers happen to be bigger. (Inputs already on a small, similar scale need less of this.)
 
 A common guideline: when your features sit on very different scales, put them on a common one before training.
 
