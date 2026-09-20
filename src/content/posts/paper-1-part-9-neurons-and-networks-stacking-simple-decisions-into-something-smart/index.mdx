@@ -73,6 +73,18 @@ With one linear layer, you can only draw straight lines to separate classes. Add
 
 The more neurons and layers you add, whether as wider layers (more neurons) or deeper stacks (more layers), the more complex the boundaries the network can represent. It also means more numbers to learn (the weights and biases) and more risk of **overfitting**: the network memorizing quirks of the training data instead of the general pattern (more on that in Part 11).
 
+## Width and Depth
+
+The stacking diagram from earlier, one layer feeding the next and the next, is what **depth** means: a chain of layers, each working on the output of the one before it. That network is four layers deep.
+
+What the diagram hides is what sits *inside* each box. A box labeled "Linear layer" is really a column of neurons side by side, and how many neurons fill that column is the layer's **width**:
+
+<img src="/experiments/neurons-and-networks/layer-width.svg" alt="A small network: three input nodes on the left connect to a vertical column of five neurons (one hidden layer) in the middle, which connect to a single output node on the right. A bracket labels the column 'width = 5 neurons'." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "420px" }} />
+
+So they are two separate choices. Depth is how many boxes you chain left to right; width is how many neurons are stacked inside a single box. A network can be deep and narrow, shallow and wide, or anything in between.
+
+The theorem in the next section is about the shallow-and-wide extreme: a single hidden layer, made wide enough.
+
 ## The Universal Approximation Theorem
 
 There's a mathematical result, the **Universal Approximation Theorem**, with a surprising message. Take a network with a single layer of neurons in the middle, between the input and the final answer; that middle layer is called a **hidden layer** (hidden because you never see its values directly, they're an internal step). Give it enough neurons, and it can mimic almost any function you could draw, to as much accuracy as you want.
