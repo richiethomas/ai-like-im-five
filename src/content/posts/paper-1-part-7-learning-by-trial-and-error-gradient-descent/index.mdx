@@ -45,7 +45,7 @@ Repeat this thousands of times, and the weights gradually improve, as long as ea
 
 ## Learning Rate: Step Size
 
-There's a critical parameter: how much should you adjust each weight?
+How much should you adjust each weight?
 
 If you take huge steps, you might overshoot the valley and end up on the other side, higher than before. In loss terms, the loss goes up instead of down: the new weights are worse than the old ones.
 
@@ -108,7 +108,7 @@ Training a model comes down to a search for the weight values that make the loss
 
 3. **Automatic feedback:** The loss number tells you how wrong you currently are, though it can rise or wobble temporarily even when training is improving overall.
 
-4. **Generalizes to thousands of weights:** The same algorithm works whether you have 1 weight or 1 million weights.
+4. **Generalizes to any number of weights:** The same algorithm works whether you have one weight or a million. It's the same procedure used to train today's large language models, which have hundreds of billions of weights.
 
 The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might settle into a valley when a deeper valley exists elsewhere. This is a known problem in deep learning, but in large networks with many weights, most local minima tend to have similarly low loss, so the valley you land in is usually good enough, and finding the single deepest one isn't necessary.
 
