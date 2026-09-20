@@ -75,7 +75,7 @@ The more neurons and layers you add, whether as wider layers (more neurons) or d
 
 ## The Universal Approximation Theorem
 
-There's a mathematical result, the **Universal Approximation Theorem**, that says a neural network with just one hidden layer, given enough neurons, can approximate any continuous function to any accuracy you want.
+There's a mathematical result, the **Universal Approximation Theorem**, with a surprising message. Take a network with a single layer of neurons in the middle, between the input and the final answer; that middle layer is called a **hidden layer** (hidden because you never see its values directly, they're an internal step). Give it enough neurons, and it can mimic almost any function you could draw, to as much accuracy as you want.
 
 That's a strong statement, with a catch worth being careful about: it says such a network *can represent* the function, not that it will *learn* it. Getting there in practice still depends on:
 1. Having enough neurons
