@@ -53,7 +53,7 @@ square footage weight's gradient = 1 × 2500 = 2500
 
 The square-footage weight's gradient is over 600 times bigger, not because square footage matters more, but only because it is counted in bigger numbers than bedrooms. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, the square-footage weight lurches while the bedrooms weight barely moves. One rate can't serve both, so training stalls or thrashes.
 
-Standardization (from the start of the post) fixes this. For each feature it measures that feature's own average and spread (its standard deviation) across the data, then subtracts the average and divides by the spread. Suppose bedrooms average 3 with a spread of 1, and square footage averages 2000 with a spread of 1000:
+Standardization (from the start of the post) fixes this. For each feature it measures that feature's own average and spread (its standard deviation, the typical distance a value sits from the average, not the min and max) across the data, then subtracts the average and divides by the spread. Suppose bedrooms average 3, with most houses within about 1 of that (a spread of 1), and square footage averages 2000, with most homes within about 1000 of that:
 
 ```
 bedrooms standardized       = (4 - 3) / 1          = 1
