@@ -13,6 +13,16 @@ tags: ["image classification", "computer vision basics"]
 
 We're going to spend this series working through [CS231n](https://cs231n.github.io/), the course number of Stanford's free class on how computers learn to see. It's a foundational course in deep learning, the kind of course that builds the intuition you need before tackling dense research papers. It also sits at the start of a famous reading list that [Ilya Sutskever](https://en.wikipedia.org/wiki/Ilya_Sutskever) (a co-founder of OpenAI and one of the researchers behind ChatGPT) is said to have given [John Carmack](https://en.wikipedia.org/wiki/John_Carmack) (the programmer behind the video games Doom and Quake).
 
+## What We're Building Is a Function
+
+Here's the goal, in one sentence: everything in this series is aimed at building a **function**.
+
+You met functions in high school. `y = mx + b` takes a number `x`, does some arithmetic, and hands back a number `y`: give it an input, get an output.
+
+What we're going to build is the same idea, just bigger. The input is a picture. The output is a guess about what the picture shows, like "dog". We find this function by showing it many pictures whose answers we already know and adjusting it until its guesses are usually right, so that it then works on new pictures it has never seen. The finished function is called a **model**.
+
+That is all a model is: a picture goes in, a guess comes out, and in between is a function we built from examples. Everything else in this series (turning pictures into numbers, scoring them, measuring mistakes, improving the guesses) is detail in service of building that one function.
+
 But before we build anything, we need to ask the most basic question: what does a computer actually receive when we hand it a picture?
 
 ## A Picture Is Just Numbers
