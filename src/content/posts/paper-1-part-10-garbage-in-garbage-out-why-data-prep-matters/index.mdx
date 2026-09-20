@@ -33,7 +33,7 @@ A more thorough approach is **standardization**. Dividing by 255 only shrinks th
 standardized_value = (raw_value - average) / standard_deviation
 ```
 
-Subtract the average and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
+Subtract the average (the mean) and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
 
 ## Why This Matters
 
