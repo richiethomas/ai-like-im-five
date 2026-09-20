@@ -15,7 +15,7 @@ We have a loss function that measures how wrong we are. We want to make that num
 
 How?
 
-**Gradient descent** is the algorithm that adjusts the weights to reduce loss. It's how most neural networks are trained and improved, including the ones in this series, though other kinds of machine learning models (like decision trees) are trained in different ways.
+**Gradient descent** is the algorithm that adjusts the weights to reduce loss. It's the core idea behind how most neural networks are trained and improved, including the ones in this series, though other kinds of machine learning models (like decision trees) are trained in different ways.
 
 ## The Downhill Metaphor
 
@@ -25,7 +25,7 @@ Your goal: reach the lowest point.
 
 Strategy: repeatedly take a step downhill. Feel the slope, step in the direction that goes down, repeat.
 
-If all goes well, each step takes you a little lower, and eventually you settle into a valley, though maybe not the lowest one on the whole mountain.
+If all goes well, each step takes you a little lower, and eventually you settle into a valley.
 
 That's gradient descent.
 
@@ -112,9 +112,9 @@ One way to look at training is as a search for the weight values that make the l
 
 2. **Repeated small steps add up:** Even if each step is small, thousands of steps can cover a lot of ground, though how fast you get there depends on the learning rate and the shape of the loss.
 
-3. **Automatic feedback:** The loss number tells you how wrong you currently are, though it can rise or wobble temporarily even when training is improving overall.
+3. **Automatic feedback:** The loss number tells you how wrong you currently are. With a good learning rate it drops every step; if it starts rising, that's the sign the learning rate is too high.
 
-4. **Generalizes to any number of weights:** The same algorithm works whether you have one weight or a million. It's the same procedure used to train today's large language models, which have hundreds of billions of weights.
+4. **Generalizes to any number of weights:** The same algorithm works whether you have one weight or a million. More advanced variants of it train today's large language models, which have hundreds of billions of weights.
 
 The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might settle into a valley when a deeper valley exists elsewhere. This is a known problem in deep learning, but in large networks with many weights, most local minima tend to have similarly low loss, so the valley you land in is usually good enough, and finding the single deepest one isn't necessary.
 
