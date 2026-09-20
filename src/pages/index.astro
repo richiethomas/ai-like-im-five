@@ -10,7 +10,7 @@ import { categoryHref, getCategoryList, getFeatured, visiblePosts } from "@/lib/
 
 const allPosts = visiblePosts(await getCollection("posts"));
 const [latest, ...rest] = allPosts;
-const feed = rest.slice(0, 8);
+const feed = [...rest].reverse().slice(0, 8);
 const featured = getFeatured(allPosts, 4).filter((post) => post.id !== latest?.id);
 const categoryList = getCategoryList(allPosts);
 const hasMore = rest.length > feed.length;

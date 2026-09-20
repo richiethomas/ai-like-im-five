@@ -9,7 +9,7 @@ import { siteConfig } from "@/config/site";
 import { visiblePosts, type Post } from "@/lib/posts";
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const posts = visiblePosts(await getCollection("posts"));
+  const posts = [...visiblePosts(await getCollection("posts"))].reverse();
   return paginate(posts, { pageSize: 10 });
 }) satisfies GetStaticPaths;
 
