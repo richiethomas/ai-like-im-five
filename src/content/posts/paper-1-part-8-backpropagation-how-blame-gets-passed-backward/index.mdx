@@ -16,7 +16,7 @@ From Part 7: gradient descent adjusts weights using gradients, the slope of the 
 For a simple function, it is easy. Take a loss like:
 
 ```
-loss = (w - 5)² + (z + 2)⁴ - (a + 6)⁵
+loss = (w - 5)² + (z + 2)⁴ + (a - 3)²
 ```
 
 Each weight sits in its own separate term. The slope for `w` is just `2(w - 5)`, from the first term; the slope for `z` is `4(z + 2)³`, from the second. Every weight is independent, and computing all their slopes is quick. If a network's loss looked like this, we wouldn't need anything clever.
@@ -29,11 +29,11 @@ Picture a short chain, where the input is multiplied by one weight, then that re
 2  →  ×3  →  6  →  ×4  →  24  →  ×5  →  120
 ```
 
-Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, the 24 becomes 24.8, and the final 120 becomes 124. How much that nudge moved the answer (that's the weight's slope) depended on the weights the change flowed through: make the ×4 or the ×5 bigger, and the same nudge would move the answer more. So the first weight's slope isn't its own private number; it's tangled with every weight after it. In the tidy sum earlier, each weight's slope came from its own separate term alone. Here it doesn't.
+Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, the 24 becomes 24.8, and the final 120 becomes 124. How much that nudge moved the answer depended on the weights the change flowed through: make the ×4 or the ×5 bigger, and the same nudge would move the answer more. That sensitivity, how much the answer moves when you nudge the weight, is what the weight's slope measures, and here it isn't the weight's own private number; it's tangled with every weight after it. In the tidy sum earlier, each weight's slope came from its own separate term alone. Here it doesn't.
 
 You can still work out every slope with calculus. The catch is that doing it one weight at a time repeats a huge amount of the same work, since all those weights share the same path forward to the loss. For a network with millions of weights, that's hopeless.
 
-**Backpropagation** is the shortcut. It computes all the slopes in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the derivative: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to a single idea from calculus: the chain rule.
+**Backpropagation** is the shortcut. It computes the exact same slopes calculus would, just far faster: all of them in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the derivative: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to a single idea from calculus: the chain rule.
 
 ## The Chain Rule
 
@@ -142,7 +142,7 @@ Cat's blame is strongly negative, meaning its score is far too low and we should
 
 **One step further back, to a weight.** Each score is a weighted sum of the pixels, so a weight's local effect on its score is just the pixel it multiplies. So blame on a weight = (blame on its score) × (that pixel's value), the same "incoming blame × local effect" from before. Dog's weights on the pixels that lit up this image get a large positive blame, and gradient descent will lower them, so dog scores lower on images like this next time.
 
-That's the whole backward pass: blame started at the loss, flowed to the three scores, then on to the weights, each step just a multiply.
+That's the whole backward pass: blame started at the loss, flowed to the three scores, then on to the weights, each step just simple arithmetic.
 
 ## Why This Is Fast
 
@@ -168,7 +168,7 @@ Backpropagation isn't magic. It's just:
 
 Each of those nested steps is a **layer** (like `inner = x + 5`, then the squaring after it). What makes this work is that each layer only needs to know its own local behavior, how its output depends on its input. It doesn't need to understand the whole function. The chain rule carries each layer's local information backward and combines it into the slope for every weight.
 
-This is why neural networks can have hundreds of layers. Each layer is independent and local. Backpropagation connects them all.
+This is why neural networks can stack hundreds of layers: each one contributes just a local calculation, and backpropagation chains them all together into the slope for every weight.
 
 ## What's Next
 
