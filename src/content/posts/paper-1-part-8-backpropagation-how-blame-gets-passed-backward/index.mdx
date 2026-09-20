@@ -33,7 +33,7 @@ Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, the 24 becomes 24.
 
 You can still work out every slope with calculus. The catch is that doing it one weight at a time repeats a huge amount of the same work, since all those weights share the same path forward to the loss. For a network with millions of weights, that's hopeless.
 
-**Backpropagation** is the shortcut. It computes the exact same slopes calculus would, just far faster: all of them in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the derivative: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to a single idea from calculus: the chain rule.
+**Backpropagation** is the shortcut. It computes the exact same slopes calculus would, just far faster: all of them in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the derivative: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to an idea from calculus called "the chain rule".
 
 ## The Chain Rule
 
@@ -82,7 +82,7 @@ At each station, workers add value (or subtract it). The final output depends on
 
 Now imagine the output is wrong. Quality control finds a defect. Who's to blame?
 
-The blame isn't the output's responsibility alone. Blame propagates backward through the line:
+The defect isn't the last station's fault alone. Blame propagates backward through the line:
 - "Why is the output bad? Because Station C did bad work, or because the input to Station C was bad."
 - "Why was the input to Station C bad? Because Station B did bad work."
 - "Why was Station B's output bad? Because Station A did bad work, or because the original input was bad."
