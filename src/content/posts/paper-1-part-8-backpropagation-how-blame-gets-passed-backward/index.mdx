@@ -182,6 +182,8 @@ But our classifier is still a single weighted sum, and that has a hard limit. Pi
 
 The easiest case is when the two groups are cleanly split: all the cats over here, all the dogs over there. Then a single straight line does the job, and a weighted sum can draw that straight line.
 
+![A graph with dog points clustered in the lower left and cat points clustered in the upper right, cleanly separated by a single straight diagonal line.](/experiments/decision-boundary/clean-split.svg)
+
 Real data is messier. Here the dogs cluster in the middle and the cats surround them, and no straight line can separate the two: wherever you draw it, some dogs or some cats end up on the wrong side.
 
 ![A straight line across a graph of dog points clustered in the center with cat points surrounding them; the line leaves cats on both sides and cannot separate the two groups.](/experiments/decision-boundary/straight-line.svg)
