@@ -45,7 +45,7 @@ Squashes any input to a value between 0 and 1. It was common in earlier networks
 ```
 f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
 ```
-Squashes to between -1 and 1. A scaled, shifted version of the sigmoid.
+Squashes to between -1 and 1. A scaled, shifted version of the sigmoid, and like sigmoid a common choice before ReLU; it was often preferred because its outputs are centered on zero rather than always positive.
 
 Which activation a layer uses is a hyperparameter, a choice you make before training (Part 7), just like the number of layers, not something the network learns on its own.
 
