@@ -37,13 +37,30 @@ Subtract the average and divide by the **standard deviation** (a measure of how 
 
 ## Why This Matters
 
-Remember the downhill walk from Part 7: training rolls the loss downhill toward its lowest point. When the inputs are large or spread across very different scales, that downhill surface gets stretched, steep in one direction and nearly flat in another. One step size can't suit both: make the step big enough to move along the flat direction and it overshoots the steep one; make it small enough for the steep direction and the flat one barely moves. Putting the inputs on a small, similar scale makes the surface more bowl-shaped, so each step makes even progress in every direction.
+Here is the problem in numbers. Suppose one training example has two inputs, and the network multiplies each by its own weight:
 
-Here is that idea as a topographic map, the loss seen from above (each line connects points of equal loss, like a hiking map):
+- Input A = 0.5 (a small-scale value)
+- Input B = 200 (a large-scale value)
 
-<img src="/experiments/data-prep/loss-surface.svg" alt="Two topographic maps of the loss. Left, without normalization: stretched oval contours forming a narrow valley, with the gradient-descent path zig-zagging back and forth and crawling slowly toward the center. Right, with normalization: round concentric contours, with the path heading straight to the center." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "560px" }} />
+From Part 8, the gradient for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the input it multiplies. Say the same blame, 1, reaches both weights:
 
-That's the payoff, and it shows up directly in the training loss: a small, cheap change to the inputs that makes training more stable and usually faster.
+```
+weight A's gradient = 1 × 0.5 = 0.5
+weight B's gradient = 1 × 200 = 200
+```
+
+Weight B's gradient is 400 times bigger than weight A's, not because it is more wrong, but only because its input is 400 times bigger. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, weight B moves 400 times as far as weight A on every step. Pick a rate small enough to keep B from overshooting and A barely budges; pick one big enough to move A and B flies past its target. One rate can't serve both, so training stalls or thrashes.
+
+Normalize the inputs first, so both are about the same size (say both near 1):
+
+```
+weight A's gradient = 1 × 1 = 1
+weight B's gradient = 1 × 1 = 1
+```
+
+Now the two weights move together, and a single learning rate works for both. That is the point of normalizing: put every input on a comparable scale, so no weight is updated wildly harder than another just because its input happened to be bigger.
+
+The difference shows up during training: with normalization the loss drops fast and smoothly; without, it falls slowly and wobbles as the mismatched updates fight each other.
 
 <img src="/experiments/data-prep/training-curves.svg" alt="A line chart of training loss over steps. The without-normalization line falls slowly and wobbles up and down; the with-normalization line drops fast and smoothly to a low value." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "480px" }} />
 
