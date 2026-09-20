@@ -37,10 +37,12 @@ Subtract the average and divide by the **standard deviation** (a measure of how 
 
 ## Why This Matters
 
-Here is the problem in numbers. Suppose one training example has two **features** (individual input values, like two pixels), each multiplied by its own weight:
+Pixels all live on the same 0-to-255 scale, so a single division by 255 shrinks them into a small range together. It gets trickier when a model's features are on different scales from each other, because then no single divisor works for all of them.
 
-- Feature A = 0.5 (a small-scale value)
-- Feature B = 200 (a large-scale value)
+Here is that problem in numbers. Suppose a training example has two **features** (two of its input numbers, each multiplied by its own weight), one small and one large:
+
+- Feature A = 0.5
+- Feature B = 200
 
 From Part 8, the gradient for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the feature it multiplies. Say the same blame, 1, reaches both weights:
 
