@@ -87,9 +87,9 @@ Input (pixels)
 
 Chaining one layer into the next like this, each working on the output of the one before it, is what **depth** means. That network is four layers deep. (The `[ReLU]` boxes aren't extra layers. Each just applies the activation to the linear layer right before it, the same activation built into every neuron. A linear box and its ReLU together make one layer.)
 
-What the diagram hides is what sits *inside* each box. A box labeled "Linear layer" is really a column of neurons side by side, and how many neurons fill that column is the layer's **width**:
+What the diagram hides is what sits *inside* each box. A box labeled "Linear layer" is really a column of neurons, and how many neurons fill that column is the layer's **width**. Here is the whole picture at three zoom levels: a single neuron, then one layer, then several layers chained.
 
-<img src="/experiments/neurons-and-networks/layer-width.svg" alt="A small network: three input nodes on the left connect to a vertical column of five neurons (one hidden layer) in the middle, which connect to a single output node on the right. A bracket labels the column 'width = 5 neurons'." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "420px" }} />
+<img src="/experiments/neurons-and-networks/neuron-layer-depth.svg" alt="Three stacked panels. Top: a single neuron takes the pixel values of one image, multiplies each by a weight, sums them, adds a bias, and applies an activation, producing one number. Middle: one layer is a column of five such neurons all reading the same pixels, each producing one output, with a bracket labeling the column 'width = 5 neurons'. Bottom: several layers chained, pixels feeding layer 1, then layer 2, then layer 3, then the output, showing depth." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "460px" }} />
 
 So they are two separate choices. Depth is how many layers you chain one after another; width is how many neurons are packed inside a single layer. A network can be deep and narrow, shallow and wide, or anything in between.
 
