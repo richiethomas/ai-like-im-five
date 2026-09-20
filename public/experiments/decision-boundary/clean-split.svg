@@ -4,21 +4,21 @@
   <circle cx="215" cy="24" r="5" fill="#2563eb"/><text x="225" y="28" font-size="13" fill="#334155">cat</text>
   <text x="200" y="52" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">The easy case</text>
   <rect x="40" y="60" width="320" height="320" fill="#f8fafc" stroke="#e2e8f0"/>
-  <line x1="40.0" y1="60.0" x2="360.0" y2="380.0" stroke="#334155" stroke-width="2.5"/>
-<circle cx="104.0" cy="300.0" r="5.5" fill="#ea580c"/>
-<circle cx="136.0" cy="316.0" r="5.5" fill="#ea580c"/>
-<circle cx="120.0" cy="268.0" r="5.5" fill="#ea580c"/>
-<circle cx="152.0" cy="284.0" r="5.5" fill="#ea580c"/>
-<circle cx="104.0" cy="252.0" r="5.5" fill="#ea580c"/>
-<circle cx="168.0" cy="300.0" r="5.5" fill="#ea580c"/>
-<circle cx="136.0" cy="268.0" r="5.5" fill="#ea580c"/>
-<circle cx="120.0" cy="316.0" r="5.5" fill="#ea580c"/>
-<circle cx="264.0" cy="140.0" r="5.5" fill="#2563eb"/>
-<circle cx="296.0" cy="156.0" r="5.5" fill="#2563eb"/>
-<circle cx="248.0" cy="124.0" r="5.5" fill="#2563eb"/>
-<circle cx="280.0" cy="172.0" r="5.5" fill="#2563eb"/>
-<circle cx="296.0" cy="124.0" r="5.5" fill="#2563eb"/>
-<circle cx="232.0" cy="156.0" r="5.5" fill="#2563eb"/>
-<circle cx="264.0" cy="172.0" r="5.5" fill="#2563eb"/>
-<circle cx="312.0" cy="140.0" r="5.5" fill="#2563eb"/>
+  <line x1="40.0" y1="380.0" x2="360.0" y2="60.0" stroke="#334155" stroke-width="2.5"/>
+<circle cx="264.0" cy="316.0" r="5.5" fill="#ea580c"/>
+<circle cx="296.0" cy="284.0" r="5.5" fill="#ea580c"/>
+<circle cx="248.0" cy="300.0" r="5.5" fill="#ea580c"/>
+<circle cx="280.0" cy="268.0" r="5.5" fill="#ea580c"/>
+<circle cx="296.0" cy="316.0" r="5.5" fill="#ea580c"/>
+<circle cx="248.0" cy="284.0" r="5.5" fill="#ea580c"/>
+<circle cx="280.0" cy="316.0" r="5.5" fill="#ea580c"/>
+<circle cx="312.0" cy="268.0" r="5.5" fill="#ea580c"/>
+<circle cx="104.0" cy="156.0" r="5.5" fill="#2563eb"/>
+<circle cx="136.0" cy="124.0" r="5.5" fill="#2563eb"/>
+<circle cx="120.0" cy="172.0" r="5.5" fill="#2563eb"/>
+<circle cx="152.0" cy="140.0" r="5.5" fill="#2563eb"/>
+<circle cx="104.0" cy="124.0" r="5.5" fill="#2563eb"/>
+<circle cx="168.0" cy="140.0" r="5.5" fill="#2563eb"/>
+<circle cx="136.0" cy="172.0" r="5.5" fill="#2563eb"/>
+<circle cx="120.0" cy="140.0" r="5.5" fill="#2563eb"/>
 </svg>
