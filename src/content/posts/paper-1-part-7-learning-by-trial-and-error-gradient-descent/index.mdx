@@ -73,6 +73,8 @@ loss = (w - 5)²
 
 The minimum is at `w = 5` (loss = 0).
 
+This `(w - 5)²` isn't one of the loss functions from Part 6 (hinge or softmax). It's a stand-in, chosen to be as simple as possible: one weight instead of thousands, and an obvious lowest point, so we can run gradient descent by hand and watch it converge. Part 6's losses are functions of thousands of weights at once, which you can't step through on paper.
+
 The gradient at any point `w` is:
 
 ```
@@ -97,6 +99,10 @@ Let's start with `w = 0` and learning rate = 0.1:
 - new_w = 1.8 - 0.1 * (-6.4) = 1.8 + 0.64 = 2.44
 
 The loss is decreasing: 25 → 16 → 10.24. We're moving downhill. After many iterations, `w` converges to 5 and loss approaches 0.
+
+![A parabola, loss = (w-5)², with points stepping down its left side from w=0 toward the minimum at w=5, each step smaller than the last](/experiments/gradient-descent/parabola-descent.svg)
+
+Each orange dot is one iteration. The steps shrink as you near the bottom: far from the minimum the slope is steep, so the step is big; close to it the slope is gentle, so the step is small. That's why `w` eases into the minimum instead of shooting past it.
 
 ## Why This Works
 
