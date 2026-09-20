@@ -112,8 +112,8 @@ Each training step has two passes, and backpropagation is the second one.
 This forward-then-backward pair runs on every training step. The weights change after each step, so the next step reruns the forward pass and recomputes fresh intermediate results; they are never captured once and reused.
 
 At each station, blame flows backward by multiplying two numbers:
-- **Incoming blame:** how much the final loss changes if my output changes a little (say, 2.5).
-- **My local effect:** how much my output changes if my input changes a little (say, 1.2).
+- **Incoming blame:** how much the final loss changes when my output changes. For example, if my output changes by 2 and the loss changes by 5, the incoming blame is 5 ÷ 2 = 2.5.
+- **My local effect:** how much my output changes when my input changes. For example, if my input changes by 5 and my output changes by 6, the local effect is 6 ÷ 5 = 1.2.
 - **Blame I pass back to my input:** 2.5 × 1.2 = 3.0.
 
 By the time you reach the weights, you know exactly how much each weight affects the final loss.
