@@ -37,7 +37,7 @@ In mathematics, the **gradient** of a function points in the direction of steepe
 
 At a single spot, the steepness isn't one number. It depends on which way you face. Step north and the ground might barely rise; step east and it might climb sharply. So a point has a slope for *every* direction you could move, and the gradient bundles those together to point at the single steepest one.
 
-A real mountain has two directions to weigh (north-south and east-west). A loss function has thousands, one for each weight. For each weight you measure its own slope, the loss's *partial derivative* with respect to that weight: "if I nudge this weight up a little, does the loss rise or fall, and by how much?" Those thousands of slopes together are the gradient.
+A real mountain has two directions to weigh (north-south and east-west). A loss function has thousands, one for each weight. For each weight you measure its own slope: if you nudge this weight up a little, does the loss rise or fall, and by how much? (A slope like this is what calculus calls a *derivative*; the slope for one weight among many is a *partial derivative*.) Those thousands of slopes together are the gradient.
 
 Then you adjust each weight a tiny bit in the direction that reduces loss.
 
