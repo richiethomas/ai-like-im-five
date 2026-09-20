@@ -59,7 +59,7 @@ Input (pixels)
   → [Linear layer 4 - final scores]
 ```
 
-Each layer transforms the output of the layer before it. With images especially, the layers often end up capturing different levels of detail: early ones pick up low-level patterns like edges, later ones combine those into bigger pieces, and still later ones respond to higher-level concepts. How cleanly that happens depends on the data and the training.
+Each layer transforms the output of the layer before it, and the network can build up features in stages: early layers picking up low-level patterns like edges, later ones combining those into bigger pieces, and still later ones responding to higher-level concepts. That clean edges-to-objects story is clearest in the convolutional networks coming in Parts 12 to 14; how well the plain stacked layers here pull it off depends on the data and the training.
 
 The final layer then uses those built-up features to make the actual decision, like cat versus dog.
 
