@@ -37,24 +37,34 @@ You can still work out every slope with calculus. The catch is that doing it one
 
 ## The Chain Rule
 
-If you remember your high-school calculus: when a function is built from nested functions, the chain rule tells you how to compute its derivative.
+The separable example from the opening was the easy case: every term stood on its own, so each slope was a one-step calculation. A step closer to how this domain actually works is a **nested** equation, one equation tucked inside another. The simplest example:
 
 ```
-If y = f(g(x)), then dy/dx = (dy/dg) * (dg/dx)
+inner = x + 5
+y     = inner²
 ```
 
-Example: if `y = (x + 5)²`
+`y` isn't written directly in terms of `x`. It's written in terms of `inner`, and `inner` is written in terms of `x`, one equation sitting inside the other. (A network is this same idea taken much further: layer inside layer inside layer.)
 
-You can break it down:
-- `g(x) = x + 5`
-- `f(g) = g²`
+Our goal hasn't changed. We still want `dy/dx`, the slope: how much `y` changes when we nudge `x`. In the separable case that was one step. But the nesting gets in the way: `x` is buried inside `inner`, which is buried inside the squaring, so we can't read off how `y` responds to `x` in a single move.
 
-Then:
-- `dg/dx = 1` (the derivative of addition)
-- `df/dg = 2g` (the derivative of squaring)
-- `dy/dx = (2g) * (1) = 2(x + 5)`
+The **chain rule** resolves this by going through the middle. To get how `y` changes as `x` changes, you multiply two simpler rates of change:
 
-The chain rule turns one complex derivative into a product of simple, local ones, which is what lets you break the problem into manageable pieces.
+- how much `y` changes as `inner` changes, and
+- how much `inner` changes as `x` changes.
+
+For our example:
+
+- `y = inner²`, so `y` changes at a rate of `2 × inner` as `inner` changes, which is `2(x + 5)`.
+- `inner = x + 5`, so `inner` changes at a rate of `1` as `x` changes (nudge `x` a little, and `inner` moves by the same amount).
+
+Multiply them:
+
+```
+dy/dx = 2(x + 5) × 1 = 2(x + 5)
+```
+
+The nesting is handled by chaining two simple, local rates of change through the middle.
 
 ## The Assembly Line Metaphor
 
