@@ -13,11 +13,11 @@ tags: ["backpropagation", "chain rule"]
 
 From Part 7: gradient descent adjusts weights using gradients (slopes). But how do you compute gradients for a complex function with thousands of weights?
 
-**Backpropagation** is the algorithm that does this efficiently. It's the workhorse of deep learning, and it's based on a simple idea: the chain rule from calculus.
+**Backpropagation** is the algorithm that does this efficiently. It's the standard way gradients get computed in deep learning, and it's based on one idea: the chain rule from calculus.
 
 ## The Chain Rule
 
-From high school calculus: if you have a function built from nested functions, the chain rule tells you how to compute the derivative.
+If you remember your high-school calculus: when a function is built from nested functions, the chain rule tells you how to compute its derivative.
 
 ```
 If y = f(g(x)), then dy/dx = (dy/dg) * (dg/dx)
@@ -34,7 +34,7 @@ Then:
 - `df/dg = 2g` (the derivative of squaring)
 - `dy/dx = (2g) * (1) = 2(x + 5)`
 
-The chain rule lets you break complex derivatives into simple pieces.
+The chain rule turns one complex derivative into a product of simple, local ones, which is what lets you break the problem into manageable pieces.
 
 ## The Assembly Line Metaphor
 
@@ -55,40 +55,40 @@ The blame isn't the output's responsibility alone. Blame propagates backward thr
 
 Each station needs to know: "How much of the final defect is my fault?"
 
-Backpropagation does exactly this for neural networks. It passes blame backward through the function.
+Backpropagation does exactly this for a neural network: it works out how much each weight is to blame for the loss, passing blame backward through the function.
 
 ## How Backpropagation Works
 
-In a linear classifier, the function has layers:
+A linear classifier is really just one step, multiply the pixels by weights and add the biases, followed by computing the loss:
 
 ```
-Input (pixels) → [multiply by weights] → [add biases] → [compute loss]
+Input (pixels) → [multiply by weights, add biases] → [compute loss]
 ```
 
-Each layer is a "station" that produces an output from an input.
+Each box is a "station" that produces an output from an input.
 
 Backpropagation works in two passes:
 
 **Forward pass:** Feed the input through the entire function, computing outputs at each station. Save the intermediate results.
 
-**Backward pass:** Starting from the output loss, compute how much the loss changed with respect to each station's output. Use the chain rule to propagate blame backward through each layer.
+**Backward pass:** Starting from the output loss, work out how much the loss would change if each station's output changed a little. That number is the station's "blame." Use the chain rule to propagate it backward through each layer.
 
-At each station:
-- "The output loss is 2.5"
-- "My output contributed 1.2 to that loss"
-- "The loss I can blame my input for is: 2.5 * (my contribution factor)"
+At each station, blame flows backward by multiplying two numbers:
+- **Incoming blame:** how much the final loss changes if my output changes a little (say, 2.5).
+- **My local effect:** how much my output changes if my input changes a little (say, 1.2).
+- **Blame I pass back to my input:** 2.5 × 1.2 = 3.0.
 
-By the time you reach the weights, you know exactly how much each weight contributed to the final loss.
+By the time you reach the weights, you know exactly how much each weight affects the final loss.
 
 ## Why This Is Fast
 
-If you computed gradients directly (by perturbing each weight slightly and measuring the change), you'd need to:
+If you estimated the gradients numerically (nudge each weight a tiny bit, rerun, and see how much the loss changed), you'd need to:
 
 1. Change weight #1 by 0.0001, run the full forward pass, measure the loss change → gradient for weight #1
 2. Change weight #2 by 0.0001, run the full forward pass, measure the loss change → gradient for weight #2
 3. Repeat for all 3,000 weights
 
-That's 3,000 full forward passes. Slow.
+That's 3,000 full forward passes, one for every weight, and real networks have millions of them.
 
 Backpropagation does it in one forward pass and one backward pass, no matter how many weights you have.
 
@@ -98,11 +98,11 @@ The chain rule means: once you've computed blame at one layer, you can quickly c
 
 Backpropagation isn't magic. It's just:
 
-1. The chain rule from calculus (learned in high school)
+1. The chain rule from calculus
 2. Applied systematically to a layered function
 3. In reverse order (backward)
 
-The deep insight: each layer only needs to know its own local behavior (how its output depends on its input). It doesn't need to understand the entire function. The chain rule automatically propagates local information backward into global gradients.
+What makes this work: each layer only needs to know its own local behavior (how its output depends on its input). It doesn't need to understand the entire function. The chain rule automatically propagates local information backward into global gradients.
 
 This is why neural networks can have hundreds of layers. Each layer is independent and local. Backpropagation connects them all.
 
@@ -114,4 +114,4 @@ Now we have:
 - A way to find gradients (backpropagation)
 - A way to improve weights (gradient descent)
 
-The next step: what if we stack multiple layers instead of just one? What if each layer applies a non-linear function, not just a weighted sum? That's neural networks, and that's where things get interesting.
+The next step: our classifier so far is a single layer. What if we stack many layers, each applying a non-linear function instead of just a weighted sum? That's neural networks, and they're where the series goes from here.
