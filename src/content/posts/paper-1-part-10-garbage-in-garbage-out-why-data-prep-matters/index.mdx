@@ -33,7 +33,7 @@ A more thorough approach is **standardization**. Dividing by 255 only shrinks th
 standardized_value = (raw_value - average) / standard_deviation
 ```
 
-Subtract the average and divide by the **standard deviation** (a measure of how spread out the values are), both measured on your training data and then applied unchanged to any new data. This puts the values around zero with a comparable spread. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
+Subtract the average and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
 
 ## Why This Matters
 
@@ -53,16 +53,16 @@ square footage weight's gradient = 1 × 2500 = 2500
 
 The square-footage weight's gradient is over 600 times bigger, not because square footage matters more, but only because it is counted in bigger numbers than bedrooms. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, the square-footage weight lurches while the bedrooms weight barely moves. One rate can't serve both, so training stalls or thrashes.
 
-Standardization (from the start of the post) fixes this. For each feature, it measures that feature's own average and spread (a.k.a. its standard deviation, the distance a typical value sits from the average). Then it subtracts the average and divides by the spread.
+Standardization (from the start of the post) fixes this. For each feature, it measures that feature's own average and standard deviation. Then it subtracts the average and divides by the standard deviation.
 
-Suppose bedrooms average 3, with most houses within about 1 of that (a spread, or standard deviation, of 1), and square footage averages 2000, with most homes within about 1000 of that:
+Suppose bedrooms average 3, with most houses within about 1 of that (a standard deviation of 1), and square footage averages 2000, with most homes within about 1000 of that:
 
 ```
 bedrooms standardized       = (4 - 3) / 1          = 1
 square footage standardized = (2500 - 2000) / 1000 = 0.5
 ```
 
-Both now sit on the same small scale, comparable in size (1 and 0.5) instead of wildly apart (4 and 2500). That is by design, not coincidence: standardization expresses every feature as how far a value sits from its own average, measured in spreads, so features that started in different units come out comparable in size. Dividing everything by one number, the way we divided pixels by 255, wouldn't do this, because bedrooms and square footage are on different scales; each needs its own average and spread. Now the gradients are comparable:
+Both now sit on the same small scale, comparable in size (1 and 0.5) instead of wildly apart (4 and 2500). That is by design, not coincidence: standardization expresses every feature as how far a value sits from its own average, measured in standard deviations, so features that started in different units come out comparable in size. Dividing everything by one number, the way we divided pixels by 255, wouldn't do this, because bedrooms and square footage are on different scales; each needs its own average and standard deviation. Now the gradients are comparable:
 
 ```
 bedrooms weight's gradient       = 1 × 1   = 1
