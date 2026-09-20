@@ -47,6 +47,8 @@ f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
 ```
 Squashes to between -1 and 1. A scaled, shifted version of the sigmoid.
 
+Which activation a layer uses is a hyperparameter, a choice you make before training (Part 7), just like the number of layers, not something the network learns on its own.
+
 The key: without the activation function, stacking linear layers just gives you another linear layer (stacking straight-line steps only ever gives you another straight-line step). The activation function breaks this chain and lets the network learn curved, non-linear patterns.
 
 ## Stacking Layers
