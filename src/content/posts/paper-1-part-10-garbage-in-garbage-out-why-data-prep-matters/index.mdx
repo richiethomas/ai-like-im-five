@@ -62,7 +62,7 @@ bedrooms standardized       = (4 - 3) / 1          = 1
 square footage standardized = (2500 - 2000) / 1000 = 0.5
 ```
 
-They both come out near 1 by design, not by coincidence: that is the whole job of standardization, pulling every feature onto a common scale no matter what size it started at. Dividing everything by one number, the way we divided pixels by 255, wouldn't do this, because bedrooms and square footage are on different scales; each needs its own average and spread. Now the gradients are comparable:
+Both now sit on the same small scale, comparable in size (1 and 0.5) instead of wildly apart (4 and 2500). That is by design, not coincidence: standardization expresses every feature as how far a value sits from its own average, measured in spreads, so features that started in different units come out comparable in size. Dividing everything by one number, the way we divided pixels by 255, wouldn't do this, because bedrooms and square footage are on different scales; each needs its own average and spread. Now the gradients are comparable:
 
 ```
 bedrooms weight's gradient       = 1 × 1   = 1
