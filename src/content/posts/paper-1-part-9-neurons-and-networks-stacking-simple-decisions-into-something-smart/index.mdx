@@ -93,6 +93,8 @@ What the diagram hides is what sits *inside* each box. A box labeled "Linear lay
 
 So they are two separate choices. Depth is how many layers you chain one after another; width is how many neurons are packed inside a single layer. A network can be deep and narrow, shallow and wide, or anything in between.
 
+This is also where a model's huge weight count comes from. Every line in the figure is a separate weight, and each neuron has its own weight for every input, so a single pixel is multiplied by a different weight in each neuron. If an image is 3,072 numbers (the 32×32×3 from Part 5) and a layer has 100 neurons, that one layer holds 100 × 3,072 = 307,200 weights, plus one bias per neuron. Stack several wide layers and the total climbs into the millions or billions. Those learned numbers, the weights and biases together, are what people call a model's **parameters**. When a headline says a new model has 500 billion parameters, it means 500 billion individual numbers the model adjusted during training.
+
 The theorem in the next section is about the shallow-and-wide extreme: a single hidden layer, made wide enough.
 
 ## The Universal Approximation Theorem
