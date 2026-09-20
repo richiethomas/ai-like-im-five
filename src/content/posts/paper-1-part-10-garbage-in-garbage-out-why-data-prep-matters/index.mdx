@@ -75,16 +75,7 @@ The difference shows up during training: with normalization the loss drops fast 
 
 <img src="/experiments/data-prep/training-curves.svg" alt="A line chart of training loss over steps. The without-normalization line falls slowly and wobbles up and down; the with-normalization line drops fast and smoothly to a low value." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "480px" }} />
 
-## Beyond Pixels
-
-Normalization isn't only for pixels. Whenever your inputs arrive on very different scales, the same problem shows up and the same fix helps:
-
-- Financial data (prices from $1 to $10,000)
-- Fitness data (daily step count in the thousands, next to hours of sleep, 0 to 12)
-
-Here each feature is standardized using its own average and standard deviation, so no single feature dominates just because its numbers happen to be bigger. (Inputs already on a small, similar scale need less of this.)
-
-A common guideline: when your features sit on very different scales, put them on a common one before training.
+And none of this is specific to house prices or pixels: any time a model's features are on very different scales, standardizing them first keeps the big-numbered ones from dominating. Features already on a small, similar scale need it less.
 
 ## What's Next
 
