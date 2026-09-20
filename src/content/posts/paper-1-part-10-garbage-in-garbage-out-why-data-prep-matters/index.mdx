@@ -1,6 +1,6 @@
 ---
 title: "Paper #1, Part 10: Garbage In, Garbage Out (Why Data Prep Matters)"
-excerpt: "Your network is only as good as your data. Before you feed pixels to a neural network, you need to prepare them. It's unglamorous but essential."
+excerpt: "Before a network can learn from pixels, those pixels need to be put on a consistent scale. It's a small step that makes training much more stable."
 category: "Fundamentals"
 date: 2023-09-13T23:59:59Z
 author:
@@ -11,51 +11,49 @@ draft: false
 tags: ["data preprocessing", "normalization"]
 ---
 
-Neural networks are powerful, but they're sensitive to the scale of their inputs.
+Neural networks are sensitive to the scale of their inputs, and pixels come in a wide range: 0 to 255.
 
-Pixel values range from 0 to 255. If you feed these directly into a network, early layers see huge values (255) and tiny values (0). Weights adjust differently for different ranges. Training becomes unstable and slow.
+Recall from Part 8 that a weight's update is proportional to the input feeding it: blame on a weight = incoming blame × that input's value. So a pixel of 255 pushes its weights 255 times harder than a pixel of 1. Feed raw 0-to-255 values straight into a network and the updates come out large and erratic, which makes training unstable and slow.
 
-The solution: **normalize** your inputs.
+The fix: **normalize** the inputs, shrinking them to a small, consistent range.
 
 ## Normalization
 
-The simplest approach: divide all pixel values by 255, so they range from 0 to 1 instead of 0 to 255.
+The simplest approach: divide every pixel by 255, so the values run from 0 to 1 instead of 0 to 255.
 
 ```
 normalized_pixel = raw_pixel / 255
 ```
 
-Now all inputs are in a consistent range. Gradients flow more smoothly. Training converges faster.
+Now every input is a small number in the same range, so no pixel pushes its weights wildly harder than another, and the updates stay manageable.
 
-A more sophisticated approach: **standardization** (z-score normalization).
+A more thorough approach is **standardization** (also called z-score normalization): instead of only shrinking the range, you also center it.
 
 ```
-standardized_pixel = (raw_pixel - mean) / std_dev
+standardized_value = (raw_value - average) / standard_deviation
 ```
 
-Subtract the mean of all pixels, divide by the standard deviation. This centers the data around zero with unit variance.
-
-Why? Networks learn faster when inputs have zero mean and unit variance. Weights don't need to spend parameters learning "the overall shift"; they can focus on patterns.
+Subtract the average and divide by the standard deviation, both measured from your training data. This centers the values at zero and gives them a consistent spread. Centering helps because the network doesn't have to first learn to cancel out a constant offset before it can focus on the actual patterns. Networks generally train more easily this way.
 
 ## Why This Matters
 
-Without normalization, training is like trying to walk downhill in a severely tilted landscape. You overshoot in some directions, get stuck in others. With normalization, the landscape is more balanced. Gradient descent works much more smoothly.
+Remember the downhill walk from Part 7: training rolls the loss downhill toward its lowest point. When inputs are on very different scales, that downhill surface gets stretched, steep in one direction and nearly flat in another. One step size can't suit both: make the step big enough to move along the flat direction and it overshoots the steep one; make it small enough for the steep direction and the flat one barely moves. Putting the inputs on a similar scale makes the surface more bowl-shaped, so each step makes even progress in every direction.
 
-On CIFAR-10 (a standard benchmark), proper normalization can reduce training time by 2-3x and improve final accuracy.
+This is why normalizing inputs is a routine first step before training; the CS231n notes treat it as standard preprocessing. It's a small, cheap change that makes training more stable and usually faster.
 
 ## Beyond Pixels
 
-Normalization isn't just for pixels. Any numerical input benefits from scaling:
-- Financial data (stock prices range from $1 to $10,000)
-- Medical data (height in cm vs. weight in kg have vastly different ranges)
-- Any mixed-scale features
+Normalization isn't only for pixels. Whenever your inputs arrive on very different scales, the same problem shows up and the same fix helps:
 
-The rule: if your features have different scales, normalize them.
+- Financial data (prices from $1 to $10,000)
+- Medical data (height in centimeters next to weight in kilograms)
+
+Here each feature is scaled by its own average and standard deviation, so no feature dominates just because its numbers happen to be bigger. (Inputs that are already on similar scales don't need it.)
+
+A common guideline: when your features sit on very different scales, put them on a common one before training.
 
 ## What's Next
 
-Now we have:
-- Networks with layers and activations
-- Properly normalized inputs
+Now we have networks with layers and activations, and inputs that are properly scaled.
 
-The next challenge: a network trained on training data often overfits: it memorizes rather than generalizes. Part 11 covers overfitting and how to prevent it with regularization.
+The next challenge is **overfitting**: a network can end up memorizing its training examples instead of learning the general pattern, so it does well on data it has seen and poorly on data it hasn't. Part 11 covers why that happens and how to curb it, with regularization.
