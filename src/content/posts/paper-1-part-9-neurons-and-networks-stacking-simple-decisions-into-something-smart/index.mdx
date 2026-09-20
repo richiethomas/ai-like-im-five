@@ -93,7 +93,7 @@ What the diagram hides is what sits *inside* each box. A box labeled "Linear lay
 
 So they are two separate choices. Depth is how many layers you chain one after another; width is how many neurons are packed inside a single layer. A network can be deep and narrow, shallow and wide, or anything in between.
 
-The widths don't even have to match from layer to layer. Each hidden layer's width is its own choice, so one layer can be wider or narrower than the one before it. The figure above drew five neurons in every layer just to keep the panels tidy; a real network's layers are usually different sizes. The one width that isn't free is the last layer's: it's fixed by the task, with one output neuron per possible answer (in this case three, for cat/dog/bird).
+The widths don't even have to match from layer to layer. Each hidden layer's width is its own choice, another hyperparameter you set before training (like the depth and the activation function), so one layer can be wider or narrower than the one before it. The figure above drew five neurons in every layer just to keep the panels tidy; a real network's layers are usually different sizes. The one width that isn't free is the last layer's: it's fixed by the task, with one output neuron per possible answer (in this case three, for cat/dog/bird).
 
 <img src="/experiments/neurons-and-networks/varying-widths.svg" alt="A network whose layers have different sizes: three pixel inputs feed a layer of six neurons, then a layer of three, then a layer of four, then three output neurons. A caption notes each hidden layer's width is a free choice and only the last layer, the output, is pinned by the task at three scores." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
 
