@@ -138,7 +138,7 @@ blame on dog's score  = 0.999  - 0 =  0.999
 blame on bird's score = 0.0001 - 0 =  0.0001
 ```
 
-Read the signs: cat's blame is strongly negative (its score is far too low, push it up), dog's is strongly positive (far too high, push it down), and bird's is tiny (leave it alone). Exactly the correction a confidently-wrong guess deserves.
+Cat's blame is strongly negative (its score is far too low, push it up), dog's is strongly positive (far too high, push it down), and bird's is tiny (leave it alone). Exactly the correction a confidently-wrong guess deserves.
 
 **One step further back, to a weight.** Each score is a weighted sum of the pixels, so a weight's local effect on its score is just the pixel it multiplies. So blame on a weight = (blame on its score) × (that pixel's value), the same "incoming blame × local effect" from before. Dog's weights on the pixels that lit up this image get a large positive blame, and gradient descent will lower them, so dog scores lower on images like this next time.
 
