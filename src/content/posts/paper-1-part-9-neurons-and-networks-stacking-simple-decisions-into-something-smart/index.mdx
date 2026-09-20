@@ -105,10 +105,18 @@ The theorem in the next section is about the shallow-and-wide extreme: a single 
 
 There's a mathematical result, the **Universal Approximation Theorem**, with a surprising message. Take a network with a single layer of neurons in the middle, between the input and the final answer; that middle layer is called a **hidden layer** (hidden because you never see its values directly, they're an internal step). Give it enough neurons, and it can mimic almost any function you could draw, to as much accuracy as you want.
 
-That's a strong statement, with a catch worth being careful about: it says such a network *can represent* the function, not that it will *learn* it. Getting there in practice still depends on:
-1. Having enough neurons
-2. Having enough data to learn the patterns
-3. Finding the right weights through gradient descent (the training process from Part 7)
+That's a strong statement, and it comes with a catch. The theorem says such a network *can represent* the function, not that it will *learn* it. Those are two different things:
+
+- **Represent:** somewhere among all the possible settings of the network's weights (its millions of knobs), a setting exists that matches the target function.
+- **Learn:** training, starting from random weights and nudging them based on the data, can actually arrive at that setting.
+
+Think of a safe. The theorem guarantees the safe has a combination that opens it. It says nothing about whether you can find that combination, and finding it can fail even though it exists:
+
+- Gradient descent (Part 7) walks downhill from wherever it happened to start, and it can settle into a mediocre valley without ever reaching the best setting.
+- You might not have enough data to tell which weight settings are the right ones.
+- "Enough neurons" could be an impractically huge number.
+
+So the theorem promises only that a good setting exists. Whether training reaches it, with a sane number of neurons and the data you have, is a separate question.
 
 And "one hidden layer is enough in principle" doesn't make depth pointless. In practice, stacking more layers usually captures complex patterns more efficiently, with fewer neurons, than one very wide layer, and the way the network is arranged (its architecture) strongly affects what it actually learns.
 
