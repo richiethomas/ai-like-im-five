@@ -13,7 +13,7 @@ tags: ["data preprocessing", "normalization"]
 
 Neural networks are sensitive to the scale of their inputs, and pixels come in a wide range: 0 to 255.
 
-Recall from Part 8 that the size of the input feeding a weight is one of the things that sets how much that weight gets adjusted: bigger inputs tend to mean bigger adjustments. Raw pixels run all the way up to 255, big enough to make those adjustments large and erratic, so training is unstable and slow.
+Recall from Part 8 that the size of the input feeding a weight is one of the things that sets how much that weight gets adjusted: bigger inputs tend to mean bigger adjustments. Raw pixels run all the way up to 255, big enough to make those adjustments large and erratic, so training can be unstable and slow.
 
 The fix: **normalize** the inputs, shrinking them to a small, consistent range.
 
@@ -33,7 +33,7 @@ A more thorough approach is **standardization**. Dividing by 255 only shrinks th
 standardized_value = (raw_value - average) / standard_deviation
 ```
 
-Subtract the average (the mean) and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale. Inputs that are centered and evenly scaled make training easier for gradient descent, which the next section explains. Networks generally train more easily this way.
+Subtract the average (the mean) and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale, which makes training go more smoothly (the next section shows why).
 
 ## Why This Matters
 
@@ -71,7 +71,7 @@ square footage weight's gradient = 1 × 0.5 = 0.5
 
 so the two weights move at similar rates, and a single learning rate works for both. That is the point of normalizing: put every input on a comparable scale, so no weight is updated wildly harder than another just because its input happened to be bigger.
 
-The difference shows up during training: with normalization the loss drops fast and smoothly; without, it falls slowly and wobbles as the mismatched updates fight each other.
+In practice, normalizing usually makes the loss drop faster and more smoothly; without it, the loss falls slowly and wobbles, because no single learning rate fits both the large and small gradients.
 
 <img src="/experiments/data-prep/training-curves.svg" alt="A line chart of training loss over steps. The without-normalization line falls slowly and wobbles up and down; the with-normalization line drops fast and smoothly to a low value." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "480px" }} />
 
