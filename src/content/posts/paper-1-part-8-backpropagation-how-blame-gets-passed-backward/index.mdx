@@ -11,9 +11,30 @@ draft: false
 tags: ["backpropagation", "chain rule"]
 ---
 
-From Part 7: gradient descent adjusts weights using gradients (slopes). But how do you compute gradients for a complex function with thousands of weights?
+From Part 7: gradient descent adjusts weights using gradients, the slope of the loss for each weight. So the job now is to compute those slopes. If you remember some calculus, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
 
-**Backpropagation** is the algorithm that does this efficiently. It's the standard way gradients get computed in deep learning, and it's based on one idea: the chain rule from calculus.
+For a simple function, it is easy. Take a loss like:
+
+```
+loss = (w - 5)² + (z + 2)⁴ - (a + 6)⁵
+```
+
+Each weight sits in its own separate term. The slope for `w` is just `2(w - 5)`, from the first term; the slope for `z` is `4(z + 2)³`, from the second. Every weight is independent, and computing all their slopes is quick. If a network's loss looked like this, we wouldn't need anything clever.
+
+But a network's loss isn't a sum of separate terms. It's deeply **nested**: every weight's effect on the loss flows through all the weights after it. A tiny two-weight version:
+
+```
+output = a × (w × x)     (w and a are weights, x is the input)
+loss   = (output - target)²
+```
+
+Here `w` doesn't get its own term. Its effect runs through `a`, so the slope for `w` depends on `a`, and the slope for `a` depends on `w`. They're tangled together. Stack hundreds of layers and millions of weights, and each early weight's slope becomes a long chain of factors running through every later layer.
+
+You can still write down each slope with calculus; that part isn't the problem. The problem is doing it without repeating yourself. Millions of weights share those same later layers, so if you work out each weight's chain separately, you recompute the identical downstream pieces over and over, millions of times.
+
+**Backpropagation** is the bookkeeping that computes each shared piece once. Working backward from the loss, it computes, one time per layer, how much the loss responds to that layer's output. Then each weight feeding into that layer multiplies by its own local factor and reuses that shared result. The redundant recomputation is gone, and finding every slope takes a single backward pass.
+
+This matches the instinct that a computer should just be able to take the derivative: that is exactly what happens, and the efficient method it uses *is* backpropagation. Backprop isn't a replacement for calculus; it's the order of operations that makes the calculus cheap when everything is tangled together. The whole thing rests on one rule from calculus: the chain rule.
 
 ## The Chain Rule
 
