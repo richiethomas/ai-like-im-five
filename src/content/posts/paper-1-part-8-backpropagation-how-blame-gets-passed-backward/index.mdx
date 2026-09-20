@@ -29,7 +29,7 @@ Picture a short chain, where the input is multiplied by one weight, then that re
 2  →  ×3  →  6  →  ×4  →  24  →  ×5  →  120
 ```
 
-Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, which turns the 24 into 24.8, which turns the final 120 into 124. That one small change moved the final answer, because everything downstream depended on it. You can't read each weight's slope off its own little term, because it doesn't have one.
+Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, the 24 becomes 24.8, and the final 120 becomes 124. How much that nudge moved the answer (that's the weight's slope) depended on the weights the change flowed through: make the ×4 or the ×5 bigger, and the same nudge would move the answer more. So the first weight's slope isn't its own private number; it's tangled with every weight after it. In the tidy sum earlier, each weight's slope came from its own separate term alone. Here it doesn't.
 
 You can still work out every slope with calculus. The catch is that doing it one weight at a time repeats a huge amount of the same work, since all those weights share the same path forward to the loss. For a network with millions of weights, that's hopeless.
 
