@@ -9,9 +9,10 @@ import { siteConfig } from "@/config/site";
 import { categoryHref, getCategoryList, getFeatured, visiblePosts } from "@/lib/posts";
 
 const allPosts = visiblePosts(await getCollection("posts"));
-const [latest, ...rest] = allPosts;
-const feed = [...rest].reverse().slice(0, 8);
-const featured = getFeatured(allPosts, 4).filter((post) => post.id !== latest?.id);
+const oldestFirst = [...allPosts].reverse();
+const [lead, ...rest] = oldestFirst;
+const feed = rest.slice(0, 8);
+const featured = getFeatured(allPosts, 4).filter((post) => post.id !== lead?.id);
 const categoryList = getCategoryList(allPosts);
 const hasMore = rest.length > feed.length;
 ---
@@ -22,9 +23,9 @@ const hasMore = rest.length > feed.length;
     <div class="inner">
       <h1 class="sr-only">{siteConfig.name}: {siteConfig.tagline}</h1>
 
-      {latest && (
-        <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Latest post">
-          <PostCard post={latest} variant="lead" headingLevel="h2" dateLabel="Latest" />
+      {lead && (
+        <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Where to start">
+          <PostCard post={lead} variant="lead" headingLevel="h2" dateLabel="Start here" />
         </section>
       )}
 
