@@ -46,7 +46,7 @@ Why squared, rather than just adding up the weights? Raw weights carry signs, so
 
 **Dropout**
 
-During training, randomly "drop" (set to zero) a fraction of the neurons, the network's own internal units, not pixels of the input image. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
+During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
 
 Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This discourages the network from relying on fragile, specific patterns.
 
