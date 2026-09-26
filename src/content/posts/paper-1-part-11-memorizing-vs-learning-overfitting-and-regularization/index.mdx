@@ -21,7 +21,7 @@ The network memorized the training data instead of learning generalizable patter
 
 ## Training vs. Test Accuracy
 
-The gap between training accuracy and test accuracy reveals overfitting:
+The gap between training accuracy and test accuracy is the main sign of overfitting, as long as your test set is representative of real data:
 
 - **Small gap (90% train, 88% test):** Good generalization. The network learned actual patterns.
 - **Large gap (99% train, 60% test):** Severe overfitting. The network memorized.
@@ -38,17 +38,17 @@ Add a penalty to the loss function based on how large the weights are:
 total_loss = classification_loss + λ * (sum of squared weights)
 ```
 
-The parameter λ controls the penalty strength. Large weights are penalized more. This pushes the network toward smaller, simpler weights. Simpler weights learn broader patterns instead of memorizing details.
+The parameter λ controls the penalty strength. Large weights are penalized more. This pushes the network toward smaller weights. Smaller weights make the network respond more smoothly to its inputs, so it can't swing sharply to fit the exact quirks of individual training examples; it settles for the broader patterns instead.
 
 **Dropout**
 
 During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
 
-Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This prevents the network from learning fragile, specific patterns.
+Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This discourages the network from relying on fragile, specific patterns.
 
-At test time, every neuron stays on. To keep the overall output the same size as during training (when only some neurons were active), a scaling factor is applied; modern libraries fold that into training, so at test time you just run the full network.
+At test time, every neuron stays on. With more neurons active than during training, their combined output would come out too large, so it gets scaled back down to match; in practice the libraries do this for you, so you just run the full network.
 
-Dropout is surprisingly effective and is now standard in deep learning.
+Dropout is simple and widely used.
 
 **Early Stopping**
 
