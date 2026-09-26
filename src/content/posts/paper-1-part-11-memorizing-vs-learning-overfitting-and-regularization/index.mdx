@@ -71,7 +71,7 @@ Regularization reduces overfitting, but too much of it underfits: the network is
 Getting the balance right means tuning several things:
 - Penalty strength (λ)
 - Dropout rate
-- Network size relative to data size
+- Network size (a bigger network needs more data to avoid overfitting)
 - Amount of training
 
 This is where hyperparameter tuning comes in: trying different settings and keeping what generalizes best. You judge "generalizes best" on the validation set; the test set stays untouched until the very end, as a final, unbiased check (Part 4), since tuning against the validation set can slowly overfit it too.
