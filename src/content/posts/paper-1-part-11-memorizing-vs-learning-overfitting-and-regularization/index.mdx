@@ -42,6 +42,8 @@ total_loss = classification_loss + λ * (sum of squared weights)
 
 Here **λ** (the Greek letter lambda) is a number you choose, the penalty strength. It makes the optimizer balance two goals: fit the training data (the first term) and keep the weights small (the second). A bigger λ pulls harder toward small weights; a smaller one lets the network fit the data more freely. The network settles on the smallest weights that still fit the data well, the gentle, general-pattern weights rather than the large, quirk-fitting ones.
 
+Why squared, rather than just adding up the weights? Raw weights carry signs, so they would cancel out (a +1000 and a -1000 add to zero, penalizing nothing); squaring removes the sign, and because it grows fast, it comes down hardest on the few largest weights, exactly the ones that let a network overfit. Squaring isn't the only option: using the absolute value instead is a common alternative, **L1 regularization**, which tends to push weights all the way to zero rather than just shrinking them.
+
 **Dropout**
 
 During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
