@@ -61,6 +61,8 @@ Multiple filters run in parallel. A layer might have 32 filters, each detecting 
 
 Together, these let a convolutional layer find patterns anywhere in an image with far fewer parameters than a fully-connected layer.
 
+Worth making explicit, because it's a common misconception: this advantage comes from locality and sharing, not from the filter being a 2D grid. The 2D shape matters only because it lets the filter line up with a 2D image neighborhood; a 1D convolution does the same job for 1D data like audio, and a fully-connected layer could in principle learn the same patterns, just far less efficiently and without reusing them across positions.
+
 ## What's Next
 
 Convolution detects local patterns. But images have structure at multiple scales: small edges, textures, shapes, objects. Part 13 covers how to build hierarchies by stacking convolutions with pooling.
