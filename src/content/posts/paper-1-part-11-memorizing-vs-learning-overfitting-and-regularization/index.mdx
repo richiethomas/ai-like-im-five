@@ -30,15 +30,17 @@ The bigger your network and the smaller your dataset, the more prone to overfitt
 
 ## Regularization: Fighting Overfitting
 
+The common thread across the techniques below is to hold the network back: make it a little harder to fit the training data exactly, so the network is nudged toward the broad pattern instead of the fine-grained quirks. Each does this in a different way.
+
 **L2 Regularization (Weight Decay)**
 
-Add a penalty to the loss function based on how large the weights are:
+Memorizing quirks takes sharp, extreme responses to tiny differences between images, and sharp responses require **large weights** (a big weight lets a single input swing the output hard). So one way to discourage memorizing is to discourage large weights. L2 regularization does exactly that, by adding a penalty to the loss that grows with the size of the weights:
 
 ```
 total_loss = classification_loss + λ * (sum of squared weights)
 ```
 
-The parameter λ controls the penalty strength. Large weights are penalized more. This pushes the network toward smaller weights. Smaller weights make the network respond more smoothly to its inputs, so it can't swing sharply to fit the exact quirks of individual training examples; it settles for the broader patterns instead.
+Now the optimizer has to balance two goals: fit the training data (the first term) and keep the weights small (the second). The parameter λ sets how much the second goal matters. The network settles on the smallest weights that still fit the data well, the gentle, general-pattern weights rather than the large, quirk-fitting ones.
 
 **Dropout**
 
