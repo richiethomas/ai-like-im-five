@@ -17,7 +17,7 @@ You try it on data it hasn't seen. 60% accuracy.
 
 What happened? **Overfitting**.
 
-The network memorized the training data instead of learning generalizable patterns. It found quirks specific to your training set: "If pixel 47 is exactly 128 and pixel 92 is exactly 200, output 'cat'." That works on training data but fails on anything slightly different.
+The network memorized the training data instead of learning generalizable patterns. It latched onto quirks specific to your training set, behaving as if it had memorized rules like "if pixel 47 is exactly 128 and pixel 92 is exactly 200, it's a cat." Those exact combinations hold on the training images but fall apart on anything new.
 
 ## Training vs. Validation Accuracy
 
@@ -26,7 +26,7 @@ The gap between training accuracy and accuracy on a **validation set** (data hel
 - **Small gap (90% train, 88% validation):** Good generalization. The network learned actual patterns.
 - **Large gap (99% train, 60% validation):** Severe overfitting. The network memorized.
 
-The bigger your network and the smaller your dataset, the worse overfitting gets. A network with a million parameters can memorize a dataset of 1,000 images trivially.
+The bigger your network and the smaller your dataset, the more prone to overfitting it tends to be. A network with a million parameters can memorize a dataset of 1,000 images with ease.
 
 ## Regularization: Fighting Overfitting
 
@@ -46,7 +46,7 @@ During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dro
 
 Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This discourages the network from relying on fragile, specific patterns.
 
-At test time, every neuron stays on. Because more neurons are active than during training, the framework automatically adjusts the scale so the output matches what the network learned to expect; you don't have to do anything special.
+At test time, every neuron stays on, and nothing special happens. Modern frameworks already compensate during training: when neurons are dropped, the ones that remain are scaled up to stand in for them, so the numbers line up once all the neurons are active at test time.
 
 Dropout is simple and widely used.
 
@@ -70,7 +70,7 @@ Getting the balance right means tuning several things:
 - Network size relative to data size
 - Amount of training
 
-This is where hyperparameter tuning comes in: trying different settings and keeping what generalizes best.
+This is where hyperparameter tuning comes in: trying different settings and keeping what generalizes best. You judge "generalizes best" on the validation set; the test set stays untouched until the very end, as a final, unbiased check (Part 4), since tuning against the validation set can slowly overfit it too.
 
 ## What's Next
 
