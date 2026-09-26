@@ -40,7 +40,7 @@ Memorizing quirks takes sharp, extreme responses to tiny differences between ima
 total_loss = classification_loss + λ * (sum of squared weights)
 ```
 
-Now the optimizer has to balance two goals: fit the training data (the first term) and keep the weights small (the second). The parameter λ sets how much the second goal matters. The network settles on the smallest weights that still fit the data well, the gentle, general-pattern weights rather than the large, quirk-fitting ones.
+Here **λ** (the Greek letter lambda) is a number you choose, the penalty strength. It makes the optimizer balance two goals: fit the training data (the first term) and keep the weights small (the second). A bigger λ pulls harder toward small weights; a smaller one lets the network fit the data more freely. The network settles on the smallest weights that still fit the data well, the gentle, general-pattern weights rather than the large, quirk-fitting ones.
 
 **Dropout**
 
@@ -67,7 +67,7 @@ The most direct cure for overfitting is simply more training data: quirks are ha
 Regularization reduces overfitting, but too much of it underfits: the network is so constrained it can't learn the task at all.
 
 Getting the balance right means tuning several things:
-- Regularization strength (λ)
+- Penalty strength (λ)
 - Dropout rate
 - Network size relative to data size
 - Amount of training
