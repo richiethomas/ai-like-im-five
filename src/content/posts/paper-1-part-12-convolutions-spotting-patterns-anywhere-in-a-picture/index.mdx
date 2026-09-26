@@ -13,6 +13,8 @@ tags: ["convolutions", "CNNs", "computer vision basics"]
 
 A **fully-connected** network connects every pixel to every neuron, each connection with its own weight, after flattening the image into a long list of pixels.
 
+<img src="/experiments/convolutions/fully-connected.svg" alt="A fully-connected layer: a 3-by-3 image is flattened into a vertical list of 9 pixels, and every pixel connects by its own line to each of 4 neurons, forming a dense mesh. Each line is a separate weight." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
+
 This ignores a key property of images: **locality**. Important patterns are usually local. An eye is a small region. A texture is a repeating pattern over nearby pixels. Connecting every pixel to every neuron, the way a fully-connected layer does, can't exploit this.
 
 **Convolution** does. A convolution slides a small filter (like a 3×3 grid) across the image, and at each position computes the dot product between the filter and the image region under it (multiply each filter number by the pixel beneath it, then add them all up).
