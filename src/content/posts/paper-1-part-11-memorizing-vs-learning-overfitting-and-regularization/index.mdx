@@ -46,13 +46,13 @@ During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dro
 
 Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This prevents the network from learning fragile, specific patterns.
 
-At test time, you don't drop neurons. But you scale outputs by the dropout rate so expected values match.
+At test time, every neuron stays on. To keep the overall output the same size as during training (when only some neurons were active), a scaling factor is applied; modern libraries fold that into training, so at test time you just run the full network.
 
 Dropout is surprisingly effective and is now standard in deep learning.
 
 **Early Stopping**
 
-Monitor validation accuracy during training. Stop when it stops improving, even if training accuracy could still increase.
+Monitor accuracy on a **validation set** (data held out from training, from Part 4) as training goes. When it stops improving for a while, stop, even if training accuracy could still climb. (You wait rather than stopping at the first dip, since validation accuracy naturally wobbles.)
 
 This prevents the network from overfitting over many iterations.
 
@@ -60,13 +60,13 @@ This prevents the network from overfitting over many iterations.
 
 Regularization prevents overfitting, but too much regularization underfits: the network is so constrained it can't learn the task at all.
 
-The art is finding the right balance:
+Getting the balance right means tuning several things:
 - Regularization strength (λ)
 - Dropout rate
 - Network size relative to data size
 - Amount of training
 
-This is where hyperparameter tuning comes in, and it's one of the hard parts of machine learning.
+This is where hyperparameter tuning comes in: trying different settings and keeping what generalizes best.
 
 ## What's Next
 
