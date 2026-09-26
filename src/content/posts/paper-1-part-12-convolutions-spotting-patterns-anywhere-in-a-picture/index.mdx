@@ -11,7 +11,7 @@ draft: false
 tags: ["convolutions", "CNNs", "computer vision basics"]
 ---
 
-A fully-connected neural network flattens an image into a long vector and applies weights to every pixel independently.
+A fully-connected neural network flattens an image into a long list of pixels and gives each pixel its own separate weight into every neuron.
 
 This ignores a key property of images: **locality**. Important patterns are usually local. An eye is a small region. A texture is a repeating pattern over nearby pixels. Connecting every pixel to every neuron, the way a fully-connected layer does, can't exploit this.
 
@@ -36,9 +36,9 @@ Place the filter at position (0,0) and multiply element-wise with the image regi
 (10*0 + 10*-1 + 10*0 + 10*-1 + 50*4 + 10*-1 + 10*0 + 10*-1 + 10*0) = 200 - 40 = 160
 ```
 
-This gives one output value, 160: a big response, because the filter is centered on the bright spot. (Over a flat patch of all 10s, the same filter would give 0, so it lights up only where the pattern it detects appears.) Slide the filter one pixel to the right and repeat. Slide down and repeat. After sliding everywhere, you get a smaller output map.
+This gives one output value: 160. The same filter run over a flat patch of all 10s would give 0, so a large output like 160 means the filter's pattern (here, a bright spot) is present, and 0 means it isn't. Slide the filter one pixel to the right and repeat. Slide down and repeat. After sliding everywhere, you get a smaller output map.
 
-With a 3×3 filter and no padding, the output is 2 pixels smaller in each dimension, since the filter can't slide off the edges. Adding a border of zeros around the image, called **padding**, keeps the output the same size.
+With a 3×3 filter sliding one pixel at a time and no padding, the output is 2 pixels smaller in each dimension, since the filter can't slide off the edges. Adding a border of zeros around the image, called **padding**, keeps the output the same size.
 
 ## What the Filter Learns
 
@@ -53,7 +53,7 @@ Multiple filters run in parallel. A layer might have 32 filters, each detecting 
 
 **Local receptive fields:** Each output pixel depends only on a small region of the input. Patterns don't need to be globally aligned.
 
-**Parameter sharing:** The same filter slides everywhere. This dramatically reduces the number of parameters compared to fully-connected layers.
+**Parameter sharing:** The same filter slides everywhere. This dramatically reduces the number of parameters (the learned weights): one small filter is reused across the whole image, instead of a separate weight for every pixel.
 
 **A filter works everywhere:** because the same filter slides across the whole image, it spots its pattern wherever that pattern appears, so the network doesn't have to learn it separately for each location. (Making the output fully unaffected by position takes one more step, pooling, in Part 13.)
 
