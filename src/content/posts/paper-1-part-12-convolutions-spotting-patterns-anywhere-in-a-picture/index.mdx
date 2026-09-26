@@ -17,7 +17,7 @@ A **fully-connected** network connects every pixel to every neuron, each connect
 
 This ignores a key property of images: **locality**. Important patterns are usually local. An eye is a small region. A texture is a repeating pattern over nearby pixels. A fully-connected layer can't take advantage of that. By flattening the image into a list, it throws away which pixels are next to which, so a nearby pair of pixels and a far-apart pair look exactly the same to it.
 
-**Convolution** does. A convolution slides a small filter (like a 3×3 grid) across the image, and at each position computes the dot product between the filter and the image region under it (multiply each filter number by the pixel beneath it, then add them all up).
+**Convolution** takes advantage of locality instead: it slides a small filter (like a 3×3 grid) across the image, and at each position computes the dot product between the filter and the image region under it (multiply each filter number by the pixel beneath it, then add them all up).
 
 ## A Concrete Example
 
