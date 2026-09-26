@@ -44,7 +44,7 @@ With a 3×3 filter sliding one pixel at a time and no padding, the output is 2 p
 
 ## What the Filter Learns
 
-The weights in the filter are learned (like weights in a fully-connected layer). After training, filters often learn to detect specific features:
+The values in the above 3×3 filter are weights, and are learned over repeated rounds of training, just like weights in a 1D, fully-connected layer. After training, filters often learn to detect specific features:
 - Edge filters (horizontal, vertical, diagonal edges)
 - Texture filters (corners, blobs)
 - More complex patterns in deeper layers
