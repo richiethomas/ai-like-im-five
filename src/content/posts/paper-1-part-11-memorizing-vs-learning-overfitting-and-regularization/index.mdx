@@ -13,18 +13,18 @@ tags: ["overfitting", "regularization", "dropout"]
 
 You build a neural network. Train it on your training set. It achieves 99% accuracy.
 
-You test it on new data. 60% accuracy.
+You try it on data it hasn't seen. 60% accuracy.
 
 What happened? **Overfitting**.
 
 The network memorized the training data instead of learning generalizable patterns. It found quirks specific to your training set: "If pixel 47 is exactly 128 and pixel 92 is exactly 200, output 'cat'." That works on training data but fails on anything slightly different.
 
-## Training vs. Test Accuracy
+## Training vs. Validation Accuracy
 
-The gap between training accuracy and test accuracy is the main sign of overfitting, as long as your test set is representative of real data:
+The gap between training accuracy and accuracy on a **validation set** (data held out from training to check progress, from Part 4) is the main sign of overfitting:
 
-- **Small gap (90% train, 88% test):** Good generalization. The network learned actual patterns.
-- **Large gap (99% train, 60% test):** Severe overfitting. The network memorized.
+- **Small gap (90% train, 88% validation):** Good generalization. The network learned actual patterns.
+- **Large gap (99% train, 60% validation):** Severe overfitting. The network memorized.
 
 The bigger your network and the smaller your dataset, the worse overfitting gets. A network with a million parameters can memorize a dataset of 1,000 images trivially.
 
@@ -46,15 +46,19 @@ During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dro
 
 Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This discourages the network from relying on fragile, specific patterns.
 
-At test time, every neuron stays on. With more neurons active than during training, their combined output would come out too large, so it gets scaled back down to match; in practice the libraries do this for you, so you just run the full network.
+At test time, every neuron stays on. Because more neurons are active than during training, the framework automatically adjusts the scale so the output matches what the network learned to expect; you don't have to do anything special.
 
 Dropout is simple and widely used.
 
 **Early Stopping**
 
-Monitor accuracy on a **validation set** (data held out from training, from Part 4) as training goes. When it stops improving for a while, stop, even if training accuracy could still climb. (You wait rather than stopping at the first dip, since validation accuracy naturally wobbles.)
+Monitor the validation accuracy as training goes. When it stops improving for a while, stop, even if training accuracy could still climb. (You wait rather than stopping at the first dip, since validation accuracy naturally wobbles.)
 
 This prevents the network from overfitting over many iterations.
+
+**More (or Augmented) Data**
+
+The most direct cure for overfitting is simply more training data: quirks are harder to memorize across a larger, more varied set. When you can't gather more, you can augment what you have. For images, small flips, crops, and color shifts turn one example into many, all still clearly the same class.
 
 ## The Balance
 
