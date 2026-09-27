@@ -27,7 +27,7 @@ Early filters in a trained network often look like edge detectors:
 
 You can literally see what features the network is looking for.
 
-Deeper layers are harder to interpret (they work on the features built up by earlier layers, several steps removed from the raw pixels), but you can still extract patterns.
+Deeper layers are harder to interpret this way: their filters don't correspond to a simple picture you can look at, so instead of displaying them directly, you probe them with the indirect methods below.
 
 ## Feature Maps
 
@@ -43,7 +43,7 @@ Ask: "What image would maximally activate this neuron?"
 
 Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: a neuron that detects faces produces a face-like image when you optimize for maximum activation.
 
-This works like training in reverse. In training, the network nudges its weights to lower the loss (Part 7); here the weights stay fixed and we nudge the image instead, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
+This uses the same gradient trick as training, but aimed at the image instead of the weights. In training, the network nudges its weights to lower the loss (Part 7); here the weights stay fixed and we nudge the image, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
 
 The resulting images often look strange, full of repeated, swirling patterns, but they reveal what the neuron responds to.
 
@@ -53,7 +53,7 @@ Given an image and a classification, which pixels mattered most?
 
 Compute the gradient of the classification score with respect to the image. Pixels with high gradients had the most influence on the decision.
 
-Visualize these gradients as a heatmap: it gives a rough picture of which regions swayed the decision. Saliency maps are noisy, though, so treat them as a hint rather than a precise readout.
+Visualize these gradients as a heatmap: it shows, roughly, which pixels the score is most sensitive to, a proxy for which regions mattered. Saliency maps are noisy, though, so treat them as a hint rather than a precise readout.
 
 A well-trained classifier usually leans on relevant regions (the animal's face, not the background).
 
