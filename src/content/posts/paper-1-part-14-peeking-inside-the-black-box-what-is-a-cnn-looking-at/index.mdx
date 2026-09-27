@@ -27,7 +27,7 @@ Early filters in a trained network often look like edge detectors:
 
 You can literally see what features the network is looking for.
 
-Deeper layers are harder to interpret (they operate on abstractions, not raw pixels), but you can still extract patterns.
+Deeper layers are harder to interpret (they work on the features built up by earlier layers, several steps removed from the raw pixels), but you can still extract patterns.
 
 ## Feature Maps
 
@@ -43,9 +43,9 @@ Ask: "What image would maximally activate this neuron?"
 
 Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: a neuron that detects faces produces a face-like image when you optimize for maximum activation.
 
-This works by gradient ascent on the image: start with random noise, compute gradients with respect to the image, adjust the image to increase the neuron's activation, repeat.
+This works like training in reverse. In training, the network nudges its weights to lower the loss (Part 7); here the weights stay fixed and we nudge the image instead, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
 
-The resulting images sometimes look spooky (uncanny shapes), but they reveal what the neuron cares about.
+The resulting images often look strange, full of repeated, swirling patterns, but they reveal what the neuron responds to.
 
 ## Saliency Maps
 
@@ -53,15 +53,15 @@ Given an image and a classification, which pixels mattered most?
 
 Compute the gradient of the classification score with respect to the image. Pixels with high gradients had the most influence on the decision.
 
-Visualize these gradients as a heatmap. You literally see which regions the network focused on.
+Visualize these gradients as a heatmap: it gives a rough picture of which regions swayed the decision. Saliency maps are noisy, though, so treat them as a hint rather than a precise readout.
 
-A well-trained classifier usually focuses on relevant regions (the animal's face, not the background).
+A well-trained classifier usually leans on relevant regions (the animal's face, not the background).
 
 ## Why This Matters
 
-Visualization builds trust. If you see that a cat classifier is focusing on cat faces and whiskers, you're more confident it learned the right features. If it's focusing on background colors, something went wrong.
+Visualization is a sanity check. If a cat classifier is keying on cat faces and whiskers, that's a good sign it learned sensible features; if it's keying on background colors, something went wrong.
 
-Visualization also guides debugging: "The network isn't detecting paws correctly, let me check the middle layers."
+Visualization also helps diagnose failures: if the network keeps getting paws wrong, its saliency and feature maps can show whether it's even looking at the paws, which points you toward a fix (more data, better augmentation, an architecture change).
 
 For safety-critical applications (medical imaging, autonomous driving), interpretability is essential.
 
