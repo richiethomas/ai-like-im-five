@@ -40,17 +40,17 @@ Memorizing quirks takes sharp, extreme responses to tiny differences between ima
 total_loss = classification_loss + λ * (sum of squared weights)
 ```
 
-Here **λ** (the Greek letter lambda) is a number you choose, the penalty strength. It makes the optimizer balance two goals: fit the training data (the first term) and keep the weights small (the second). A bigger λ pulls harder toward small weights; a smaller one lets the network fit the data more freely. The network settles on the smallest weights that still fit the data well, the gentle, general-pattern weights rather than the large, quirk-fitting ones.
+Here **λ** (the Greek letter lambda) is a number you choose, the penalty strength. It makes the optimizer balance two goals: fit the training data (the first term) and keep the weights small (the second). A bigger λ pulls harder toward small weights; a smaller one lets the network fit the data more freely. The network settles on the smallest weights that still fit the data well, the ones that capture the general pattern rather than the large ones that fit quirks.
 
-Why squared, rather than just adding up the weights? Raw weights carry signs, so they would cancel out (a +1000 and a -1000 add to zero, penalizing nothing); squaring removes the sign, and because it grows fast, it comes down hardest on the few largest weights, exactly the ones that let a network overfit. Squaring isn't the only option: using the absolute value instead is a common alternative, **L1 regularization**, which tends to push weights all the way to zero rather than just shrinking them.
+Why squared, rather than just adding up the weights? A raw sum doesn't measure size: positive and negative weights cancel (a +1000 and a -1000 add to zero), and the optimizer could even shrink the penalty by driving weights very negative. To penalize size, you have to drop the sign, either by squaring or by taking the absolute value. Squaring (L2) is the common default because it grows fast, so it comes down hardest on the few largest weights, exactly the ones that let a network overfit. The absolute-value version, **L1 regularization**, is the main alternative; it tends to push weights all the way to zero rather than just shrinking them.
 
 **Dropout**
 
 During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dropout is used, each neuron has a 50% chance of being zeroed out on each forward pass.
 
-Why? Dropout forces the network to learn redundantly. No single neuron can carry critical information, because it might be dropped. Instead, many neurons must contribute. This discourages the network from relying on fragile, specific patterns.
+Why? Because any neuron might be dropped on a given pass, the network can't rely on any single one to carry critical information. The work has to be spread across many neurons, so no fragile, one-off pattern can take hold.
 
-At test time, every neuron stays on, and nothing special happens. Modern frameworks already compensate during training: when neurons are dropped, the ones that remain are scaled up to stand in for them, so the numbers line up once all the neurons are active at test time.
+At test time, every neuron stays on, and nothing special happens. Modern frameworks handle the bookkeeping during training instead: when some neurons are dropped, the outputs of the ones that remain are scaled up to compensate, so the totals line up once all the neurons are active at test time.
 
 Dropout is simple and widely used.
 
@@ -58,7 +58,7 @@ Dropout is simple and widely used.
 
 Monitor the validation accuracy as training goes. When it stops improving for a while, stop, even if training accuracy could still climb. (You wait rather than stopping at the first dip, since validation accuracy naturally wobbles.)
 
-This prevents the network from overfitting over many iterations.
+Left training too long, a network starts fitting the training set's quirks after it has already learned the general pattern; stopping early avoids that.
 
 **More (or Augmented) Data**
 

@@ -44,7 +44,7 @@ With a 3×3 filter sliding one pixel at a time and no padding, the output is 2 p
 
 ## What the Filter Learns
 
-The values in the above 3×3 filter are weights, and are learned over repeated rounds of training, just like weights in a 1D, fully-connected layer. After training, filters often learn to detect specific features:
+The values in the above 3×3 filter are weights, and are learned over repeated rounds of training, just like the weights in a fully-connected layer. After training, filters often learn to detect specific features:
 - Edge filters (horizontal, vertical, diagonal edges)
 - Texture filters (corners, blobs)
 - More complex patterns in deeper layers
@@ -59,7 +59,7 @@ One filter finds one kind of pattern. But an image has many patterns at once (ed
 
 **Parameter sharing:** The same filter slides everywhere. This dramatically reduces the number of parameters (the learned weights): one small filter is reused across the whole image, instead of a separate weight for every pixel.
 
-**A filter works everywhere:** because the same filter slides across the whole image, it spots its pattern wherever that pattern appears. Say the network has learned a detector for a dog's nose: it finds the nose whether it sits in the corner or dead center, because the same detector runs at every position. A fully-connected layer would instead have to learn "nose" separately for each spot, and would miss a corner nose if it had only trained on centered ones. Convolution learns a pattern once and reuses it everywhere. (A later step called **pooling** summarizes each region, which makes the network less sensitive to exactly where a pattern appears; that's Part 13.)
+**A filter works everywhere:** because the same filter slides across the whole image, it spots its pattern wherever that pattern appears. Say the network has learned a detector for a dog's nose: it finds the nose whether it sits in the corner or dead center, because the same detector runs at every position. A fully-connected layer would instead have to learn "nose" separately for each position, needing far more weights and examples of noses in every spot; if it had trained only on centered noses, it would miss one in the corner. Convolution learns a pattern once and reuses it everywhere. (A later step called **pooling** summarizes each region, which makes the network less sensitive to exactly where a pattern appears; that's Part 13.)
 
 Together, these let a convolutional layer find patterns anywhere in an image with far fewer parameters than a fully-connected layer.
 
