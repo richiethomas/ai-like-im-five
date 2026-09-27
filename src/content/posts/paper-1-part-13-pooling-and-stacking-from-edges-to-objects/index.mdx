@@ -13,7 +13,7 @@ tags: ["pooling", "CNNs", "feature hierarchies"]
 
 After a convolution layer, feature maps are the same size as the input (or slightly smaller). If the input is 224×224, the output might be 222×222.
 
-Apply another convolution, get 220×220. Keep going and the maps stay large, the computation piles up, and each convolution still only sees a small local patch.
+Apply another convolution, get 220×220. Each layer shaves off only a little, so the maps stay large for many layers, the computation piles up, and each convolution still only sees a small local patch.
 
 **Pooling** solves this. It downsamples: takes a region (like 2×2) and outputs a single value. Common pooling: **max pooling**. Take the maximum value in each 2×2 region.
 
@@ -25,7 +25,7 @@ Input:           Max Pooling (2×2):
 13 14 15 16
 ```
 
-Output is half the size in each dimension. A 224×224 map becomes 112×112.
+Output is about half the size in each dimension. A 224×224 map becomes 112×112.
 
 ## Why Pooling Works
 
@@ -58,4 +58,4 @@ Loosely speaking, a cat classifier ends up responding to a particular combinatio
 
 ## What's Next
 
-This hierarchy works, but it's hard to tell what the network actually learned. Its filters are millions of numbers, and reading them off doesn't reveal which one detects an ear or a whisker. Part 14 covers how to visualize and interpret what convolutional networks see.
+This hierarchy works, but it's hard to tell what the network actually learned: its filters are millions of numbers, and looking at those numbers doesn't reveal what each one detects. Part 14 covers how to visualize and interpret what convolutional networks see.
