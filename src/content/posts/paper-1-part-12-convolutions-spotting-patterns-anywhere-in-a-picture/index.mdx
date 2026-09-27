@@ -55,7 +55,7 @@ One filter finds one kind of pattern. But an image has many patterns at once (ed
 
 ## Why Convolution Works
 
-**Local receptive fields:** Each output pixel depends only on a small region of the input. Patterns don't need to be globally aligned.
+**Local receptive fields:** each output value depends only on a small region of the input, called its *receptive field* (the part of the input it takes in). A pattern just has to fall within one of these small patches; it doesn't have to line up with the whole image.
 
 **Parameter sharing:** The same filter slides everywhere. This dramatically reduces the number of parameters (the learned weights): one small filter is reused across the whole image, instead of a separate weight for every pixel.
 
