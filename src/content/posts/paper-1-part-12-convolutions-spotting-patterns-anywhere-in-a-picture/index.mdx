@@ -51,7 +51,7 @@ The values in the above 3×3 filter are weights, and are learned over repeated r
 
 ## Many Filters, One Layer
 
-One filter finds one kind of pattern. But an image has many patterns at once (edges in different directions, textures, colors). So a convolutional layer doesn't use a single filter; it uses a bank of them, often dozens (say 32), each with its own learned weights and each hunting for a different pattern. Every filter slides across the image and produces its own output map, so a layer with 32 filters turns the input into 32 stacked maps: a 3D block of results. The next layer's filters then slide over that stack, looking for patterns in those patterns.
+One filter finds one kind of pattern. But an image has many patterns at once (edges in different directions, textures, colors). So a convolutional layer doesn't use a single filter; it uses a bank of them, often dozens (say 32), each with its own learned weights and each hunting for a different pattern. Every filter slides across the image and produces its own output map, so a layer with 32 filters turns the input into 32 stacked maps: a 3D block of results. The next layer's filters then slide over that 3D block of results, looking for patterns in those patterns.
 
 ## Why Convolution Works
 
