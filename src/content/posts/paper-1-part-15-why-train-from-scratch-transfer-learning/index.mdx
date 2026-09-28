@@ -32,27 +32,25 @@ Now you have two choices:
 
 Train the entire network (including pre-trained layers) on your small dataset, but with a low learning rate. The pre-trained weights are a good starting point; small adjustments adapt them to your task.
 
-This works well when your task is similar to ImageNet (general object recognition).
+This works well when you have a fair amount of data: enough examples that adjusting all the weights improves the fit instead of just overfitting.
 
 **Option 2: Feature extraction**
 
 Freeze the pre-trained layers (don't update their weights). Only train the new final layer.
 
-This is faster and requires less data. You're treating the pre-trained network as a feature extractor: it converts your images to high-level features, and you just need to learn a linear classifier on top.
+This is faster and needs less data. You're treating the pre-trained network as a feature extractor: it converts your images to high-level features, and you just train a simple classifier (often a single new layer) on top.
 
-This works well when your task is very different from ImageNet or when data is scarce.
+This works well when your data is scarce, too little to safely retrain the whole network without overfitting. It relies on the borrowed features being relevant, so it works best when your task resembles the everyday objects ImageNet was trained on; the more your images differ from those, the less the frozen features help.
 
 ## The Hiring Analogy
 
-Imagine hiring someone with 10 years of relevant experience vs. training someone from scratch. The experienced hire needs less training; they already know the domain. Transfer learning is similar.
+Imagine hiring someone with years of general experience in the field versus a total beginner. The experienced hire still has to learn your specific job, but they pick it up far faster because they already have the foundation. Transfer learning is similar.
 
-A network trained on ImageNet already understands vision. Adapting it to your task is much faster than teaching it vision from zero.
+A network trained on ImageNet already understands vision in general. Adapting it to your specific task is much faster than teaching it to see from zero.
 
 ## Impact
 
-Transfer learning is one of the most important techniques in modern deep learning. It makes state-of-the-art CNNs accessible to anyone, even with small datasets.
-
-Without transfer learning, you'd need enormous resources to train from scratch. With it, you can build competitive systems with modest data and compute.
+Transfer learning is what puts state-of-the-art CNNs within reach of people without giant datasets or compute budgets. Instead of the hundreds of thousands of images and weeks of GPU time that training from scratch demands, you can build a competitive system with modest data and a pre-trained network.
 
 ## What's Next
 
