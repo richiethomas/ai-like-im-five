@@ -31,7 +31,7 @@ You can literally see what features the network is looking for.
 
 These are illustrations of the idea, not filters from a specific trained network, but real early-layer filters look much like this.
 
-Deeper layers are harder to interpret this way. A deep filter doesn't read raw pixels; it combines patterns found by the layer before it, so its weights don't form a picture you can just look at. Instead of inspecting the weights, you study how the filter behaves: which images make it fire, and which parts of an image it responds to. That's what the rest of this post does.
+Deeper layers are harder to interpret from their weights alone. A deep filter doesn't read raw pixels; it reads the many feature maps the layer before it produced. Its weights span that whole stack, so they don't come together into a single picture you can just look at. Instead of inspecting the weights, you study how the filter behaves: which images make it fire, and which parts of an image it responds to. That's what the rest of this post does.
 
 ## Feature Maps
 
@@ -70,11 +70,11 @@ Shown as an image, the pixels the score is most sensitive to come out bright, an
 
 <img src="/experiments/interpretability/saliency-map.svg" alt="Three panels. Left: an input image, a simple animal face on a gray background with a small distractor shape in the corner. Middle: the saliency map on a dark background, a bright glow concentrated over where the face is, with a few faint stray specks elsewhere. Right: the saliency map laid over the input image at partial opacity, so the photo is dimmed and the bright glow marks the animal's face." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
 
-For a well-trained classifier, the hot region usually sits on the thing being classified, the animal's face rather than the background, which is a reassuring sign it's keying on the right pixels. Saliency maps are noisy, though, as the stray specks in the middle image above show, so treat them as a hint rather than a precise readout.
+For a well-trained classifier, the hot region often sits on the thing being classified, the animal's face rather than the background, which is a reassuring sign it's keying on the right pixels. Saliency maps are noisy, though, as the stray specks in the middle image above show, so treat them as a hint rather than a precise readout.
 
 ## Why This Matters
 
-Visualization is a sanity check. If a cat classifier is keying on cat faces and whiskers, that's a good sign it learned sensible features; if it's keying on background colors, something went wrong.
+Visualization lets you check whether the network learned sensible features. If a cat classifier is keying on cat faces and whiskers, that's a good sign; if it's keying on background colors, something went wrong.
 
 Visualization also helps diagnose failures: if the network keeps getting paws wrong, its saliency and feature maps can show whether it's even looking at the paws, which points you toward a fix (more data, better augmentation, an architecture change).
 
