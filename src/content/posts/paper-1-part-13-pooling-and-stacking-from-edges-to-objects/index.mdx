@@ -63,6 +63,8 @@ Input image (224×224)
 
 Early layers detect simple features. Later layers detect complex combinations. By the time you reach a fully-connected layer, you're working with high-level features (combinations that respond to things like shapes and object parts) rather than raw pixels.
 
+That fully-connected layer at the end isn't a step backward to where we started. Part 12's objection was to running a fully-connected layer directly on raw pixels: wiring every pixel to every neuron takes an enormous number of weights and learns each pattern separately for every position. Convolution and pooling handle that part, scanning locally and reusing the same filters everywhere. But the final decision has to weigh all the evidence together: given every shape and part the network found, anywhere in the image, what is this? That's a global question, and a fully-connected layer, which connects to everything at once, is suited to it. What changed is what it connects to: a compact set of high-level features, not a raw grid of pixels.
+
 Loosely speaking, a cat classifier ends up responding to a particular combination of these features: certain edges here, certain textures there, together adding up to "cat" (not a rule written in words, but a pattern of numbers that behaves like one).
 
 ## What's Next
