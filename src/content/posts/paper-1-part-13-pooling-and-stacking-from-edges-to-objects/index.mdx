@@ -18,11 +18,18 @@ Apply another convolution, get 220×220. Each layer shaves off only a little, so
 **Pooling** solves this. It downsamples: takes a region (like 2×2) and outputs a single value. Common pooling: **max pooling**. Take the maximum value in each 2×2 region.
 
 ```
-Input:           Max Pooling (2×2):
-1 2 3 4          6 8
-5 6 7 8    →     14 16
-9 10 11 12
-13 14 15 16
+Input (6×6):
+ 1  2  3  4  5  6
+ 7  8  9 10 11 12
+13 14 15 16 17 18
+19 20 21 22 23 24
+25 26 27 28 29 30
+31 32 33 34 35 36
+
+Max pooling with 2×2 regions, giving a 3×3 output:
+ 8 10 12
+20 22 24
+32 34 36
 ```
 
 Output is about half the size in each dimension. A 224×224 map becomes 112×112.
