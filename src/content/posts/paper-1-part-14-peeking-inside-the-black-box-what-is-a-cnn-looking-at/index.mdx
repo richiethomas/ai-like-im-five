@@ -62,7 +62,7 @@ The resulting images often look strange, full of repeated, swirling patterns, bu
 
 ## Saliency Maps
 
-Feature maps show where the network sees its features. A **saliency map** asks a sharper question: for one image and one prediction, which pixels mattered most to the decision?
+Feature maps show where the network sees its features. A **saliency map** asks a more specific question: for one image and one prediction, which pixels mattered most to the decision?
 
 Here's the idea. Take a photo the network labels "cat." Now ask, one pixel at a time: if I brightened or darkened this pixel a little, how much would the "cat" score change? A pixel that barely moves the score didn't matter much; a pixel that swings it a lot did. That sensitivity, measured for every pixel at once, is the saliency map. (Measuring how much an output shifts when you nudge an input is exactly the gradient from Part 7, taken here with respect to the image rather than the weights.)
 
