@@ -31,15 +31,24 @@ You can literally see what features the network is looking for.
 
 These are illustrations of the idea, not filters from a specific trained network, but real early-layer filters look much like this.
 
-Deeper layers are harder to interpret this way: their filters don't correspond to a simple picture you can look at, so instead of displaying them directly, you probe them with the indirect methods below.
+Deeper layers are harder to interpret this way. A deep filter doesn't read raw pixels; it combines patterns found by the layer before it, so its weights don't form a picture you can just look at. Instead of inspecting the weights, you study how the filter behaves: which images make it fire, and which parts of an image it responds to. That's what the rest of this post does.
 
 ## Feature Maps
 
-Run an image through the network and display intermediate feature maps.
+Visualizing a filter's weights shows what pattern it looks for. A **feature map** shows where it found that pattern in a particular image.
 
-Early maps show which regions activate the edge detectors. Middle maps show which regions have textures or shapes. Late maps show semantic features related to the task.
+Recall from Part 12 that when a filter slides across an image, it produces a grid of numbers, one per position, each saying how strongly the filter's pattern shows up at that spot. (Part 12 called this the filter's output map; "feature map" is the same thing.) Shown as an image, that grid is bright wherever the pattern is present and dark where it isn't.
 
-For a cat classifier, late maps might light up around facial features, ears, and body shapes.
+So you can feed a real image through the network and look at the maps it produces. The vertical-edge filter's map lights up along the vertical edges; the horizontal-edge filter's map lights up along the horizontal ones:
+
+<img src="/experiments/interpretability/feature-maps.svg" alt="Three panels. Left: an input image, a light square on a gray field. Middle: the vertical-edge filter's feature map, dark except for two bright vertical bars aligned with the square's left and right edges. Right: the horizontal-edge filter's feature map, dark except for two bright horizontal bars aligned with the square's top and bottom edges." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+
+The maps change character as you go deeper into the network:
+- **Early maps** light up on simple features in specific places: edges, mostly.
+- **Middle maps** light up on textures and small shapes.
+- **Late maps** light up on high-level, task-related features. For a cat classifier, a late map might brighten around the eyes, the ears, or the face, wherever those happen to be in the image.
+
+Reading the maps tells you not just what the network can detect but where it detected it in this particular image. That's the first step toward the question the next sections ask: which parts of the image actually drove the decision?
 
 ## Activation Maximization
 

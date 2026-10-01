@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 262" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="262" rx="10" fill="#ffffff"/>
+<text x="320.0" y="30" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Feature maps: where a filter responds</text>
+<text x="320.0" y="50" text-anchor="middle" font-size="11.5" fill="#64748b">the same image seen through two edge filters; bright = strong response</text>
+<rect x="40.0" y="80" width="150" height="150" fill="rgb(150,150,150)" stroke="#94a3b8" stroke-width="1"/>
+<rect x="76.0" y="116.0" width="78" height="78" fill="rgb(238,238,238)"/>
+<text x="115.0" y="254" text-anchor="middle" font-size="12" fill="#334155">Input image</text>
+<rect x="245.0" y="80" width="150" height="150" fill="rgb(26,26,26)" stroke="#94a3b8" stroke-width="1"/>
+<rect x="274.5" y="116.0" width="13" height="78" fill="rgb(240,240,240)"/>
+<rect x="352.5" y="116.0" width="13" height="78" fill="rgb(240,240,240)"/>
+<rect x="281.0" y="116.0" width="78" height="78" fill="none" stroke="rgb(70,70,70)" stroke-width="1"/>
+<text x="320.0" y="254" text-anchor="middle" font-size="12" fill="#334155">Vertical-edge filter</text>
+<rect x="450.0" y="80" width="150" height="150" fill="rgb(26,26,26)" stroke="#94a3b8" stroke-width="1"/>
+<rect x="486.0" y="109.5" width="78" height="13" fill="rgb(240,240,240)"/>
+<rect x="486.0" y="187.5" width="78" height="13" fill="rgb(240,240,240)"/>
+<rect x="486.0" y="116.0" width="78" height="78" fill="none" stroke="rgb(70,70,70)" stroke-width="1"/>
+<text x="525.0" y="254" text-anchor="middle" font-size="12" fill="#334155">Horizontal-edge filter</text>
+</svg>
