@@ -67,4 +67,8 @@ Worth making explicit, because it's a common misconception: this advantage comes
 
 ## What's Next
 
-Convolution detects local patterns. But images have structure at multiple scales: small edges, textures, shapes, objects. Part 13 covers how to build hierarchies by stacking convolutions with pooling.
+A single convolution only looks at a small patch, so it can only find small, local patterns: an edge here, a texture there. But recognizing a whole object means combining many of those small patterns across the entire image. A cat isn't in any one patch; it's edges, fur, ears, and eyes spread across the picture.
+
+So we need later layers to take in larger and larger regions, building small patterns up into bigger ones: edges into textures, textures into shapes, shapes into objects. The obstacle is that stacking convolutions barely shrinks the maps (224×224 becomes 222×222), so each filter's view stays stubbornly local and the computation piles up.
+
+Part 13 covers the fix: **pooling**. It shrinks the maps as you go, which both cuts the computation and widens what each later layer can see, so stacking convolution and pooling together builds the edges-to-objects hierarchy.
