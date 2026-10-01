@@ -27,6 +27,10 @@ Early filters in a trained network often look like edge detectors:
 
 You can literally see what features the network is looking for.
 
+<img src="/experiments/interpretability/early-filters.svg" alt="Four early-layer convolutional filters shown as grayscale weight grids. The first fades from light at the top to dark at the bottom (a horizontal edge detector); the second fades light to dark from left to right (a vertical edge detector); the third fades from light at the top-left to dark at the bottom-right (a diagonal edge detector); the fourth is light in the center and dark around the edges (a blob or spot detector). Darker cells are lower weights, lighter cells higher." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+
+These are illustrations of the idea, not filters from a specific trained network, but real early-layer filters look much like this.
+
 Deeper layers are harder to interpret this way: their filters don't correspond to a simple picture you can look at, so instead of displaying them directly, you probe them with the indirect methods below.
 
 ## Feature Maps
