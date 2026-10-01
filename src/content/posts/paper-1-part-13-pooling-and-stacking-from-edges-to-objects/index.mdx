@@ -35,6 +35,8 @@ Output is about half the size in each dimension. A 224×224 map becomes 112×112
 
 **Dimensionality reduction:** Smaller feature maps = faster computation.
 
+**Wider view:** because pooling shrinks the maps, each filter in the next layer covers more of the original image. A 3×3 filter working on a once-pooled map effectively spans a 6×6 patch of the input; after another round of pooling, wider still. This is what lets deeper layers combine small patterns into bigger ones, which is the hierarchy below.
+
 ## The Hierarchy
 
 Stacking convolution and pooling layers builds a hierarchy:
