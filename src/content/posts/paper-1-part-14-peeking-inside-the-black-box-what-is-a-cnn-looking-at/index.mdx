@@ -68,7 +68,7 @@ Here's the idea. Take a photo the network labels "cat." Now ask, one pixel at a 
 
 Shown as an image, the pixels the score is most sensitive to come out bright, and the ones that barely matter stay dark:
 
-<img src="/experiments/interpretability/saliency-map.svg" alt="Three panels. Left: an input image, a simple animal face on a gray background with a small distractor shape in the corner. Middle: the saliency map on a dark background, a bright glow concentrated over where the face is, with a few faint stray specks elsewhere. Right: the saliency glow overlaid on the input image, sitting on the animal's face." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+<img src="/experiments/interpretability/saliency-map.svg" alt="Three panels. Left: an input image, a simple animal face on a gray background with a small distractor shape in the corner. Middle: the saliency map on a dark background, a bright glow concentrated over where the face is, with a few faint stray specks elsewhere. Right: the same saliency shown as concentric contour rings over the input image, centered on the animal's face." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
 
 For a well-trained classifier, the hot region usually sits on the thing being classified, the animal's face rather than the background, which is a reassuring sign it's keying on the right pixels. Saliency maps are noisy, though, as the stray specks above show, so treat them as a hint rather than a precise readout.
 
