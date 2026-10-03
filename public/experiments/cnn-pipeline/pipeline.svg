@@ -17,7 +17,7 @@
 <rect x="236.0" y="87.0" width="38" height="38" rx="3" fill="#2f7fcf" fill-opacity="0.3" stroke="#2f7fcf" stroke-width="1.3"/>
 <rect x="244.0" y="95.0" width="22" height="22" rx="3" fill="#2f7fcf" fill-opacity="0.55" stroke="#2f7fcf" stroke-width="1.3"/>
 <text x="255" y="182" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">conv + pooling (&#215;5)</text>
-<text x="255" y="199" text-anchor="middle" font-size="11" fill="#64748b">224&#178; &#8594; 7&#178;, 512 maps</text>
+<text x="255" y="199" text-anchor="middle" font-size="11" fill="#64748b">224&#215;224 &#8594; 7&#215;7, 512 maps</text>
 <text x="255" y="216" text-anchor="middle" font-size="10" fill="#94a3b8">edges &#8594; textures &#8594; parts</text>
 <rect x="406" y="68" width="18" height="96" rx="3" fill="#f1f5f9" stroke="#cbd5e1"/>
 <line x1="408" y1="72.0" x2="422" y2="72.0" stroke="#cbd5e1" stroke-width="0.8"/>

@@ -17,7 +17,7 @@ Let's trace a complete example: classifying a cat image.
 
 ## The Pipeline
 
-<img src="/experiments/cnn-pipeline/pipeline.svg" alt="The full CNN pipeline, left to right: an input cat image (224 by 224 by 3); a convolution-plus-pooling stack repeated five times, shown as nested shrinking squares (224 squared down to 7 squared, 512 maps, detecting edges then textures then parts); a flatten step into a vector of 25,088 values; two fully-connected layers (4096 to 4096) shown as connected node columns; and a softmax producing 1000 class scores shown as bars, with 'cat' winning at 99 percent. The final prediction is 'cat' with 99 percent confidence." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "720px" }} />
+<img src="/experiments/cnn-pipeline/pipeline.svg" alt="The full CNN pipeline, left to right: an input cat image (224 by 224 by 3); a convolution-plus-pooling stack repeated five times, shown as nested shrinking squares (224 by 224 down to 7 by 7, 512 maps, detecting edges then textures then parts); a flatten step into a vector of 25,088 values; two fully-connected layers (4096 to 4096) shown as connected node columns; and a softmax producing 1000 class scores shown as bars, with 'cat' winning at 99 percent. The final prediction is 'cat' with 99 percent confidence." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "720px" }} />
 
 **Step 1: Input**
 

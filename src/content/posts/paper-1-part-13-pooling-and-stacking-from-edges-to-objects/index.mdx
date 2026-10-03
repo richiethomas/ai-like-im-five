@@ -63,7 +63,7 @@ Input image (224×224)
   ↓ Fully connected layers (make the final decision)
 ```
 
-<img src="/experiments/feature-hierarchy/hierarchy.svg" alt="A left-to-right diagram of four stages. Stage one, Edges: short horizontal, vertical, and diagonal strokes (map size 224 squared). Stage two, Textures: diagonal hatching, a corner, and a blob (56 squared). Stage three, Object parts: an eye shape and an ear triangle (28 squared). Stage four, Whole object: a cat face (14 squared). Arrows connect the stages, and a caption notes the feature maps shrink while the features grow from edges to whole objects." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "680px" }} />
+<img src="/experiments/feature-hierarchy/hierarchy.svg" alt="A left-to-right diagram of four stages. Stage one, Edges: short horizontal, vertical, and diagonal strokes (map size 224 by 224). Stage two, Textures: diagonal hatching, a corner, and a blob (56 by 56). Stage three, Object parts: an eye shape and an ear triangle (28 by 28). Stage four, Whole object: a cat face (14 by 14). Arrows connect the stages, and a caption notes the feature maps shrink while the features grow from edges to whole objects." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "680px" }} />
 
 Early layers detect simple features. Later layers detect complex combinations. By the time you reach a <Term k="fully-connected-layer">fully-connected layer</Term>, you're working with high-level features (combinations that respond to things like shapes and object parts) rather than raw pixels.
 
