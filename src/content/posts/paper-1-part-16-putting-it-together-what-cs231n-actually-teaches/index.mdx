@@ -27,7 +27,7 @@ First convolutional layer: 64 filters, each detecting simple patterns (edges, co
 
 Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its weights and sums them into a single number. So one filter produces one 2D feature map, not three. (This is the same depth-spanning idea from [Part 12](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), where a deeper filter spans all the feature maps beneath it; here the depth is just the 3 color channels.)
 
-Output: 64 feature maps, 224×224 if you pad the edges, or 222×222 if you don't.
+Output: 64 feature maps, 224×224. (Padding the edges keeps the size the same; without padding it would be 222×222.)
 
 Apply ReLU activation: set negative values to zero.
 
@@ -74,11 +74,11 @@ Network predicts "cat" with 99% confidence.
 
 **Hierarchy:** Early layers learned low-level features (edges). Middle layers combined them into medium-level features (textures). Late layers combined those into high-level features (objects).
 
-By the time a spatial region reaches the fully-connected layer, it's been transformed into a semantic representation: "this region contains a cat face."
+By the final convolutional layers, each location in the feature maps encodes something high-level, like "there's a cat face around here." The fully-connected layers then weigh all of that together to make the call.
 
 **Robustness:** Pooling and convolutions make the network robust to small shifts. A cat's whiskers don't have to be at pixel-perfect positions.
 
-**Generalization:** Regularization (dropout, weight decay) prevents the network from memorizing specific training images. It learns generalizable patterns.
+**Generalization:** Regularization (dropout, and weight decay, a penalty on large weights) prevents the network from memorizing specific training images. It learns generalizable patterns.
 
 **Transfer learning:** If you're fine-tuning a pre-trained network, the early layers already recognize edges and textures. You only need to train the late layers to recognize your specific categories.
 
@@ -98,7 +98,7 @@ CS231n is foundational because it builds intuition. Once you understand how a CN
 
 ## The Journey
 
-Fifteen posts ago, you didn't know what image classification meant. Now you understand:
+Fifteen posts ago, image classification was a black box. Here's the ground we've covered since:
 
 - How computers represent images as numbers
 - Why nearest neighbor fails
