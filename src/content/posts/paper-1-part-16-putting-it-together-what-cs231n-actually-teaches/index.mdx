@@ -29,7 +29,7 @@ Each filter spans all three color channels: a 3×3 filter is really 3×3×3, cov
 
 Output: 64 feature maps, 224×224. (Padding the edges keeps the size the same; without padding it would be 222×222.)
 
-Apply ReLU activation: set negative values to zero.
+Apply ReLU activation: set negative values to zero, leave positives unchanged.
 
 Pool with 2×2 max pooling: output becomes 112×112.
 
@@ -53,7 +53,7 @@ Each map detects high-level concepts: object parts, shapes, semantic features.
 
 **Step 4: Classification**
 
-Flatten the 512×7×7 maps into a vector: 512*49 = 25,088 values.
+Flatten the 512×7×7 maps (unroll the whole 3D block into one long list) into a vector: 512 × 49 = 25,088 values.
 
 Pass through fully-connected layers:
 - Dense layer 1: 4096 neurons, ReLU
@@ -115,4 +115,4 @@ Fifteen posts ago, image classification was a black box. Here's the ground we've
 
 This is deep learning. You've now followed the whole path, from representing an image as numbers to a working image classifier.
 
-The next step: go build something. Take a pre-trained model off the shelf (a ResNet, which is a deep CNN, or a Vision Transformer, ViT). Fine-tune it on your data. Deploy it. The theory you've learned applies directly.
+The next step: go build something. Take a pre-trained model off the shelf (a ResNet, which is a deep CNN, or a Vision Transformer, ViT). Fine-tune it on your data. Deploy it. The ideas from this series carry over directly.
