@@ -9,6 +9,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Callout from "@/components/mdx/Callout.astro";
 import CodeGroup from "@/components/mdx/CodeGroup.astro";
 import CodeGroupItem from "@/components/mdx/CodeGroupItem.astro";
+import Term from "@/components/mdx/Term.astro";
 import { siteConfig } from "@/config/site";
 import {
   authorSlug,
@@ -39,7 +40,7 @@ interface Props {
 
 const { post, allPosts } = Astro.props;
 const { Content } = await render(post);
-const mdxComponents = { Callout, CodeGroup, CodeGroupItem };
+const mdxComponents = { Callout, CodeGroup, CodeGroupItem, Term };
 const data = post.data;
 const related = getRelated(allPosts, post);
 const { newer, older } = getAdjacent(allPosts, post);

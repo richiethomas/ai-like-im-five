@@ -1,0 +1,77 @@
+---
+import { glossary } from "@/data/glossary";
+
+interface Props {
+  k: string;
+}
+
+const { k } = Astro.props;
+const def = glossary[k];
+---
+
+{
+  def ? (
+    <span class="term" tabindex="0" aria-label={`Definition: ${def}`}>
+      <slot />
+      <span class="term-pop" aria-hidden="true">{def}</span>
+    </span>
+  ) : (
+    <slot />
+  )
+}
+
+<style>
+  .term {
+    position: relative;
+    border-bottom: 1px dotted currentColor;
+    cursor: help;
+  }
+  .term:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .term-pop {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(18rem, 78vw);
+    background: #1f2937;
+    color: #f3f4f6;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.12s ease;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .term-pop::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+  }
+  .term:hover .term-pop,
+  .term:focus .term-pop,
+  .term:focus-within .term-pop {
+    opacity: 1;
+    visibility: visible;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .term-pop {
+      transition: none;
+    }
+  }
+</style>
