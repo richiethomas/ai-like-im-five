@@ -25,7 +25,7 @@
 <circle cx="424" cy="144" r="6" fill="#334155"/>
 <polygon points="450,192 466,156 480,192" fill="none" stroke="#334155" stroke-width="3.5" stroke-linejoin="round"/>
 <text x="440.0" y="238" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">Object parts</text>
-<text x="440.0" y="256" text-anchor="middle" font-size="10.5" fill="#94a3b8">map size 14&#178;</text>
+<text x="440.0" y="256" text-anchor="middle" font-size="10.5" fill="#94a3b8">map size 28&#178;</text>
 <line x1="508" y1="156.0" x2="532" y2="156.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
 <rect x="540" y="96" width="120" height="120" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
 <polygon points="570,136 580,112 594,136" fill="#f1f5f9" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>
@@ -39,6 +39,6 @@
 <line x1="606" y1="172" x2="630" y2="168" stroke="#64748b" stroke-width="1.5"/>
 <line x1="606" y1="175" x2="630" y2="178" stroke="#64748b" stroke-width="1.5"/>
 <text x="600.0" y="238" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">Whole object</text>
-<text x="600.0" y="256" text-anchor="middle" font-size="10.5" fill="#94a3b8">map size 7&#178;</text>
-<text x="360.0" y="330" text-anchor="middle" font-size="12" fill="#64748b">The feature maps shrink (224&#178; &#8594; 7&#178;) while the features they hold grow from edges to whole objects.</text>
+<text x="600.0" y="256" text-anchor="middle" font-size="10.5" fill="#94a3b8">map size 14&#178;</text>
+<text x="360.0" y="330" text-anchor="middle" font-size="12" fill="#64748b">The feature maps shrink (224&#178; &#8594; 14&#178;) while the features they hold grow from edges to whole objects.</text>
 </svg>
