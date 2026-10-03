@@ -1,0 +1,46 @@
+---
+title: "Paper #2: The Contest That Changed Everything"
+excerpt: "Before 2012, teaching a computer to recognize objects meant designing the clues by hand. Then a deep neural network won the hardest contest in the field, and not by a little."
+category: "Vision"
+date: 2023-09-20T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "ImageNet", "computer vision basics"]
+---
+
+> **Where we are:** In [Paper #1](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/) we worked through CS231n, building up from raw pixels to a trained convolutional network that labels images. Now we read **AlexNet**, the 2012 paper that put those ideas together and won the hardest contest in computer vision.
+
+Paper #1 was a course: it taught how the pieces work. Paper #2 is a real research paper, and a famous one. It is where those pieces came together and beat every hand-built system that came before.
+
+## Before 2012: computer vision done by hand
+
+For decades, getting a computer to recognize objects meant choosing the clues yourself. A researcher decided, ahead of time, what patterns mattered, edges at certain angles, blobs of certain colors, hand-built measurements with names like SIFT, and wrote code to detect them. A simpler classifier then sorted images using those hand-picked clues.
+
+It worked, a little. But progress was slow, and the hardest test in the field, a dataset called ImageNet, was one that even the best methods struggled on.
+
+## ImageNet: over a million photos, a thousand categories
+
+[ImageNet](/post/paper-1-part-15-why-train-from-scratch-transfer-learning/) is a giant collection of labeled photos pulled from the web, millions of them, sorted into categories by human labelers. (The full dataset holds over 15 million images across roughly 22,000 categories, each tagged by people paid small amounts through Amazon's Mechanical Turk.) Each year, a slice of it powered a contest, the <Term k="ilsvrc">ImageNet Large Scale Visual Recognition Challenge</Term>: about 1.2 million training photos spread across 1,000 categories, from "golden retriever" to "container ship."
+
+A thousand categories is a lot to tell apart. Many look alike (think of all the dog breeds), and the same object shows up in endless variety: different angles, lighting, and backgrounds. That is exactly the set of [challenges](/post/paper-1-part-2-the-problem-of-classification/) Paper #1 kept running into, now at full scale.
+
+## Scoring it: top-5 error
+
+With 1,000 possible labels, demanding the single exact answer every time would be harsh. So the contest used **<Term k="top-5-error">top-5 error</Term>**: a guess counts as correct if the right label is among the model's five most confident answers. Top-5 error is the fraction of test images it still gets wrong even by that generous measure. (The stricter version, top-1 error, counts only whether your single best guess was right.) Lower is better.
+
+Before 2012, the best systems, those hand-built feature pipelines, sat around 26% top-5 error on the contest. Nobody was moving that number by much.
+
+## 2012: a neural network wins, and not by a little
+
+Then a deep convolutional network, later nicknamed **AlexNet** after its lead author Alex Krizhevsky, entered the 2012 contest and scored **15.3%** top-5 error. The runner-up, still built on hand-designed clues, managed 26.2%.
+
+That eleven-point jump dwarfed the usual year-to-year gains, which had been a point or two. It marked the end of the hand-crafted approach: within a couple of years, nearly every serious entry in the contest was a deep neural network.
+
+## What made it work
+
+Here is the surprising part: AlexNet did not invent the convolutional network. Almost every piece, [convolutions](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), [pooling](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/), [ReLU](/post/paper-1-part-9-neurons-and-networks-stacking-simple-decisions-into-something-smart/), [dropout](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/), [softmax](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/), was already known, and most of it we covered in Paper #1.
+
+What AlexNet did was put those pieces together, make the network big, and actually train it on all 1.2 million images without it either taking forever or just memorizing them. That last part turned out to be the hard part. The rest of this series covers the specific choices that made it possible: a faster activation function, a way to split the model across two graphics cards, and the methods they used to stop the network from memorizing. We start with the one change that, more than any other, made training a network this large feasible at all.

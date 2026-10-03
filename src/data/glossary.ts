@@ -72,4 +72,6 @@ export const glossary: Record<string, string> = {
   "fine-tuning": "keep training the reused layers, gently, on your own data.",
   "feature-extraction": "freeze the reused layers and train only a new final layer.",
   imagenet: "a large public image dataset networks are commonly pre-trained on.",
+  ilsvrc: "the ImageNet Large Scale Visual Recognition Challenge: the annual contest on a 1,000-category slice of ImageNet.",
+  "top-5-error": "the fraction of images whose correct label is not among the model's five most confident guesses.",
 };
