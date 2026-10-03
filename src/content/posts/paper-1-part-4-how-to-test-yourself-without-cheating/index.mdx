@@ -79,7 +79,7 @@ The gap between training accuracy and test accuracy is a measure of **overfittin
 
 ## Cross-Validation
 
-If you have a small dataset, you can't afford to hold out 20% just to measure accuracy once. In that case, machine learning uses a technique called **k-fold cross-validation**.
+If you have a small dataset, a single train/test split is both wasteful and unreliable: the held-out 20% never gets to train, and your accuracy depends on which 20% you happened to pick. **k-fold cross-validation** fixes both.
 
 Imagine you have 1000 images. Instead of a single train/test split:
 
@@ -90,6 +90,8 @@ Imagine you have 1000 images. Instead of a single train/test split:
 5. Average the five accuracy numbers
 
 This way, every image gets tested exactly once and every image is used for training four times. You get a more stable estimate of real performance without needing a huge dataset.
+
+Cross-validation gives you an estimate, or helps you pick between settings; it doesn't hand you a finished model. Once you've chosen a design, you retrain it on all the data. And if you used cross-validation to make those choices, still keep a separate test set aside for the final, untouched score, just as before.
 
 The metaphor: instead of one final exam, you take five quizzes on different material. Your actual grade is the average.
 
