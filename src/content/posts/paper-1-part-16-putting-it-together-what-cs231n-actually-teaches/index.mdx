@@ -17,7 +17,7 @@ Let's walk through a complete example: classifying a cat image.
 
 **Step 1: Input**
 
-Raw image: 224×224 pixels, RGB, values 0-255.
+Raw image: 224×224 pixels, each with 3 color channels (RGB), so the input is a 224×224×3 block of values, each from 0 to 255.
 
 First thing: normalize. Divide by 255, or standardize using ImageNet statistics. Normalized image: same shape, values now in a sensible range.
 
