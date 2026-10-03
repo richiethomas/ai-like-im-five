@@ -29,7 +29,7 @@ Your brain does this instantly and without effort. For a computer it is hard, ha
 
 ## The Seven Things That Make It Hard
 
-CS231n, formally titled "Convolutional Neural Networks for Visual Recognition," is Stanford's introductory course on computer vision. It opens with a list of challenges. Each one is a way that two pictures of the same subject end up with wildly different numbers.
+CS231n, formally titled "Convolutional Neural Networks for Visual Recognition," is Stanford's course on deep learning for computer vision. It opens with a list of challenges. Each one is a way that two pictures of the same subject end up with wildly different numbers.
 
 **Viewpoint variation.** A dog viewed from the front looks different from a dog viewed from the side. A dog lying down looks different from a dog standing. The dog is still a dog, but the grid of numbers changes completely depending on where the camera is. Concretely: rotate the camera 90 degrees around the dog, and nearly every value in the grid changes, even though it's the same animal.
 
@@ -53,7 +53,7 @@ A naive approach, comparing the number grids directly, fails in general for exac
 
 We need methods whose predicted label stays correct even when the picture changes. Methods that say "yes, this is a dog" even when the dog is rotated, occluded, far away, or in shadow.
 
-This is what CS231n teaches us to build, one idea per post: first nearest neighbor (guess by finding the most similar stored example), then linear classifiers (score each possible label with a simple weighted recipe), then the convolutional networks that tackle all seven challenges.
+This is what CS231n teaches us to build, one idea per post: first nearest neighbor (guess by finding the most similar stored example), then linear classifiers (score each possible label with a simple weighted recipe), then the convolutional networks built to handle these challenges.
 
 ## Try It Yourself
 
