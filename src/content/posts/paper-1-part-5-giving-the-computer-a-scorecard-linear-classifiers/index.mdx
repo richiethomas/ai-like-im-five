@@ -48,7 +48,7 @@ A 32×32 color image has 1,024 pixels, and each pixel is 3 numbers (red, green, 
 The score for "cat" is computed as:
 
 ```
-score_cat = w1*pixel1 + w2*pixel2 + ... + w3072*pixel3072 + bias_cat
+score_cat = w1*value1 + w2*value2 + ... + w3072*value3072 + bias_cat
 ```
 
 Where `w1, w2, ..., w3072` are the learned weights and `bias_cat` is a constant bonus/penalty for the "cat" label.
@@ -93,13 +93,13 @@ But here's the limitation: a linear classifier uses just one set of weights per 
 
 You might think: fine, just use more templates. One for "side view dog," one for "front view dog," one for "small dog," one for "dog in shadow." That does help, up to a point. But it runs into two walls.
 
-The first is a combinatorial explosion. You don't need one extra template per challenge; you need one for every *combination* of them: small-and-dark-and-side-view dog, large-and-bright-and-front-view dog, and so on across all seven axes at once. That is not seven or seventy templates, it is millions, and you would need enough labeled photos to learn each one.
+The first is a **combinatorial explosion** (the number of cases blows up as the challenges combine). You don't need one extra template per challenge; you need one for every *combination* of them: small-and-dark-and-side-view dog, large-and-bright-and-front-view dog, and so on across all seven axes at once. That is not seven or seventy templates, it is millions, and you would need enough labeled photos to learn each one.
 
 The second is that two of the challenges don't yield to more templates at all. Background clutter is different in every photo, so a template, which has one fixed value per pixel position, has no consistent background it can match. And a dog can be occluded (partly hidden) in endless ways, so there's no single "occluded dog" to memorize.
 
 That single-template limit is why a linear classifier tends to do better on simple, consistent images than on messy real-world ones.
 
-The fix the field actually adopted is not more whole-dog templates. It's to learn small, reusable pattern detectors, things like edges, textures, and parts, that combine to recognize a dog in any pose. A single "ear" detector helps no matter where the ear is. That idea is what neural networks (Part 9) and later convolutional networks (Part 12 onward) are built on, and it's where the rest of this series is headed.
+The fix the field actually adopted is not more whole-dog templates. It's to learn small, reusable pattern detectors, things like edges, textures, and parts, that combine to recognize a dog in any pose. Reusable detectors like these are what neural networks (Part 9) are built on. Convolutional networks (Part 12 onward) go one step further and reuse the same detector at every position, so a single "ear" detector helps no matter where the ear sits. That is where the rest of this series is headed.
 
 ## The Missing Piece: How the Weights Get Learned
 
