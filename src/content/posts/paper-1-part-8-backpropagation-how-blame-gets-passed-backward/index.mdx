@@ -182,7 +182,7 @@ Backpropagation isn't magic. It's just:
 
 Each of those nested steps is a **layer** (like `inner = x³ + 5x`, then the squaring after it). What makes this work is that each layer only needs to know its own local behavior, how its output depends on its input. It doesn't need to understand the whole function. The chain rule carries each layer's local information backward and combines it into the slope for every weight.
 
-This is why neural networks can stack hundreds of layers: each one contributes just a local calculation, and backpropagation chains them all together into the slope for every weight.
+This efficiency is what makes training large networks possible at all: each layer contributes just a local calculation, and backpropagation chains them together into the slope for every weight, however many layers and weights there are.
 
 ## What's Next
 
