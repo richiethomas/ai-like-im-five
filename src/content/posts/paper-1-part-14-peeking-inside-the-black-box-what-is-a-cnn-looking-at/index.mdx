@@ -56,7 +56,7 @@ Reading the maps tells you not just what the network can detect but where it det
 
 Ask: "What image would maximally activate this <Term k="neuron">neuron</Term>?"
 
-Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: a neuron that detects faces produces a face-like image when you optimize for maximum activation.
+Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: optimize a face-detecting neuron and face-like shapes emerge, though as repeated, dreamlike fragments rather than one clean face.
 
 This uses the same <Term k="gradient">gradient</Term> trick as training, but aimed at the image instead of the weights. In training, the network nudges its weights to lower the <Term k="loss">loss</Term> (Part 7); here the weights stay fixed and we nudge the image, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
 
@@ -76,7 +76,7 @@ For a well-trained classifier, the hot region often sits on the thing being clas
 
 ## Why This Matters
 
-Visualization lets you check whether the network learned sensible features. If a cat classifier is keying on cat faces and whiskers, that's a good sign; if it's keying on background colors, something went wrong.
+Visualization lets you check whether the network learned sensible features. If a cat classifier is keying on cat faces and whiskers, that's a good sign; if it's keying on background colors, that's a warning sign it's relying on the wrong cue.
 
 Visualization also helps diagnose failures: if the network keeps getting paws wrong, its saliency and feature maps can show whether it's even looking at the paws, which points you toward a fix (more data, better augmentation, an architecture change).
 
