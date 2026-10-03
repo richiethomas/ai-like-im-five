@@ -40,7 +40,7 @@ Output is about half the size in each dimension. A 224×224 map becomes 112×112
 
 **Aggregation:** Pooling combines information from a small region into one value. Within that region the exact position stops mattering; what carries forward is mainly whether the feature is present.
 
-**Robustness:** if a pattern shifts by a pixel or two, max pooling often gives the same result, since the largest value in the window is usually still the largest. That makes the network more tolerant of small shifts, which helps recognition. (The flip side: pooling blurs away exact positions, so it's less suited to tasks that need to locate things precisely.)
+**Robustness:** if a pattern shifts by a pixel or two, max pooling often gives the same result, since the largest value in the window is usually still the largest. That makes the network more tolerant of small shifts, which helps recognition. Picture a spotlight following a singer: as long as the singer stays somewhere inside the circle of light, the audience sees the same bright figure, even as they drift a step left or right. The pooling window is that circle of light for a feature. (The flip side: pooling blurs away exact positions, so it's less suited to tasks that need to locate things precisely.)
 
 **Dimensionality reduction:** Smaller feature maps = faster computation.
 

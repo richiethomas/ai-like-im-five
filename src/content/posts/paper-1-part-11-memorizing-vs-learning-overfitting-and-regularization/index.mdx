@@ -54,6 +54,8 @@ During training, randomly "drop" (set to zero) a fraction of neurons. If 50% dro
 
 Why? Because any neuron might be dropped on a given pass, the network can't rely on any single one to carry critical information. The work has to be spread across many neurons, so no fragile, one-off pattern can take hold.
 
+It's like a basketball team that benches a different random player every practice. Because no one knows who will sit out, everyone has to learn every position, and the team stops leaning on any single star. A network trained with dropout spreads its knowledge the same way.
+
 At test time, every neuron stays on, and nothing special happens. Modern frameworks handle the bookkeeping during training instead: when some neurons are dropped, the outputs of the ones that remain are scaled up to compensate, so the totals line up once all the neurons are active at test time.
 
 Dropout is simple and widely used.

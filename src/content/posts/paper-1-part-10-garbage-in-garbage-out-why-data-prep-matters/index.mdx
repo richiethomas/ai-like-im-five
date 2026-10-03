@@ -37,6 +37,8 @@ standardized_value = (raw_value - average) / standard_deviation
 
 Subtract the average (the mean) and divide by the **standard deviation** (how far a typical value sits from the average), both measured on your training data and then applied unchanged to any new data. This puts the values around zero and on a comparable scale, which makes training go more smoothly (the next section shows why).
 
+This is the same move as curving a test: subtract the class average from your score, then divide by how spread out the scores were. A raw 82 tells you little on its own, but "1.5 standard deviations above average" is comparable across any class, however hard it was graded. Standardization does that to every feature.
+
 ## Why This Matters
 
 Pixels all live on the same 0-to-255 scale, so a single division by 255 shrinks them into a small range together. It gets trickier when a model's features are on different scales from each other, because then no single divisor works for all of them.
