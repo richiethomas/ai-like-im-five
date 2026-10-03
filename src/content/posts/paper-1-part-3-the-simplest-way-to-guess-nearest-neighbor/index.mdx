@@ -86,9 +86,9 @@ This is why, as you add more challenging variations (viewpoint changes, scale ch
 
 ## The Insight
 
-Nearest neighbor fails because it compares raw pixels, and raw pixels change with lighting, angle, and background. So any method that works must first **extract something deeper from the image**: features or patterns that survive the seven challenges we listed in Part 2 (viewpoint, scale, lighting, occlusion, and the rest).
+Nearest neighbor fails because it compares raw pixels, and raw pixels change with lighting, angle, and background. So any method that works well on real photos must first **extract something deeper from the image**: features or patterns that survive the seven challenges we listed in Part 2 (viewpoint, scale, lighting, occlusion, and the rest).
 
-This is where the rest of CS231n comes in. Every technique we'll learn (linear classifiers, neural networks, convolutional networks) first transforms the image into features, then classifies based on those features instead of the raw pixels.
+This is where the rest of CS231n comes in. Neural networks, and especially convolutional networks, learn to pull those deeper features out of the pixels and classify based on them rather than on the raw numbers. The linear classifier in the next post is a first improvement on nearest neighbor, but it still works on raw pixels, which is part of why it only goes so far.
 
 ## What's Next
 
