@@ -35,7 +35,7 @@ The activation function is **non-linear**, meaning its output doesn't move in si
 ```
 f(x) = max(0, x)
 ```
-If the sum is positive, pass it through. If negative, zero it out. It's about as simple as an activation function gets, and per the CS231n notes, the most common choice in networks when those notes were written.
+If the sum is positive, pass it through. If negative, zero it out. It's one of the simplest activation functions there is, and per the CS231n notes, the most common choice in networks when those notes were written.
 
 **Sigmoid:**
 ```
@@ -107,7 +107,7 @@ The theorem in the next section is about the shallow-and-wide extreme: a single 
 
 There's a mathematical result, the **Universal Approximation Theorem**, with a surprising message. Take a network with a single layer of neurons in the middle, between the input and the final answer; that middle layer is called a **hidden layer** (hidden because you never see its values directly, they're an internal step). Give it enough neurons, and it can mimic almost any function you could draw, to as much accuracy as you want.
 
-That's a strong statement, and it comes with a catch. The theorem says such a network *can represent* the function, not that it will *learn* it. Those are two different things:
+That is a sweeping claim, and it comes with a catch. The theorem says such a network *can represent* the function, not that it will *learn* it. Those are two different things:
 
 - **Represent:** somewhere among all the possible settings of the network's weights (its millions of knobs), a setting exists that matches the target function.
 - **Learn:** training, starting from random weights and nudging them based on the data, can actually arrive at that setting.
