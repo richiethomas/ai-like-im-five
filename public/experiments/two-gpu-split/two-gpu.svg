@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8"/></marker><marker id="arb" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#d98a2b"/></marker></defs>
+<rect x="0" y="0" width="700" height="300" rx="10" fill="#ffffff"/>
+<text x="350.0" y="30" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">AlexNet split across two GPUs</text>
+<text x="30" y="124" font-size="11" fill="#2f7fcf" font-weight="700">GPU 1</text>
+<text x="30" y="214" font-size="11" fill="#16a89a" font-weight="700">GPU 2</text>
+<rect x="88" y="143" width="44" height="44" rx="6" fill="#fafbfc" stroke="#cbd5e1"/>
+<circle cx="110" cy="165" r="13" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+<polygon points="97,154 102,144 108,154" fill="#e2e8f0" stroke="#334155" stroke-width="1.2"/>
+<polygon points="123,154 118,144 112,154" fill="#e2e8f0" stroke="#334155" stroke-width="1.2"/>
+<circle cx="105" cy="164" r="1.8" fill="#334155"/><circle cx="115" cy="164" r="1.8" fill="#334155"/>
+<text x="110" y="201" text-anchor="middle" font-size="9" fill="#64748b">image</text>
+<line x1="132" y1="155" x2="182" y2="120" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar)"/>
+<line x1="132" y1="175" x2="182" y2="210" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ar)"/>
+<rect x="182" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="200" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">conv1</text>
+<rect x="182" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="200" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">conv1</text>
+<rect x="250" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="268" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">conv2</text>
+<rect x="250" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="268" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">conv2</text>
+<line x1="218" y1="120" x2="250" y2="120" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="218" y1="210" x2="250" y2="210" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<rect x="318" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="336" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">conv3</text>
+<rect x="318" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="336" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">conv3</text>
+<line x1="286" y1="120" x2="318" y2="120" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="286" y1="210" x2="318" y2="210" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="336" y1="135" x2="336" y2="195" stroke="#d98a2b" stroke-width="1.8" marker-end="url(#arb)" marker-start="url(#arb)"/>
+<text x="358" y="168" font-size="8.5" fill="#b9741f" font-weight="600">share</text>
+<rect x="386" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="404" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">conv4</text>
+<rect x="386" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="404" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">conv4</text>
+<line x1="354" y1="120" x2="386" y2="120" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="354" y1="210" x2="386" y2="210" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<rect x="454" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="472" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">conv5</text>
+<rect x="454" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="472" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">conv5</text>
+<line x1="422" y1="120" x2="454" y2="120" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="422" y1="210" x2="454" y2="210" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<rect x="542" y="106" width="36" height="28" rx="4" fill="#2f7fcf" fill-opacity="0.18" stroke="#2f7fcf" stroke-width="1.2"/>
+<text x="560" y="124" text-anchor="middle" font-size="8.5" fill="#2f7fcf" font-weight="600">fc</text>
+<rect x="542" y="196" width="36" height="28" rx="4" fill="#16a89a" fill-opacity="0.18" stroke="#16a89a" stroke-width="1.2"/>
+<text x="560" y="214" text-anchor="middle" font-size="8.5" fill="#16a89a" font-weight="600">fc</text>
+<line x1="490" y1="120" x2="542" y2="120" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="490" y1="210" x2="542" y2="210" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ar)"/>
+<line x1="560" y1="135" x2="560" y2="195" stroke="#d98a2b" stroke-width="1.8" marker-end="url(#arb)" marker-start="url(#arb)"/>
+<text x="582" y="168" font-size="8.5" fill="#b9741f" font-weight="600">share</text>
+<text x="350.0" y="258" text-anchor="middle" font-size="11" fill="#64748b">Each card holds half the network and runs in parallel. The two halves exchange information</text>
+<text x="350.0" y="273" text-anchor="middle" font-size="11" fill="#64748b">only at the orange crossover links; everywhere else, each card keeps to itself.</text>
+</svg>

@@ -1,0 +1,40 @@
+---
+title: "Paper #2: What AlexNet Learned, and Why It Changed Everything"
+excerpt: "The machine is built and trained. This last post looks inside to see what it actually learned, and steps back to ask why this one paper redirected the whole field."
+category: "Vision"
+date: 2023-09-26T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "interpretability", "computer vision basics"]
+---
+
+> **Where we are:** over the last few posts we built AlexNet up piece by piece, from [the architecture](/post/paper-2-the-architecture-scaled-up/) to [the training recipe](/post/paper-2-the-finer-points/). This final post asks what the trained network learned, and why it mattered so much.
+
+## What the first layer learned
+
+When the authors drew the 96 filters in the first convolutional layer as little images, they saw something familiar: edge detectors at various angles, and small blobs of color. These are the same kinds of patterns Paper #1 found when we [visualized a network's filters](/post/paper-1-part-14-peeking-inside-the-black-box-what-is-a-cnn-looking-at/), oriented edges and simple color and texture detectors. A first-layer filter is tiny, just an 11-by-11 patch of weights, yet drawn out, each one clearly resembles an edge at a particular angle or a patch of a single color.
+
+That is reassuring. Nobody told the network to look for edges; it discovered, on its own, that edges are a useful first thing to measure in an image. The hierarchy Paper #1 described, edges building into textures, textures into shapes, was not a story imposed on the network. It is what the network actually built.
+
+## The two halves specialized
+
+Remember the odd side effect of [splitting the network across two GPUs](/post/paper-2-splitting-a-network-across-two-gpus/)? Here is where it shows up. One GPU's first-layer filters came out almost entirely color-blind, tuned to edges and shapes; the other's came out tuned to color. The authors did not plan this. It happened on its own, and it happened on every training run, no matter how the weights were first randomized.
+
+It is a small reminder that a trained network is grown, not designed. You set up the conditions and the learning fills in the details, sometimes in ways nobody asked for.
+
+## Similar meaning, not similar pixels
+
+The most striking result is about the last hidden layer, the 4,096 numbers just before the final decision. Treat those numbers as a fingerprint for an image. When you compare fingerprints, images that are close together turn out to be similar in meaning: different elephants in different poses, lit differently, sit near each other, even though their raw pixels look nothing alike.
+
+This is the exact thing Paper #1's [nearest-neighbor post](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/) said was missing. Comparing raw pixels failed because pixel similarity is not meaning similarity. AlexNet learned to turn an image into a fingerprint where closeness finally does mean "same kind of thing." The deep features Paper #1 argued we needed are exactly what the trained network produced. Those fingerprints are also why a trained network makes such a good starting point for other tasks, the [transfer learning](/post/paper-1-part-15-why-train-from-scratch-transfer-learning/) Paper #1 ended on: features general enough to reuse.
+
+## Why it changed everything
+
+Put it together, and the result was decisive. A single deep network, trained on raw pixels with no hand-designed clues, beat the carefully engineered systems that had defined computer vision for years, and beat them by a wide margin.
+
+Before 2012, the strongest results in vision came from human-designed feature detectors, refined over years of research. After 2012, the winning move was to let the network learn its own. The message the field took from the result was simple: with enough data, enough compute, and the right handful of techniques, a deep network could learn better features than people could design by hand. Within a few years, nearly all of computer vision had switched to this approach, and the same recipe spread far beyond images.
+
+That is why AlexNet is the second stop on this reading list. It is the proof that the ideas from Paper #1 were not just a nice theory; scaled up and trained with care, they worked. The posts ahead follow where that proof led, starting with a different kind of data entirely: sequences, like text.

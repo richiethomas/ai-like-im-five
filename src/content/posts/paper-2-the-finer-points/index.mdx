@@ -1,0 +1,42 @@
+---
+title: "Paper #2: The Finer Points (Normalization, Pooling, and the Training Recipe)"
+excerpt: "The big ideas are in place. This post gathers the smaller tricks AlexNet used, including one now considered obsolete, and the plain recipe for actually training it."
+category: "Vision"
+date: 2023-09-25T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "training", "CNNs"]
+---
+
+> **Where we are:** the large pieces are done: [ReLU](/post/paper-2-relu-made-big-networks-trainable/) for speed, [two GPUs](/post/paper-2-splitting-a-network-across-two-gpus/) for memory, and [augmentation and dropout](/post/paper-2-fighting-overfitting-at-scale/) against overfitting. This post collects the smaller details and the recipe for the training run itself.
+
+Not every choice in a paper is a headline. AlexNet also included a few minor tricks, and then the unremarkable but necessary work of running the training. These are the less glamorous parts, but they are part of why the whole thing worked. None is as important as ReLU or dropout; together, though, they squeezed out the last few points of accuracy.
+
+## Local response normalization (a trick that did not last)
+
+After the ReLU in a couple of layers, AlexNet applied **<Term k="local-response-normalization">local response normalization</Term>**. The idea was loosely inspired by biology: a strongly firing neuron tends to suppress its neighbors, so a strong response stands out more against its surroundings. In the network, each activation was scaled down based on how strongly nearby filters responded at the same spot, so no single filter could dominate and the strongest responses stood out.
+
+It helped a little, cutting top-1 error by about 1.4%. It is worth knowing mainly for historical reasons, though: later work found better approaches, and modern networks generally leave it out. Treat it as a period detail, not a lasting lesson.
+
+## Overlapping pooling
+
+In Paper #1, [pooling](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/) took a region, say 2×2, and summarized it, and the regions did not overlap. AlexNet used <Term k="overlapping-pooling">overlapping pooling</Term> instead: each pooling window was 3×3 but moved only 2 pixels at a time, so neighboring windows shared a strip.
+
+The gain was small, about 0.4% on top-1 error, and the authors noticed overlapping pooling also made the network a little harder to overfit. There is no deep reason given for why it helps; it simply did a little, so they kept it.
+
+## The training recipe
+
+The training itself used [gradient descent](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/), in the usual stochastic form: adjust the weights using a small batch of 128 images at a time rather than the whole dataset at once. Working in small batches keeps each step cheap while still pointing the weights roughly in the right direction. A few standard settings came along with it:
+
+- **<Term k="momentum">Momentum</Term> of 0.9**, which lets each update carry some speed from the previous ones, smoothing the path downhill.
+- **Weight decay of 0.0005**, which is the [L2 penalty](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) on large weights from Paper #1. The authors found this small amount did not just regularize; it also lowered the training error. A penalty like this usually only helps on new images, so seeing training error drop too was a pleasant surprise.
+- **A hand-tuned learning rate**, started at 0.01 and divided by 10 whenever validation accuracy stopped improving, which happened three times before they stopped. Cutting the rate lets the network take smaller, finer steps as it nears the bottom, the same idea as slowing down when you are almost at the valley floor.
+
+All of this ran for about 90 passes (<Term k="epoch">epochs</Term>) through the 1.2 million images, which took **five to six days** on the two GTX 580 GPUs. No shortcut, just days of computation. By today's standards that hardware is ancient and the same run would finish in minutes; in 2012 it was near the limit of what was possible.
+
+## What's next
+
+That is the whole machine: built, and trained. The last post steps back to ask what the finished network actually learned inside, and why this one paper changed the direction of the field.

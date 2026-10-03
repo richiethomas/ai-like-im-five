@@ -1,0 +1,40 @@
+---
+title: "Paper #2: Fighting Overfitting at Scale"
+excerpt: "With sixty million weights and only a million images, AlexNet could have memorized its way to a useless answer. Two defenses stopped it: more data, made for free, and dropout."
+category: "Vision"
+date: 2023-09-24T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "overfitting", "data augmentation", "dropout"]
+---
+
+> **Where we are:** [ReLU](/post/paper-2-relu-made-big-networks-trainable/) made training fast, and [splitting across two GPUs](/post/paper-2-splitting-a-network-across-two-gpus/) made it fit in memory. This post is about the last problem standing: with 60 million weights, the network could simply memorize its training set instead of learning from it.
+
+Paper #1 called this [overfitting](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/): a network with enough capacity learns the training images by heart, scores beautifully on them, and then fails on anything new. AlexNet had plenty of capacity and only 1.2 million images to feed it. Left alone, it would overfit badly. The authors leaned on two defenses.
+
+## Defense one: more data, made for free
+
+The most direct way to reduce overfitting is more training data, because quirks are harder to memorize across a larger, more varied set. You rarely have more data lying around, so AlexNet created more from the images it already had, a trick Paper #1 introduced as [data augmentation](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/). AlexNet used two kinds.
+
+The first is familiar: take random smaller crops of each image, and flip some of them left-to-right. A dog is still a dog when it is shifted a little or mirrored, so each original photo becomes thousands of slightly different training examples, over two thousand per image, in fact. Each crop is a genuinely new view for the network to learn from, even though you took no new photos. At test time the network steadies its answer by averaging its predictions over ten fixed crops of each image.
+
+The second is newer and worth a closer look: **color jitter**. The authors nudged the overall color and brightness of each image at random, but not arbitrarily. They measured how colors naturally vary across the whole dataset and shifted along those same directions, so the changes looked like plausible lighting differences rather than random noise. This taught the network that a dog is a dog whether the photo is warm or cool, bright or dim. It cut the top-1 error (how often the single best guess is wrong) by more than one percent on its own. A single percent sounds small, but on a benchmark decided by a point or two, it was well worth a trick that costs almost nothing to apply.
+
+<img src="/experiments/data-augmentation/augment.svg" alt="One original cat photo on the left, with an arrow to four variants: two different crops that shift and zoom the cat, one left-to-right mirror image, and one with its colors tinted warmer. A caption notes each original image becomes many training examples." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+
+## Defense two: dropout
+
+The second defense was [dropout](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/), which Paper #1 explains in detail: during training, randomly switch off half the neurons on each pass, so the network cannot lean on any single one and has to spread what it learns across many.
+
+AlexNet's specifics are worth noting. It used dropout at a rate of 50%, and only in the first two fully-connected layers, which is where most of those 60 million weights live and where overfitting was most dangerous. At test time, dropout is switched off and the full network makes the prediction, with a small adjustment so the totals still line up (Paper #1 covers that bookkeeping). The cost during training is that dropout roughly doubles the number of passes needed to finish, since each neuron is only being trained about half the time. The authors judged that a fair price: without dropout, they report, the network overfit substantially.
+
+## The payoff
+
+Dropout was brand new in 2012, and AlexNet was among the first to put it to serious use; the color jitter was AlexNet's own invention; only the crops and flips were an established idea. What AlexNet showed was that these defenses, used together at this scale, were enough. Paper #1 can teach them as fundamentals today partly because this paper showed they worked. You can see it working the way Paper #1 described: training and validation accuracy stay close, instead of training accuracy racing ahead while performance on new images stalls. A network large enough to memorize a million images instead learned patterns general enough to label images it had never seen.
+
+## What's next
+
+The large pieces are now in place: a fast activation, a way to fit the model in memory, and a working defense against overfitting. The next post gathers up the smaller tricks the paper used, and the plain hard work of actually running the training.

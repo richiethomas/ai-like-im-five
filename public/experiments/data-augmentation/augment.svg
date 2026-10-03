@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8"/></marker>
+<clipPath id="clip0"><rect x="22.0" y="117.0" width="96" height="96" rx="8"/></clipPath>
+<clipPath id="clip1"><rect x="300" y="48" width="96" height="96" rx="8"/></clipPath>
+<clipPath id="clip2"><rect x="410" y="48" width="96" height="96" rx="8"/></clipPath>
+<clipPath id="clip3"><rect x="300" y="186" width="96" height="96" rx="8"/></clipPath>
+<clipPath id="clip4"><rect x="410" y="186" width="96" height="96" rx="8"/></clipPath>
+</defs>
+<rect x="0" y="0" width="640" height="330" rx="10" fill="#ffffff"/>
+<text x="320.0" y="26" text-anchor="middle" font-size="14" fill="#334155" font-weight="600">One image becomes many: data augmentation</text>
+<rect x="22.0" y="117.0" width="96" height="96" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+<g clip-path="url(#clip0)">
+<polygon points="44,145 52,128 63,145" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="96,145 88,128 77,145" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="70" cy="165" r="26" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+<circle cx="61" cy="162" r="3" fill="#334155"/><circle cx="79" cy="162" r="3" fill="#334155"/>
+<polygon points="66,170 74,170 70,176" fill="#334155"/>
+<circle cx="54" cy="174" r="5" fill="#9aa6b8"/>
+</g>
+<text x="70" y="231.0" text-anchor="middle" font-size="11" fill="#64748b" font-weight="600">original</text>
+<line x1="126.0" y1="165" x2="265" y2="165" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="300" y="48" width="96" height="96" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+<g clip-path="url(#clip1)">
+<g transform="translate(-14,-10) translate(348.0,96.0) scale(1.45) translate(-348.0,-96.0)">
+<polygon points="322.0,76.0 330.0,59.0 341.0,76.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="374.0,76.0 366.0,59.0 355.0,76.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="348.0" cy="96.0" r="26" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+<circle cx="339.0" cy="93.0" r="3" fill="#334155"/><circle cx="357.0" cy="93.0" r="3" fill="#334155"/>
+<polygon points="344.0,101.0 352.0,101.0 348.0,107.0" fill="#334155"/>
+<circle cx="332.0" cy="105.0" r="5" fill="#9aa6b8"/>
+</g>
+</g>
+<text x="348.0" y="159" text-anchor="middle" font-size="10.5" fill="#64748b">crop</text>
+<rect x="410" y="48" width="96" height="96" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+<g clip-path="url(#clip2)">
+<g transform="translate(12,8) translate(458.0,96.0) scale(1.45) translate(-458.0,-96.0)">
+<polygon points="432.0,76.0 440.0,59.0 451.0,76.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="484.0,76.0 476.0,59.0 465.0,76.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="458.0" cy="96.0" r="26" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+<circle cx="449.0" cy="93.0" r="3" fill="#334155"/><circle cx="467.0" cy="93.0" r="3" fill="#334155"/>
+<polygon points="454.0,101.0 462.0,101.0 458.0,107.0" fill="#334155"/>
+<circle cx="442.0" cy="105.0" r="5" fill="#9aa6b8"/>
+</g>
+</g>
+<text x="458.0" y="159" text-anchor="middle" font-size="10.5" fill="#64748b">crop</text>
+<rect x="300" y="186" width="96" height="96" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+<g clip-path="url(#clip3)">
+<g transform="translate(696.0,0) scale(-1,1)">
+<polygon points="322.0,214.0 330.0,197.0 341.0,214.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="374.0,214.0 366.0,197.0 355.0,214.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="348.0" cy="234.0" r="26" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+<circle cx="339.0" cy="231.0" r="3" fill="#334155"/><circle cx="357.0" cy="231.0" r="3" fill="#334155"/>
+<polygon points="344.0,239.0 352.0,239.0 348.0,245.0" fill="#334155"/>
+<circle cx="332.0" cy="243.0" r="5" fill="#9aa6b8"/>
+</g>
+</g>
+<text x="348.0" y="297" text-anchor="middle" font-size="10.5" fill="#64748b">flip</text>
+<rect x="410" y="186" width="96" height="96" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+<g clip-path="url(#clip4)">
+<polygon points="432.0,214.0 440.0,197.0 451.0,214.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="484.0,214.0 476.0,197.0 465.0,214.0" fill="#e2e8f0" stroke="#334155" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="458.0" cy="234.0" r="26" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+<circle cx="449.0" cy="231.0" r="3" fill="#334155"/><circle cx="467.0" cy="231.0" r="3" fill="#334155"/>
+<polygon points="454.0,239.0 462.0,239.0 458.0,245.0" fill="#334155"/>
+<circle cx="442.0" cy="243.0" r="5" fill="#9aa6b8"/>
+<rect x="410" y="186" width="96" height="96" fill="#d98a2b" fill-opacity="0.22"/>
+</g>
+<text x="458.0" y="297" text-anchor="middle" font-size="10.5" fill="#64748b">color</text>
+<text x="320.0" y="320" text-anchor="middle" font-size="10.5" fill="#94a3b8">crops, flips, and color shifts turn one labeled photo into thousands of training examples</text>
+</svg>

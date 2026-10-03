@@ -74,4 +74,11 @@ export const glossary: Record<string, string> = {
   imagenet: "a large public image dataset networks are commonly pre-trained on.",
   ilsvrc: "the ImageNet Large Scale Visual Recognition Challenge: the annual contest on a 1,000-category slice of ImageNet.",
   "top-5-error": "the fraction of images whose correct label is not among the model's five most confident guesses.",
+  gpu: "a graphics card: hardware very fast at the parallel number-crunching that training a network needs.",
+  "model-parallelism": "splitting one network across several devices so each holds and computes part of it.",
+  "color-jitter": "randomly shifting an image's colors and brightness so a model learns to ignore lighting changes.",
+  "local-response-normalization": "an early trick that dampened each activation based on nearby ones; later found unnecessary and dropped.",
+  "overlapping-pooling": "pooling where the windows overlap, moving a smaller step than their own width.",
+  momentum: "letting each weight update carry some speed from the previous ones, smoothing the path downhill.",
+  epoch: "one full pass through the entire training set.",
 };

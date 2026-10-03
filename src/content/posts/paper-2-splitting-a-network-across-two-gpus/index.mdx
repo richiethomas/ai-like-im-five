@@ -1,0 +1,48 @@
+---
+title: "Paper #2: Splitting One Network Across Two Graphics Cards"
+excerpt: "ReLU made training fast enough. But the network was too big to fit on a single graphics card, so the authors did something unusual: they cut it in half."
+category: "Vision"
+date: 2023-09-23T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "GPUs", "training"]
+---
+
+> **Where we are:** [ReLU](/post/paper-2-relu-made-big-networks-trainable/) solved the speed problem. This post is about a second obstacle, one about hardware rather than math: the network was too big to fit on a single graphics card.
+
+Neural networks are trained on a <Term k="gpu">GPU</Term>, a graphics card, because the hardware built to push pixels around a screen turns out to be very good at the parallel number-crunching that training a network demands. A GPU does thousands of small multiplications at the same time, which is exactly the shape of the work inside a network: multiply many inputs by many weights, again and again. The catch in 2012 was memory.
+
+## The problem: the network did not fit
+
+The GPU the authors used, an NVIDIA GTX 580, had just 3 gigabytes of memory. And 60 million weights was only the start of what training needs to hold. It also has to keep the activations flowing forward through every layer and the gradients flowing back, for a whole batch of images at once. All together, that overflowed the 3 gigabytes a single card had. One card was not enough.
+
+Today the easy answer would be "use a bigger card." In 2012 there was no bigger card to use. So they worked around it.
+
+## The workaround: cut the network in two
+
+The authors split the network across **two** GTX 580s, putting half of each layer's filters and neurons on each card. The two halves run side by side, each card doing half the work.
+
+This is called **<Term k="model-parallelism">model parallelism</Term>**: instead of one device holding the whole model, several devices each hold a piece of it. It only works if the pieces can mostly work on their own, because sending data between two cards is slow compared to computing on one.
+
+## The clever part: they talk only sometimes
+
+Here is the detail that makes it work. The two halves mostly stay in their own lanes. At most layers, a filter on GPU 1 reads only from the maps on GPU 1, and the same for GPU 2. The two cards do not communicate.
+
+At a few specific layers, though, the halves are allowed to mix, so a filter can read from both cards' maps. This happens at the third convolutional layer and again at the fully-connected layers near the end. The authors chose exactly where to open these crossovers so the network could still combine information from both halves, while keeping the expensive cross-card chatter down to a small fraction of the work.
+
+<img src="/experiments/two-gpu-split/two-gpu.svg" alt="A diagram with two horizontal lanes labeled GPU 1 and GPU 2, each carrying half of the network's layers as a row of blocks. At most layers the two lanes run in parallel without connecting. At one middle convolutional layer and at the fully-connected layers, crossover arrows link the two lanes, showing where the halves are allowed to share information." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "680px" }} />
+
+## A historical workaround that pointed forward
+
+This kind of hand-splitting across two cards has largely disappeared. GPUs today have far more memory, and when a model really is too big for one, software handles the splitting automatically. So this particular trick is now just a historical detail.
+
+But the idea underneath it, spreading a single model across several devices because it is too big for one, did not go away. It is now a central concern in training the largest models, which run across thousands of chips at once. The scale is wildly different, but the reason is the same one AlexNet faced: a model too big for a single piece of hardware. We will see a cleaner version of the same idea much later in this series.
+
+One last thing worth remembering: splitting the network in two had an odd side effect on what the two halves learned, with one drifting toward color and the other toward shape, on its own. We will come back to it when we look inside the trained network.
+
+## What's next
+
+Training was now fast enough and fit in memory. That left the problem Paper #1 warned about: with 60 million weights, the network could simply [memorize](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) its training images. The next post is the campaign against that.
