@@ -1,0 +1,47 @@
+---
+title: "Paper #2: The Architecture (Everything from Paper #1, Scaled Up)"
+excerpt: "AlexNet didn't invent anything new in its shape. It's the convolutional network you already know, made big: five convolutional layers, three fully-connected ones, and sixty million weights."
+category: "Vision"
+date: 2023-09-21T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "CNNs", "computer vision basics"]
+---
+
+> **Where we are:** last time we saw [the contest AlexNet won](/post/paper-2-the-contest-that-changed-everything/) and by how much. Now we look inside the network itself, which turns out to be familiar ground.
+
+If you read Paper #1, you already know AlexNet's shape. That is the point of this post: the architecture is not where the surprise is. It is the ordinary [convolutional network](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) from that series, built bigger than anyone had trained before.
+
+## Eight layers that learn
+
+AlexNet has eight layers with weights: five [convolutional](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) layers followed by three [fully-connected](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/) ones. An image goes in the front; a [softmax](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/) at the end turns the final scores into probabilities across the 1,000 categories.
+
+The input is a 224×224 color image, which is 224×224×3 numbers (one per color channel). (A small aside: the paper says 224×224, but the layer sizes only work out if the input is really 227×227. It is a slip in the original that has puzzled readers ever since; 224 is the number the paper prints, so it is the one we will use.) From there:
+
+- **The five convolutional layers** do the pattern-finding, exactly as in Paper #1. Early layers catch edges, later ones catch textures and object parts, the [hierarchy](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/) we built up before. The first layer alone sweeps 96 different 11×11 filters across the image; deeper layers use smaller 3×3 and 5×5 ones. The filter count rises and then levels off: 96, then 256, then 384, 384, and 256. Pooling layers in between shrink the maps, so the picture gets smaller while the stack of feature maps gets deeper as you go.
+- **The three fully-connected layers** at the end weigh all the evidence together to make the call. The first two have 4,096 neurons each; the last has 1,000, one per category.
+
+That last pair holds most of the network's weights. Wiring a few thousand inputs to 4,096 neurons takes tens of millions of weights in a single fully-connected layer, far more than the five convolutional layers put together (which hold only a couple of million between them). A convolution is frugal because it [reuses one small filter everywhere](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/); a fully-connected layer gives every connection its own weight.
+
+<img src="/experiments/alexnet-architecture/alexnet.svg" alt="A left-to-right diagram of AlexNet. An input cat image (224 by 224 by 3) feeds five convolutional blocks, drawn as rectangles that shrink in height while their filter counts grow (96, 256, 384, 384, 256), then three fully-connected layers drawn as node columns (4096, 4096, 1000), then a softmax producing a 'cat' prediction. A bracket labels the first five as convolutional layers and the last three as fully-connected layers." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "760px" }} />
+
+If you look up the original AlexNet diagram, it appears split into two parallel halves. That split is not part of the core design; it is a hardware workaround for the GPUs of 2012, which [the next post](/post/paper-2-splitting-a-network-across-two-gpus/) is all about.
+
+## Big for its time
+
+Those layers add up to about **60 million weights** and 650,000 neurons. In 2012 that was enormous: earlier networks trained on real images had at most a few million weights, and AlexNet had sixty million. Fitting and training that many, on 1.2 million images, is exactly why so much of the rest of the paper is about making training work at all.
+
+Capacity like that is a double-edged thing, as Paper #1 warned: a network with 60 million knobs can [memorize](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) instead of learn. Holding that off is a theme of the posts to come.
+
+## Depth is not decoration
+
+One finding is worth pulling out. The authors tried removing a single one of the middle convolutional layers, each of which holds less than 1% of the total weights. Accuracy dropped by about two percentage points each time.
+
+So the depth is doing real work. Two percentage points may not sound like much, but at this level of competition it is the difference between first place and forgotten. It is not that the network is big for the sake of being big; each layer builds on the patterns found by the one before it, and removing one weakens everything above it.
+
+## What's next
+
+The shape, then, is the shape you already know. The challenge was training something this large without the training stalling or the network just memorizing its examples. The next post starts with the change that made the training fast enough to be possible at all.

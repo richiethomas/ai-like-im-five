@@ -1,0 +1,44 @@
+---
+title: "Paper #2: ReLU, the Small Change That Made Big Networks Trainable"
+excerpt: "The architecture was familiar. Training something that big was the hard part, and the first thing that made it possible was a swap in the activation function."
+category: "Vision"
+date: 2023-09-22T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["AlexNet", "ReLU", "activation functions"]
+---
+
+> **Where we are:** we've seen that [AlexNet's shape](/post/paper-2-the-architecture-scaled-up/) is an ordinary convolutional network, just large. The surprise was never the diagram; it was training something that big. This post covers the first change that made it possible.
+
+In Paper #1 we met [ReLU](/post/paper-1-part-9-neurons-and-networks-stacking-simple-decisions-into-something-smart/) as one activation function among a few. It is very simple: for each neuron, it takes the weighted sum coming in, keeps it if it is positive, and outputs zero if it is negative. AlexNet's contribution here was not the idea. It was showing, at scale, how much that simple choice matters.
+
+## The old default, and why it dragged
+
+Before ReLU, the usual activation functions were **tanh** and the sigmoid, both smooth S-shaped curves. They share a problem: they **saturate**. Push the input far in either direction and the curve flattens out, which means its slope goes nearly to zero. Feed a sigmoid a large positive number and it returns something very close to 1; feed it an even larger number and it still returns almost exactly 1. The output barely changes, so the slope there is almost nothing.
+
+Here is why that hurts. Training adjusts each weight using its [gradient](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/), the slope of the loss with respect to that weight. That slope has to travel back through every neuron's activation. When an activation has flattened out, its slope is tiny, so the signal arriving at the weight is tiny, so the weight barely moves. The problem compounds with depth: the signal gets squeezed a little at every layer it passes back through, so the earliest layers can end up with almost nothing to learn from. Across a deep, large network, learning slows to a crawl.
+
+## ReLU keeps the signal alive
+
+ReLU does not flatten on the positive side. For any positive input, its slope stays exactly 1. The learning signal passes straight through instead of being squeezed toward zero, so weights keep moving and training keeps making progress.
+
+The paper measured the difference. In a small test on the CIFAR-10 dataset, a four-layer network using ReLU reached a given training-error target about **six times faster** than the same network using tanh.
+
+<img src="/experiments/relu-vs-tanh/relu-tanh.svg" alt="Two side-by-side plots. Left: ReLU, a flat line at zero for negative inputs that turns and rises at a constant slope for positive inputs, next to tanh, an S-curve that flattens toward plus and minus one. Right: training error over time, where the ReLU curve drops to a low error far faster than the tanh curve, which descends slowly." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
+ReLU is not flawless. A neuron whose input stays negative always outputs zero, and zero has zero slope, so that neuron can get stuck and stop learning, a quirk people call the "dying ReLU." In 2012 the speed was well worth that risk, and later variants soften the flat side to avoid it.
+
+## Why six times faster mattered so much
+
+On its own, "trains faster" sounds like a nice-to-have. At AlexNet's size it was the difference between possible and not.
+
+The network had 60 million weights and 1.2 million images to learn from, and even with ReLU the training took five to six days. A slower activation would have stretched each run from days toward weeks, and you cannot iterate on a design when a single attempt takes that long. The authors put it directly: without faster nonlinearities, they "would not have been able to experiment with such large neural networks."
+
+So the smallest-looking choice in the paper, replacing a smooth curve with a bent line, turned out to be one of the most important. It did not make the network smarter; it made training it fast enough to try at all.
+
+## What's next
+
+ReLU solved the speed problem. But AlexNet hit a second limit, this one about hardware rather than math: the network was simply too big to fit on a single graphics card. The next post is the odd, clever way they worked around that.
