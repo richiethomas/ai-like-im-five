@@ -11,6 +11,8 @@ draft: false
 tags: ["data preprocessing", "normalization"]
 ---
 
+> **Where we are:** we can build and train neural networks (Part 9). Before they work well, though, the data you feed them has to be prepared properly.
+
 Neural networks are sensitive to the scale of their inputs, and pixels come in a wide range: 0 to 255.
 
 Recall from Part 8 that the size of the input feeding a weight is one of the things that sets how much that weight gets adjusted: bigger inputs tend to mean bigger adjustments. Raw pixels run all the way up to 255, big enough to make those adjustments large and erratic, so training can be unstable and slow.

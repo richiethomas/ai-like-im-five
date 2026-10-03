@@ -11,6 +11,8 @@ draft: false
 tags: ["linear classifiers", "weights and biases"]
 ---
 
+> **Where we are:** nearest neighbor just memorized images (Part 3), and we have a way to test a classifier without cheating (Part 4). Now we build the first classifier that truly learns: the linear classifier.
+
 Nearest neighbor failed because it relies on pixel-level similarity. What if we try something different: instead of comparing images directly, we compute a *score* for each possible label, then pick the label with the highest score.
 
 This is the idea behind **linear classifiers**, called "linear" because the score is just a weighted sum of the pixel values, with no curves and no combinations between pixels.

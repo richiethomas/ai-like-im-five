@@ -11,6 +11,8 @@ draft: false
 tags: ["pooling", "CNNs", "feature hierarchies"]
 ---
 
+> **Where we are:** convolutions find small local patterns anywhere in an image (Part 12). Now we stack them, together with pooling, to build from edges all the way up to whole objects.
+
 After a convolution layer, feature maps are the same size as the input (or slightly smaller). If the input is 224×224, the output might be 222×222.
 
 Apply another convolution, get 220×220. Each layer shaves off only a little, so the maps stay large for many layers, the computation piles up, and each convolution still only sees a small local patch.
