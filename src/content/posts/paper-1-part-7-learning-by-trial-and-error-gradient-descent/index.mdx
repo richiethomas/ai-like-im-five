@@ -21,7 +21,7 @@ How?
 
 ## The Downhill Metaphor
 
-Imagine you're on a foggy mountain. You can't see the valley, but you can feel the slope of the ground beneath your feet. Unlike a real mountain, this landscape can have many separate valleys, and you only ever feel the slope right under your feet, not the whole terrain.
+Imagine you're on a foggy mountain. You can't see the valley, but you can feel the slope of the ground beneath your feet. This landscape can have many separate valleys, and in the fog you only ever feel the slope right under your feet, not the whole terrain.
 
 Your goal: reach the lowest point.
 
@@ -75,7 +75,7 @@ loss = (w - 5)²
 
 The minimum is at `w = 5` (loss = 0).
 
-This `(w - 5)²` isn't one of the loss functions from Part 6 (hinge or <Term k="softmax">softmax</Term>). It's a stand-in, chosen to be as simple as possible: one weight instead of thousands, and an obvious lowest point, so we can run gradient descent by hand and watch it converge. Part 6's losses are functions of thousands of weights at once, which you can't step through on paper.
+This `(w - 5)²` isn't one of the loss functions from Part 6 (hinge or <Term k="softmax">softmax</Term> loss). It's a stand-in, chosen to be as simple as possible: one weight instead of thousands, and an obvious lowest point, so we can run gradient descent by hand and watch it converge. Part 6's losses are functions of thousands of weights at once, which you can't step through on paper.
 
 The gradient at any point `w` is:
 
@@ -118,7 +118,7 @@ One way to look at training is as a search for the weight values that make the l
 
 4. **Generalizes to any number of weights:** The same algorithm works whether you have one weight or a million. More advanced variants of it train today's large language models, which have hundreds of billions of weights.
 
-The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might settle into a valley when a deeper valley exists elsewhere. This is a known problem in deep learning, but in large networks with many weights, most local minima tend to have similarly low loss, so the valley you land in is usually good enough, and finding the single deepest one isn't necessary.
+The catch: gradient descent finds *local* minima, not necessarily the global minimum. On a mountainous landscape, you might settle into a valley when a deeper valley exists elsewhere. This sounds like a serious problem, but in practice, with large networks and the more advanced variants of gradient descent used today, training usually reaches a solution that works well, even if it isn't the single lowest point. Finding the exact global minimum turns out not to be necessary.
 
 ## What's Next
 
