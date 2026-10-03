@@ -26,6 +26,8 @@ Pre-trained networks have learned general visual features: edges, textures, shap
 
 Take a pre-trained network. Remove its final classification layer, the one that predicts the original task's categories (for example, ImageNet categories, if ImageNet is what it was trained on). Replace it with a new classification layer for your task (e.g., "disease or healthy").
 
+<img src="/experiments/transfer-learning/transfer.svg" alt="A left-to-right diagram. An input cat image feeds a chain of three blue 'conv plus pool' blocks, braced as the pre-trained feature extractor that is reused and already knows edges, textures, and shapes. At the end is a new amber 'new classifier' block; above it a dashed, crossed-out 'old classifier (ImageNet, removed)' has a 'swap in' arrow pointing down into its place. The output shows 'cat' and 'dog' bars labeled 'your classes'. A note reads: feature extraction freezes the reused layers and trains only the new head; fine-tuning also nudges the reused layers gently with a low learning rate." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "700px" }} />
+
 Now you have two choices:
 
 **Option 1: Fine-tuning**
