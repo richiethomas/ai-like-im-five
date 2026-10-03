@@ -25,6 +25,8 @@ If you're trying to classify a new photo of a dog, you find the training photo t
 
 In machine learning, copying the single closest match is called **nearest neighbor**. The general version, where you look at the *k* closest matches and take a majority vote of their labels, is called **k-nearest neighbors (kNN)**. It's a common first algorithm to learn, because it's easy to explain.
 
+<img src="/experiments/nearest-neighbor/nn-space.svg" alt="A 2D scatter plot with axes 'feature 1' and 'feature 2'. Teal dots are training cats clustered toward the lower left; amber dots are training dogs clustered toward the upper right. A dark question-mark dot, the new image, sits near the cats. A line connects it to its single nearest dot, a cat, labeled 'nearest match'. A dashed circle around the new image encloses its three nearest dots, all cats, labeled 'k equals 3: majority vote, cat'." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
+
 ## How Do You Measure "Similarity"?
 
 The catch is: how do you define which images are similar?

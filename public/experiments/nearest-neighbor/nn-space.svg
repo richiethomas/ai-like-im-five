@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="470" rx="10" fill="#ffffff"/>
+<text x="320.0" y="32" text-anchor="middle" font-size="16" fill="#334155" font-weight="600">Nearest neighbor: copy the closest image’s label</text>
+<line x1="90" y1="400" x2="450" y2="400" stroke="#cbd5e1" stroke-width="1.2"/>
+<line x1="90" y1="400" x2="90" y2="56.0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="270.0" y="426" text-anchor="middle" font-size="11.5" fill="#64748b">feature 1 &#8594;</text>
+<text x="76" y="228.0" text-anchor="middle" font-size="11.5" fill="#64748b" transform="rotate(-90 76 228)">feature 2 &#8594;</text>
+<circle cx="290.0" cy="232.0" r="82.0" fill="#334155" fill-opacity="0.05" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5 4"/>
+<line x1="290.0" y1="232.0" x2="250.0" y2="268.0" stroke="#334155" stroke-width="2"/>
+<circle cx="178.0" cy="280.0" r="7" fill="#16a79a"/>
+<circle cx="214.0" cy="224.0" r="7" fill="#16a79a"/>
+<circle cx="194.0" cy="316.0" r="7" fill="#16a79a"/>
+<circle cx="250.0" cy="268.0" r="7" fill="#16a79a"/>
+<circle cx="234.0" cy="200.0" r="7" fill="#16a79a"/>
+<circle cx="162.0" cy="232.0" r="7" fill="#16a79a"/>
+<circle cx="338.0" cy="144.0" r="7" fill="#d98a2b"/>
+<circle cx="374.0" cy="188.0" r="7" fill="#d98a2b"/>
+<circle cx="354.0" cy="104.0" r="7" fill="#d98a2b"/>
+<circle cx="402.0" cy="136.0" r="7" fill="#d98a2b"/>
+<circle cx="314.0" cy="120.0" r="7" fill="#d98a2b"/>
+<circle cx="410.0" cy="88.0" r="7" fill="#d98a2b"/>
+<circle cx="250.0" cy="268.0" r="11" fill="none" stroke="#334155" stroke-width="2"/>
+<circle cx="290.0" cy="232.0" r="10" fill="#334155"/>
+<text x="290.0" y="236.0" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">?</text>
+<text x="306.0" y="222.0" font-size="11.5" fill="#334155" font-weight="600">new image</text>
+<text x="264.0" y="250.0" text-anchor="end" font-size="11" fill="#64748b">nearest match</text>
+<text x="290.0" y="332.0" text-anchor="middle" font-size="11" fill="#64748b">k = 3: majority vote &#8594; cat</text>
+<rect x="462" y="70" width="150" height="104" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<circle cx="476" cy="92" r="7" fill="#16a79a"/><text x="492" y="96" font-size="12" fill="#334155">cat (training)</text>
+<circle cx="476" cy="120" r="7" fill="#d98a2b"/><text x="492" y="124" font-size="12" fill="#334155">dog (training)</text>
+<circle cx="476" cy="148" r="8" fill="#334155"/><text x="476" y="152" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">?</text><text x="492" y="152" font-size="12" fill="#334155">new image</text>
+<text x="320.0" y="444" text-anchor="middle" font-size="11.5" fill="#64748b">Each image is a point placed by its pixel values; a new image takes the label of its closest neighbor(s).</text>
+<text x="320.0" y="459" text-anchor="middle" font-size="10.5" fill="#94a3b8">(Real images live in millions of dimensions; shown as 2D here for intuition.)</text>
+</svg>
