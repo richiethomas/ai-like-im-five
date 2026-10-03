@@ -17,13 +17,13 @@ Let's trace a complete example: classifying a cat image.
 
 ## The Pipeline
 
-<img src="/experiments/cnn-pipeline/pipeline.svg" alt="The full CNN pipeline, left to right: an input cat image (224 by 224 by 3); a convolution-plus-pooling stack repeated five times, shown as nested shrinking squares (224 by 224 down to 7 by 7, 512 maps, detecting edges then textures then parts); a flatten step into a vector of 25,088 values; two fully-connected layers (4096 to 4096) shown as connected node columns; and a softmax producing 1000 class scores shown as bars, with 'cat' winning at 99 percent. The final prediction is 'cat' with 99 percent confidence." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "720px" }} />
+<img src="/experiments/cnn-pipeline/pipeline.svg" alt="The full CNN pipeline, left to right: an input cat image (224 by 224 by 3); a convolution-plus-pooling stack repeated five times, shown as nested shrinking squares (224 by 224 down to 7 by 7, 512 maps, detecting edges then textures then parts); a flatten step into a vector of 25,088 values; two fully-connected layers (4096 to 4096) shown as connected node columns; and a softmax producing a probability for each of 1000 classes, shown as bars, with 'cat' winning at 99 percent. The final prediction is 'cat' with 99 percent confidence." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "720px" }} />
 
 **Step 1: Input**
 
 Raw image: 224×224 pixels, each with 3 color channels (RGB), so the input is a 224×224×3 block of values, each from 0 to 255.
 
-First thing: normalize. Divide by 255, or standardize using <Term k="imagenet">ImageNet</Term> statistics. Normalized image: same shape, values now in a sensible range.
+First thing: normalize. Divide by 255, or standardize using <Term k="imagenet">ImageNet</Term> statistics. Normalized image: same shape, values now on a sensible scale.
 
 **Step 2: Early Convolutions**
 
@@ -96,7 +96,7 @@ CS231n teaches this entire pipeline from scratch. You don't just use a library; 
 - How <Term k="backpropagation">backpropagation</Term> trains weights
 - What the network actually learns
 
-This understanding transfers to other domains. Ideas move between fields: the transformer architecture that reshaped language processing was later adapted to images too. And principles like overfitting and regularization apply everywhere.
+This understanding transfers to other domains. Ideas move between fields: the transformer, the architecture behind modern language models like ChatGPT, was later adapted to images too. And principles like overfitting and regularization apply everywhere.
 
 CS231n is foundational because it builds intuition. Once you understand how a CNN works, adapting it to new tasks or understanding new architectures is straightforward.
 
@@ -119,4 +119,4 @@ Fifteen posts ago, image <Term k="classification">classification</Term> was a bl
 
 This is deep learning. You've now followed the whole path, from representing an image as numbers to a working image classifier.
 
-The next step: go build something. Take a pre-trained model off the shelf (a ResNet, which is a deep CNN, or a Vision Transformer, ViT). Fine-tune it on your data. Deploy it. The ideas from this series carry over directly.
+If you want to go further and build something yourself, the path is open: take a pre-trained model off the shelf (a ResNet, which is a deep CNN, or a Vision Transformer, ViT), fine-tune it on your own data, and deploy it. The ideas from this series carry over directly.
