@@ -17,7 +17,7 @@ A **fully-connected** network connects every pixel to every <Term k="neuron">neu
 
 <img src="/experiments/convolutions/fully-connected.svg" alt="A fully-connected layer: a 3-by-3 image is flattened into a vertical list of 9 pixels, and every pixel connects by its own line to each of 4 neurons, forming a dense mesh. Each line is a separate weight." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
 
-This ignores a key property of images: **locality**. Important patterns are usually local. An eye is a small region. A texture is a repeating pattern over nearby pixels. A fully-connected layer can't take advantage of that. By flattening the image into a list, it throws away which pixels are next to which, so a nearby pair of pixels and a far-apart pair look exactly the same to it.
+This ignores a key property of images: **locality**. Important patterns are usually local. An eye is a small region. A texture is a repeating pattern over nearby pixels. A fully-connected layer can't take advantage of that. By flattening the image into a list, it ignores which pixels are next to which, so a nearby pair of pixels and a far-apart pair look exactly the same to it.
 
 **Convolution** takes advantage of locality instead: it slides a small filter (like a 3×3 grid) across the image, and at each position computes the dot product between the filter and the image region under it (multiply each filter number by the pixel beneath it, then add them all up).
 
@@ -53,7 +53,7 @@ The values in the above 3×3 filter are weights, and are learned over repeated r
 
 ## Many Filters, One Layer
 
-One filter finds one kind of pattern. But an image has many patterns at once (edges in different directions, textures, colors). So a convolutional layer doesn't use a single filter; it uses a bank of them, often dozens (say 32), each with its own learned weights and each hunting for a different pattern. Every filter slides across the image and produces its own output map, so a layer with 32 filters turns the input into 32 stacked maps: a 3D block of results. The next layer's filters then slide over that 3D block of results, looking for patterns in those patterns.
+One filter finds one kind of pattern. But an image has many patterns at once (edges in different directions, textures, colors). So a convolutional layer doesn't use a single filter; it uses a bank of them, often dozens (say 32), each with its own learned weights and each hunting for a different pattern. Every filter slides across the image and produces its own output map, so a layer with 32 filters turns the input into 32 stacked maps: a 3D block of results. The next layer's filters then slide over that 3D block of results (each filter spanning the full stack of maps, sliding only across width and height), looking for patterns in those patterns.
 
 ## Why Convolution Works
 
@@ -71,6 +71,6 @@ Worth making explicit, because it's a common misconception: this advantage comes
 
 A single convolution only looks at a small patch, so it can only find small, local patterns: an edge here, a texture there. But recognizing a whole object means combining many of those small patterns across the entire image. A cat isn't in any one patch; it's edges, fur, ears, and eyes spread across the picture.
 
-So we need later layers to take in larger and larger regions, building small patterns up into bigger ones: edges into textures, textures into shapes, shapes into objects. The obstacle is that stacking convolutions barely shrinks the maps (224×224 becomes 222×222), so each filter's view stays stubbornly local and the computation piles up.
+So we need later layers to take in larger and larger regions, building small patterns up into bigger ones: edges into textures, textures into shapes, shapes into objects. The obstacle is that stacking convolutions barely shrinks the maps (224×224 becomes 222×222), so each filter's view stays local and the computation piles up.
 
 Part 13 covers the fix: **pooling**. It shrinks the maps as you go, which both cuts the computation and widens what each later layer can see, so stacking convolution and pooling together builds the edges-to-objects hierarchy.
