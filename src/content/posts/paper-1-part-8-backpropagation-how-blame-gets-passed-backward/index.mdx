@@ -13,6 +13,10 @@ tags: ["backpropagation", "chain rule"]
 
 > **Where we are:** gradient descent improves the weights by stepping downhill (Part [7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/)), but every step needs the slope for each weight. This post is how those slopes get computed.
 
+<Callout type="tip" title="The one-minute version">
+Backpropagation is the chain rule applied to the whole network: each layer passes its share of the blame backward to the layer before it, and every weight's share of that blame tells [gradient descent](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/) which way to nudge it. This is the longest post in the series; the rest of it builds that idea up slowly, with a worked example, so take it a section at a time.
+</Callout>
+
 From [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/): <Term k="gradient-descent">gradient descent</Term> adjusts <Term k="weights">weights</Term> using <Term k="gradient">gradients</Term>, the slope of the <Term k="loss">loss</Term> for each weight. So the job now is to compute those slopes. If you remember some calculus, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
 
 For a simple function, it is easy. Take a loss like:
