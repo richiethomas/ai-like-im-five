@@ -16,17 +16,17 @@ tags: ["transfer learning", "CNNs"]
 Training a CNN from scratch is expensive. You need:
 - Hundreds of thousands of images
 - Weeks of GPU compute
-- Careful hyperparameter tuning
+- Careful <Term k="hyperparameter">hyperparameter</Term> tuning
 
 If you're building a classifier for a niche task (detecting disease in medical scans), you might not have that data.
 
-**Transfer learning** solves this. Reuse a network trained on a large, public dataset (like ImageNet, which has millions of images and thousands of categories) as a starting point. Adapt it to your task.
+**Transfer learning** solves this. Reuse a network trained on a large, public dataset (like <Term k="imagenet">ImageNet</Term>, which has millions of images and thousands of categories) as a starting point. Adapt it to your task.
 
 ## How It Works
 
 Pre-trained networks have learned general visual features: edges, textures, shapes, objects. These features are useful for almost any vision task.
 
-Take a pre-trained network. Remove its final classification layer, the one that predicts the original task's categories (for example, ImageNet categories, if ImageNet is what it was trained on). Replace it with a new classification layer for your task (for example, telling cats from dogs, or disease from healthy).
+Take a pre-trained network. Remove its final <Term k="classification">classification</Term> layer, the one that predicts the original task's categories (for example, ImageNet categories, if ImageNet is what it was trained on). Replace it with a new classification layer for your task (for example, telling cats from dogs, or disease from healthy).
 
 <img src="/experiments/transfer-learning/transfer.svg" alt="A left-to-right diagram. An input cat image feeds a chain of three blue 'conv plus pool' blocks, braced as the pre-trained feature extractor that is reused and already knows edges, textures, and shapes. At the end is a new amber 'new classifier' block; above it a dashed, crossed-out 'old classifier (ImageNet, removed)' has a 'swap in' arrow pointing down into its place. The output shows 'cat' and 'dog' bars labeled 'your classes'. A note reads: feature extraction freezes the reused layers and trains only the new head; fine-tuning also nudges the reused layers gently with a low learning rate." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "700px" }} />
 
@@ -34,9 +34,9 @@ Now you have two choices:
 
 **Option 1: Fine-tuning**
 
-Train the entire network (including pre-trained layers) on your small dataset, but with a low learning rate. The pre-trained weights are a good starting point; small adjustments adapt them to your task.
+Train the entire network (including pre-trained layers) on your small dataset, but with a low <Term k="learning-rate">learning rate</Term>. The pre-trained <Term k="weights">weights</Term> are a good starting point; small adjustments adapt them to your task.
 
-This works well when you have a fair amount of data: enough examples that adjusting all the weights improves the fit instead of just overfitting.
+This works well when you have a fair amount of data: enough examples that adjusting all the weights improves the fit instead of just <Term k="overfitting">overfitting</Term>.
 
 **Option 2: Feature extraction**
 
@@ -60,7 +60,7 @@ Transfer learning is what puts state-of-the-art CNNs within reach of people with
 
 We've covered:
 - The fundamentals of neural networks
-- How convolutions exploit local structure
+- How <Term k="convolution">convolutions</Term> exploit local structure
 - How to interpret what networks learn
 - How to reuse trained networks
 

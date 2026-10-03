@@ -43,7 +43,7 @@ You "look at" the image (scan through its pixel values), tally up the points for
 
 In practice, a linear classifier doesn't hand-code features like "pointy ears." Instead, it assigns a weight to *every single input number* in the image.
 
-A 32×32 color image has 1,024 pixels, and each pixel is 3 numbers (red, green, blue), so 3,072 numbers in total (this is the grid of numbers from Part 1). The classifier has one weight per number: 3,072 weights for the "cat" label and another 3,072 for the "dog" label.
+A 32×32 color image has 1,024 pixels, and each pixel is 3 numbers (red, green, blue), so 3,072 numbers in total (this is the grid of numbers from Part 1). The classifier has one weight per number: 3,072 <Term k="weights">weights</Term> for the "cat" label and another 3,072 for the "dog" label.
 
 The score for "cat" is computed as:
 
@@ -55,7 +55,7 @@ Where `w1, w2, ..., w3072` are the learned weights and `bias_cat` is a constant 
 
 Each weight multiplies one number in the image (say, the red value at one spot): a large positive weight means a high value there pushes the score toward "cat," a negative weight pushes it away from "cat."
 
-(The bias is like a tiebreaker: even if the image has no distinctive features, you might favor "cat" if you've seen more cat images in training.)
+(The <Term k="bias">bias</Term> is like a tiebreaker: even if the image has no distinctive features, you might favor "cat" if you've seen more cat images in training.)
 
 The same computation happens for "dog" with different weights. Whichever score is higher wins.
 
@@ -73,7 +73,7 @@ Here's that process at a high level (Parts 6 and 7 explain each step in detail):
 6. Repeat on the next training image
 7. After passing through all the training images many times, the weights settle into values that make fewer mistakes on the training data (though, as we'll see, a single linear template only goes so far)
 
-This is fundamentally different from nearest neighbor, which has no weights to learn. Nearest neighbor stores the training images as-is and, at test time, compares each new image against all of them by distance.
+This is fundamentally different from <Term k="nearest-neighbor">nearest neighbor</Term>, which has no weights to learn. Nearest neighbor stores the training images as-is and, at test time, compares each new image against all of them by distance.
 
 ## What Weights Represent
 
@@ -87,7 +87,7 @@ Here is what this actually looks like. I trained a linear classifier on CIFAR-10
 
 ![Ten blurry weight templates, one per CIFAR-10 category, each a 32 by 32 image](/experiments/linear-classifiers/cifar10-linear-weights.png)
 
-None of these are sharp pictures, exactly as described above: each is a blurry average of thousands of training photos. But you can still make out real structure. "Ship" has blue along the bottom (water) and "airplane" has blue along the top (sky). "Frog" has a green blob in the middle. "Automobile" shows a reddish car-body shape. Look closely at "horse" and you can see what looks like a two-headed animal: the training set has horses facing both left and right, and a single template has to average them into one smear.
+None of these are sharp pictures, exactly as described above: each is a blurry average of thousands of training photos. But you can still make out real structure. "Ship" has blue along the bottom (water) and "airplane" has blue along the top (sky). "Frog" has a green blob in the middle. "Automobile" shows a reddish car-body shape. Look closely at "horse" and you can see what looks like a two-headed animal: the <Term k="training-set">training set</Term> has horses facing both left and right, and a single template has to average them into one smear.
 
 But here's the limitation: a linear classifier uses just one set of weights per class, one weight for each pixel value, so it can only look for one pattern per class. A single dog template won't match every dog, and this is where the seven challenges from Part 2 come back. A dog seen from the side, a dog far away and tiny, a dog in shadow, a Chihuahua versus a Great Dane: each produces a different grid of numbers, and a single template, being the average of all of them, matches each one only poorly.
 

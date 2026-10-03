@@ -13,7 +13,7 @@ tags: ["loss functions", "hinge loss", "softmax"]
 
 > **Where we are:** we have a linear classifier that gives each image a score (Part [5](/post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/)). To make those scores better, we first need to measure how wrong they are.
 
-From Part 5: a linear classifier computes scores for each label and picks the highest one.
+From Part 5: a <Term k="linear-classifier">linear classifier</Term> computes scores for each label and picks the highest one.
 
 Now, if the highest score is the wrong label, how wrong is it? And how do you tell the computer to improve?
 
@@ -168,7 +168,7 @@ The numbers differ from hinge loss, but the ranking is the same: the confident c
 
 ## Which Loss Function Is Right?
 
-Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned weights. There's no universal "right" answer; it depends on your problem and your preference.
+Hinge loss (SVM) and softmax loss are different, and they lead to slightly different learned <Term k="weights">weights</Term>. There's no universal "right" answer; it depends on your problem and your preference.
 
 Softmax has become more popular in deep learning for a couple of reasons.
 

@@ -13,11 +13,11 @@ tags: ["gradient descent", "optimization"]
 
 > **Where we are:** we can score an image (Part [5](/post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/)) and measure how wrong the score is (Part [6](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/)). Now we use that measure to adjust the weights and make the scores better.
 
-We have a loss function that measures how wrong we are. We want to make that number smaller.
+We have a <Term k="loss-function">loss function</Term> that measures how wrong we are. We want to make that number smaller.
 
 How?
 
-**Gradient descent** is the algorithm that adjusts the weights to reduce loss. It's the core idea behind how most neural networks are trained and improved, including the ones in this series, though other kinds of machine learning models (like decision trees) are trained in different ways.
+**Gradient descent** is the algorithm that adjusts the <Term k="weights">weights</Term> to reduce <Term k="loss">loss</Term>. It's the core idea behind how most neural networks are trained and improved, including the ones in this series, though other kinds of machine learning models (like decision trees) are trained in different ways.
 
 ## The Downhill Metaphor
 
@@ -63,7 +63,7 @@ If the learning rate is too high, training is unstable: the loss bounces around,
 
 If the learning rate is too low, training is slow but stable.
 
-In most practical guides, the learning rate is one of the first hyperparameters (settings you pick before training, unlike the weights the model learns on its own) that people tune.
+In most practical guides, the learning rate is one of the first <Term k="hyperparameter">hyperparameters</Term> (settings you pick before training, unlike the weights the model learns on its own) that people tune.
 
 ## A Concrete Example
 
@@ -75,7 +75,7 @@ loss = (w - 5)²
 
 The minimum is at `w = 5` (loss = 0).
 
-This `(w - 5)²` isn't one of the loss functions from Part 6 (hinge or softmax). It's a stand-in, chosen to be as simple as possible: one weight instead of thousands, and an obvious lowest point, so we can run gradient descent by hand and watch it converge. Part 6's losses are functions of thousands of weights at once, which you can't step through on paper.
+This `(w - 5)²` isn't one of the loss functions from Part 6 (hinge or <Term k="softmax">softmax</Term>). It's a stand-in, chosen to be as simple as possible: one weight instead of thousands, and an obvious lowest point, so we can run gradient descent by hand and watch it converge. Part 6's losses are functions of thousands of weights at once, which you can't step through on paper.
 
 The gradient at any point `w` is:
 

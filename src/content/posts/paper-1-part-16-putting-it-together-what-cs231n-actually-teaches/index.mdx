@@ -23,31 +23,31 @@ Let's trace a complete example: classifying a cat image.
 
 Raw image: 224×224 pixels, each with 3 color channels (RGB), so the input is a 224×224×3 block of values, each from 0 to 255.
 
-First thing: normalize. Divide by 255, or standardize using ImageNet statistics. Normalized image: same shape, values now in a sensible range.
+First thing: normalize. Divide by 255, or standardize using <Term k="imagenet">ImageNet</Term> statistics. Normalized image: same shape, values now in a sensible range.
 
 **Step 2: Early Convolutions**
 
-First convolutional layer: 64 filters, each detecting simple patterns (edges, corners, colors).
+First convolutional layer: 64 <Term k="filter">filters</Term>, each detecting simple patterns (edges, corners, colors).
 
-Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its weights and sums them into a single number. So one filter produces one 2D feature map, not three. (This is the same depth-spanning idea from [Part 12](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), where a deeper filter spans all the feature maps beneath it; here the depth is just the 3 color channels.)
+Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its <Term k="weights">weights</Term> and sums them into a single number. So one filter produces one 2D <Term k="feature-map">feature map</Term>, not three. (This is the same depth-spanning idea from [Part 12](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), where a deeper filter spans all the feature maps beneath it; here the <Term k="depth">depth</Term> is just the 3 color channels.)
 
-Output: 64 feature maps, 224×224. (Padding the edges keeps the size the same; without padding it would be 222×222.)
+Output: 64 feature maps, 224×224. (Padding the edges keeps the size the same; without <Term k="padding">padding</Term> it would be 222×222.)
 
-Apply ReLU activation: set negative values to zero, leave positives unchanged.
+Apply <Term k="relu">ReLU</Term> activation: set negative values to zero, leave positives unchanged.
 
-Pool with 2×2 max pooling: output becomes 112×112.
+Pool with 2×2 <Term k="max-pooling">max pooling</Term>: output becomes 112×112.
 
 Result: 64 feature maps of edges and simple patterns.
 
 **Step 3: Intermediate Convolutions**
 
-Second convolution: 128 filters, applied to the 64 input maps.
+Second <Term k="convolution">convolution</Term>: 128 filters, applied to the 64 input maps.
 
 These filters detect combinations of edges: textures, blobs, more complex patterns.
 
 Output: 128 feature maps, 112×112.
 
-ReLU, then 2×2 pooling: 56×56.
+ReLU, then 2×2 <Term k="pooling">pooling</Term>: 56×56.
 
 Repeat: more convolutions, more pooling, increasing complexity and decreasing size.
 
@@ -59,14 +59,14 @@ Each map detects high-level concepts: object parts, shapes, semantic features.
 
 Flatten the 512×7×7 maps (unroll the whole 3D block into one long list) into a vector: 512 × 49 = 25,088 values.
 
-Pass through fully-connected layers:
-- Dense layer 1: 4096 neurons, ReLU
+Pass through <Term k="fully-connected-layer">fully-connected layers</Term>:
+- Dense layer 1: 4096 <Term k="neuron">neurons</Term>, ReLU
 - Dense layer 2: 4096 neurons, ReLU
 - Output layer: 1000 neurons (one per ImageNet category)
 
-During training, dropout (randomly zeroing 50% of the neurons) is applied to these dense layers to prevent overfitting.
+During training, <Term k="dropout">dropout</Term> (randomly zeroing 50% of the neurons) is applied to these dense layers to prevent <Term k="overfitting">overfitting</Term>.
 
-Apply softmax, which turns the raw scores into probabilities that add up to 1. If the cat is clearly visible, the "cat" neuron fires strongest, and softmax returns ~0.99 for cat, ~0.01 split among others.
+Apply <Term k="softmax">softmax</Term>, which turns the raw scores into probabilities that add up to 1. If the cat is clearly visible, the "cat" neuron fires strongest, and softmax returns ~0.99 for cat, ~0.01 split among others.
 
 **Step 5: Inference**
 
@@ -82,9 +82,9 @@ By the final convolutional layers, each location in the feature maps encodes som
 
 **Robustness:** Pooling and convolutions make the network robust to small shifts. A cat's whiskers don't have to be at pixel-perfect positions.
 
-**Generalization:** Regularization (dropout, and weight decay, a penalty on large weights) prevents the network from memorizing specific training images. It learns generalizable patterns.
+**Generalization:** Regularization (dropout, and <Term k="weight-decay">weight decay</Term>, a penalty on large weights) prevents the network from memorizing specific training images. It learns generalizable patterns.
 
-**Transfer learning:** If you're fine-tuning a pre-trained network, the early layers already recognize edges and textures. You only need to train the late layers to recognize your specific categories.
+**Transfer learning:** If you're <Term k="fine-tuning">fine-tuning</Term> a pre-trained network, the early layers already recognize edges and textures. You only need to train the late layers to recognize your specific categories.
 
 ## Why CS231n Matters
 
@@ -92,8 +92,8 @@ CS231n teaches this entire pipeline from scratch. You don't just use a library; 
 
 - Why architecture matters
 - Why data preparation matters
-- Why regularization matters
-- How backpropagation trains weights
+- Why <Term k="regularization">regularization</Term> matters
+- How <Term k="backpropagation">backpropagation</Term> trains weights
 - What the network actually learns
 
 This understanding transfers to other domains. Ideas move between fields: the transformer architecture that reshaped language processing was later adapted to images too. And principles like overfitting and regularization apply everywhere.
@@ -102,15 +102,15 @@ CS231n is foundational because it builds intuition. Once you understand how a CN
 
 ## The Journey
 
-Fifteen posts ago, image classification was a black box. Here's the ground we've covered since:
+Fifteen posts ago, image <Term k="classification">classification</Term> was a black box. Here's the ground we've covered since:
 
 - How computers represent images as numbers
-- Why nearest neighbor fails
-- How linear classifiers score images
-- How loss functions measure wrongness
-- How gradient descent optimizes weights
-- How backpropagation computes gradients efficiently
-- How neural networks with activation functions learn non-linear patterns
+- Why <Term k="nearest-neighbor">nearest neighbor</Term> fails
+- How <Term k="linear-classifier">linear classifiers</Term> score images
+- How <Term k="loss-function">loss functions</Term> measure wrongness
+- How <Term k="gradient-descent">gradient descent</Term> optimizes weights
+- How backpropagation computes <Term k="gradient">gradients</Term> efficiently
+- How neural networks with <Term k="activation-function">activation functions</Term> learn non-linear patterns
 - How convolutions exploit locality
 - How pooling builds hierarchies
 - How regularization prevents overfitting

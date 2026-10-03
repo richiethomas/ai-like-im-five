@@ -13,7 +13,7 @@ tags: ["convolutions", "CNNs", "computer vision basics"]
 
 > **Where we are:** we have the full toolkit for general neural networks (Parts [5](/post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/) to [11](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/)). Now we specialize it for images with a new building block: the convolution.
 
-A **fully-connected** network connects every pixel to every neuron, each connection with its own weight, after flattening the image into a long list of pixels.
+A **fully-connected** network connects every pixel to every <Term k="neuron">neuron</Term>, each connection with its own weight, after flattening the image into a long list of pixels.
 
 <img src="/experiments/convolutions/fully-connected.svg" alt="A fully-connected layer: a 3-by-3 image is flattened into a vertical list of 9 pixels, and every pixel connects by its own line to each of 4 neurons, forming a dense mesh. Each line is a separate weight." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
 
@@ -40,7 +40,7 @@ Place the filter over the top-left corner of the image and multiply element-wise
 (10*0 + 10*-1 + 10*0 + 10*-1 + 50*4 + 10*-1 + 10*0 + 10*-1 + 10*0) = 200 - 40 = 160
 ```
 
-This gives one output value: 160, which becomes the top-left cell of the output map. The 160 is large because this patch contains the bright spot (50) that this filter responds to. Run the same filter over a flat patch instead (all 10s, with no spot) and it gives 0, because the filter's weights sum to zero (a +4 and four -1s, with the rest 0s), so they cancel out on any constant patch. So the same filter is selective: a large output where its pattern appears, near zero where it doesn't. Slide the filter one pixel to the right and repeat. Slide down and repeat. After sliding everywhere, you get a smaller output map: here, a 3×3 map from the 5×5 image.
+This gives one output value: 160, which becomes the top-left cell of the output map. The 160 is large because this patch contains the bright spot (50) that this filter responds to. Run the same filter over a flat patch instead (all 10s, with no spot) and it gives 0, because the filter's <Term k="weights">weights</Term> sum to zero (a +4 and four -1s, with the rest 0s), so they cancel out on any constant patch. So the same filter is selective: a large output where its pattern appears, near zero where it doesn't. Slide the filter one pixel to the right and repeat. Slide down and repeat. After sliding everywhere, you get a smaller output map: here, a 3×3 map from the 5×5 image.
 
 With a 3×3 filter sliding one pixel at a time and no padding, the output is 2 pixels smaller in each dimension, since the filter can't slide off the edges. Adding a one-pixel border of zeros around the image, called **padding**, keeps the output the same size (a larger filter needs a wider border).
 

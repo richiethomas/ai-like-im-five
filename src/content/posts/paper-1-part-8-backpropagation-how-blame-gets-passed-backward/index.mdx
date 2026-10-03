@@ -13,7 +13,7 @@ tags: ["backpropagation", "chain rule"]
 
 > **Where we are:** gradient descent improves the weights by stepping downhill (Part [7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/)), but every step needs the slope for each weight. This post is how those slopes get computed.
 
-From [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/): gradient descent adjusts weights using gradients, the slope of the loss for each weight. So the job now is to compute those slopes. If you remember some calculus, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
+From [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/): <Term k="gradient-descent">gradient descent</Term> adjusts <Term k="weights">weights</Term> using <Term k="gradient">gradients</Term>, the slope of the <Term k="loss">loss</Term> for each weight. So the job now is to compute those slopes. If you remember some calculus, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
 
 For a simple function, it is easy. Take a loss like:
 
@@ -35,7 +35,7 @@ Nudge that first weight from 3 to 3.1, and the 6 becomes 6.2, the 24 becomes 24.
 
 You can still work out every slope with calculus. The catch is that doing it one weight at a time repeats a huge amount of the same work, since all those weights share the same path forward to the loss. For a network with millions of weights, that's hopeless.
 
-**Backpropagation** is the shortcut. It computes the exact same slopes calculus would, just far faster: all of them in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the derivative: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to an idea from calculus called "the chain rule".
+**Backpropagation** is the shortcut. It computes the exact same slopes calculus would, just far faster: all of them in one sweep backward through the network, doing each shared piece of work once instead of millions of times. That matches the hunch that a computer should just be able to take the <Term k="derivative">derivative</Term>: it can, and backpropagation is the efficient way it does it. The rest of this post is how, and it comes down to an idea from calculus called "the chain rule".
 
 ## The Chain Rule
 
@@ -95,7 +95,7 @@ Backpropagation does exactly this for a neural network: it works out how much ea
 
 ## How Backpropagation Works
 
-A linear classifier (such as our cat / dog / bird image classifier) is really just one step: for each class (i.e. "cat", "dog", "bird"), multiply every pixel by that class's weight *for that pixel*, add the results into a single score, then add a "bias" for that class on top. (If you remember `y = mx + b` from school, the bias is the `+ b`, a constant that shifts the score up or down regardless of the pixels; the weights are the `m`. It was introduced in Part 5.)
+A <Term k="linear-classifier">linear classifier</Term> (such as our cat / dog / bird image classifier) is really just one step: for each class (i.e. "cat", "dog", "bird"), multiply every pixel by that class's weight *for that pixel*, add the results into a single score, then add a "bias" for that class on top. (If you remember `y = mx + b` from school, the <Term k="bias">bias</Term> is the `+ b`, a constant that shifts the score up or down regardless of the pixels; the weights are the `m`. It was introduced in Part 5.)
 
 Then compute the loss:
 
@@ -124,7 +124,7 @@ By the time you reach the weights, you know exactly how much each weight affects
 
 Take the confidently-wrong case from Part 6: the true label is cat, but the scores come out cat 3, dog 10, bird 1. The classifier is sure it's a dog. Let's watch the blame flow backward.
 
-**Turn the scores into probabilities** (softmax, from Part 6):
+**Turn the scores into probabilities** (<Term k="softmax">softmax</Term>, from Part 6):
 
 ```
 P(cat)  = 0.0009   (should be 1)
@@ -184,7 +184,7 @@ This is why neural networks can stack hundreds of layers: each one contributes j
 
 Now we have:
 - A way to score images (linear classifiers)
-- A way to measure wrongness (loss functions)
+- A way to measure wrongness (<Term k="loss-function">loss functions</Term>)
 - A way to find gradients (backpropagation)
 - A way to improve weights (gradient descent)
 

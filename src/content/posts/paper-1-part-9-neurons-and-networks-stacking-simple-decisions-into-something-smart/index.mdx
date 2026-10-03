@@ -13,7 +13,7 @@ tags: ["neural networks", "activation functions"]
 
 > **Where we are:** we have built and trained a single linear classifier (Parts [5](/post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/) to [8](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/)). Now we stack many simple units into a neural network that can learn far more complex patterns.
 
-From Part 5: a linear classifier computes a weighted sum of pixels and picks the highest score.
+From Part 5: a <Term k="linear-classifier">linear classifier</Term> computes a weighted sum of pixels and picks the highest score.
 
 The problem: one linear layer can only learn linear decision boundaries. If your classes aren't linearly separable (and most real-world data isn't), no straight-line boundary can tell them apart.
 
@@ -21,7 +21,7 @@ The solution: change the function. Back in Part 1 we said the function is ours t
 
 ## The Neuron
 
-A **neuron** is the basic unit. It takes inputs, multiplies them by weights, adds a **bias** (a constant that shifts the result up or down, the `+ b` in `y = mx + b`), and applies an **activation function**.
+A **neuron** is the basic unit. It takes inputs, multiplies them by <Term k="weights">weights</Term>, adds a **<Term k="bias">bias</Term>** (a constant that shifts the result up or down, the `+ b` in `y = mx + b`), and applies an **activation function**.
 
 ```
 output = activation( (w1*x1 + w2*x2 + ... + bias) )
@@ -49,7 +49,7 @@ f(x) = (e^x - e^(-x)) / (e^x + e^(-x))
 ```
 Squashes to between -1 and 1. A scaled, shifted version of the sigmoid, and like sigmoid a common choice before ReLU; it was often preferred because its outputs are centered on zero rather than always positive.
 
-Which activation a layer uses is a hyperparameter, a choice you make before training (Part 7), just like the number of layers, not something the network learns on its own.
+Which activation a layer uses is a <Term k="hyperparameter">hyperparameter</Term>, a choice you make before training (Part 7), just like the number of layers, not something the network learns on its own.
 
 The key: without the activation function, stacking linear layers just gives you another linear layer (stacking straight-line steps only ever gives you another straight-line step). The activation function breaks this chain and lets the network learn curved, non-linear patterns.
 

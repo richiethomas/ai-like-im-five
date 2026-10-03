@@ -19,7 +19,7 @@ Making sense of what a trained network is doing is called **interpretability**. 
 
 ## Visualizing Filters
 
-The simplest approach: display the weights of early-layer filters as images.
+The simplest approach: display the <Term k="weights">weights</Term> of early-layer <Term k="filter">filters</Term> as images.
 
 Early filters in a trained network often look like edge detectors:
 - Horizontal line patterns (detect horizontal edges)
@@ -33,7 +33,7 @@ You can literally see what features the network is looking for.
 
 These are illustrations of the idea, not filters from a specific trained network, but real early-layer filters look much like this.
 
-Deeper layers are harder to interpret from their weights alone. A deep filter doesn't read raw pixels; it reads the many feature maps the layer before it produced. Its weights span that whole stack, so they don't come together into a single picture you can just look at. Instead of inspecting the weights, you study how the filter behaves: which images make it fire, and which parts of an image it responds to. That's what the rest of this post does.
+Deeper layers are harder to interpret from their weights alone. A deep filter doesn't read raw pixels; it reads the many <Term k="feature-map">feature maps</Term> the layer before it produced. Its weights span that whole stack, so they don't come together into a single picture you can just look at. Instead of inspecting the weights, you study how the filter behaves: which images make it fire, and which parts of an image it responds to. That's what the rest of this post does.
 
 ## Feature Maps
 
@@ -54,11 +54,11 @@ Reading the maps tells you not just what the network can detect but where it det
 
 ## Activation Maximization
 
-Ask: "What image would maximally activate this neuron?"
+Ask: "What image would maximally activate this <Term k="neuron">neuron</Term>?"
 
 Generate an image that makes a specific neuron fire as strongly as possible. The result is often interpretable: a neuron that detects faces produces a face-like image when you optimize for maximum activation.
 
-This uses the same gradient trick as training, but aimed at the image instead of the weights. In training, the network nudges its weights to lower the loss (Part 7); here the weights stay fixed and we nudge the image, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
+This uses the same <Term k="gradient">gradient</Term> trick as training, but aimed at the image instead of the weights. In training, the network nudges its weights to lower the <Term k="loss">loss</Term> (Part 7); here the weights stay fixed and we nudge the image, to raise the chosen neuron's activation. Start from random noise, work out which way to tweak each pixel to make the neuron fire a little more, adjust, and repeat.
 
 The resulting images often look strange, full of repeated, swirling patterns, but they reveal what the neuron responds to.
 

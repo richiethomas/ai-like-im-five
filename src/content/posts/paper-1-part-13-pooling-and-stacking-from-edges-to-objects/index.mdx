@@ -44,7 +44,7 @@ Output is about half the size in each dimension. A 224×224 map becomes 112×112
 
 **Dimensionality reduction:** Smaller feature maps = faster computation.
 
-**Wider view:** because pooling shrinks the maps, each filter in the next layer covers more of the original image. A 3×3 filter working on a once-pooled map effectively spans a 6×6 patch of the input; after another round of pooling, wider still. This is what lets deeper layers combine small patterns into bigger ones, which is the hierarchy below.
+**Wider view:** because pooling shrinks the maps, each <Term k="filter">filter</Term> in the next layer covers more of the original image. A 3×3 filter working on a once-pooled map effectively spans a 6×6 patch of the input; after another round of pooling, wider still. This is what lets deeper layers combine small patterns into bigger ones, which is the hierarchy below.
 
 ## The Hierarchy
 
@@ -67,7 +67,7 @@ Input image (224×224)
 
 Early layers detect simple features. Later layers detect complex combinations. By the time you reach a <Term k="fully-connected-layer">fully-connected layer</Term>, you're working with high-level features (combinations that respond to things like shapes and object parts) rather than raw pixels.
 
-That fully-connected layer at the end isn't a step backward to where we started. Part 12's objection was to running a fully-connected layer directly on raw pixels: wiring every pixel to every neuron takes an enormous number of weights and learns each pattern separately for every position. Convolution and pooling handle that part, scanning locally and reusing the same filters everywhere. But the final decision has to weigh all the evidence together: given every shape and part the network found, anywhere in the image, what is this? That's a global question, and a fully-connected layer, which connects to everything at once, is suited to it. What changed is what it connects to: a compact set of high-level features, not a raw grid of pixels.
+That fully-connected layer at the end isn't a step backward to where we started. Part 12's objection was to running a fully-connected layer directly on raw pixels: wiring every pixel to every <Term k="neuron">neuron</Term> takes an enormous number of <Term k="weights">weights</Term> and learns each pattern separately for every position. Convolution and pooling handle that part, scanning locally and reusing the same filters everywhere. But the final decision has to weigh all the evidence together: given every shape and part the network found, anywhere in the image, what is this? That's a global question, and a fully-connected layer, which connects to everything at once, is suited to it. What changed is what it connects to: a compact set of high-level features, not a raw grid of pixels.
 
 Loosely speaking, a cat classifier ends up responding to a particular combination of these features: certain edges here, certain textures there, together adding up to "cat" (not a rule written in words, but a pattern of numbers that behaves like one).
 

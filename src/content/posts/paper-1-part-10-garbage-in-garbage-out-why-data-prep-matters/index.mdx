@@ -48,14 +48,14 @@ Say a model predicts a house's value, and one house has two features:
 - Bedrooms: 4
 - Square footage: 2500
 
-From Part 8, the gradient for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the feature it multiplies. With the same blame, 1, reaching both weights:
+From Part 8, the <Term k="gradient">gradient</Term> for a weight (the number that sets how far it moves) is the blame arriving at it (its share of the error) times the feature it multiplies. With the same blame, 1, reaching both <Term k="weights">weights</Term>:
 
 ```
 bedrooms weight's gradient       = 1 × 4    = 4
 square footage weight's gradient = 1 × 2500 = 2500
 ```
 
-The square-footage weight's gradient is over 600 times bigger, not because square footage matters more, but only because it is counted in bigger numbers than bedrooms. Each step moves a weight by the learning rate times its gradient, so with one learning rate for both, the square-footage weight lurches while the bedrooms weight barely moves. One rate can't serve both, so training stalls or thrashes.
+The square-footage weight's gradient is over 600 times bigger, not because square footage matters more, but only because it is counted in bigger numbers than bedrooms. Each step moves a weight by the <Term k="learning-rate">learning rate</Term> times its gradient, so with one learning rate for both, the square-footage weight lurches while the bedrooms weight barely moves. One rate can't serve both, so training stalls or thrashes.
 
 Standardization (from the start of the post) fixes this. For each feature, it measures that feature's own average and standard deviation. Then it subtracts the average and divides by the standard deviation.
 
@@ -75,7 +75,7 @@ square footage weight's gradient = 1 × 0.5 = 0.5
 
 so the two weights move at similar rates, and a single learning rate works for both. That is the point of normalizing: put every input on a comparable scale, so no weight is updated wildly harder than another just because its input happened to be bigger.
 
-In practice, normalizing usually makes the loss drop faster and more smoothly; without it, the loss falls slowly and wobbles, because no single learning rate fits both the large and small gradients.
+In practice, normalizing usually makes the <Term k="loss">loss</Term> drop faster and more smoothly; without it, the loss falls slowly and wobbles, because no single learning rate fits both the large and small gradients.
 
 <img src="/experiments/data-prep/training-curves.svg" alt="A line chart of training loss over steps. The without-normalization line falls slowly and wobbles up and down; the with-normalization line drops fast and smoothly to a low value." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "480px" }} />
 
