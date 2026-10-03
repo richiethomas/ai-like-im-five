@@ -26,6 +26,8 @@ The gap between training accuracy and accuracy on a **validation set** (data hel
 - **Small gap (90% train, 88% validation):** Good generalization. The network learned actual patterns.
 - **Large gap (99% train, 60% validation):** Severe overfitting. The network memorized.
 
+<img src="/experiments/overfitting/train-val-gap.svg" alt="A line graph of accuracy over training time. The training-accuracy line climbs steadily to nearly 100 percent. The validation-accuracy line rises with it at first, peaks around 79 percent, then declines to about 62 percent. The widening gap between the two lines is shaded and labeled 'this gap = memorizing.' A dashed vertical line at the validation peak is labeled 'early stopping: stop where validation peaks.'" style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+
 The bigger your network and the smaller your dataset, the more prone to overfitting it tends to be. A network with a million parameters can memorize a dataset of 1,000 images with ease.
 
 ## Regularization: Fighting Overfitting
