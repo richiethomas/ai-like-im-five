@@ -11,7 +11,7 @@ draft: false
 tags: ["CNNs", "computer vision basics", "synthesis"]
 ---
 
-Let's walk through a complete example: classifying a cat image.
+Let's trace a complete example: classifying a cat image.
 
 ## The Pipeline
 
@@ -27,7 +27,7 @@ First convolutional layer: 64 filters, each detecting simple patterns (edges, co
 
 Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its weights and sums them into a single number. So one filter produces one 2D feature map, not three. (This is the same depth-spanning idea from [Part 12](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), where a deeper filter spans all the feature maps beneath it; here the depth is just the 3 color channels.)
 
-Output: 64 feature maps, 224×224 (or 222×222 depending on padding).
+Output: 64 feature maps, 224×224 if you pad the edges, or 222×222 if you don't.
 
 Apply ReLU activation: set negative values to zero.
 
@@ -45,8 +45,6 @@ Output: 128 feature maps, 112×112.
 
 ReLU, then 2×2 pooling: 56×56.
 
-Apply dropout: 50% of neurons are randomly zeroed during training, preventing overfitting.
-
 Repeat: more convolutions, more pooling, increasing complexity and decreasing size.
 
 By layer 5: perhaps 512 feature maps, 7×7.
@@ -62,11 +60,13 @@ Pass through fully-connected layers:
 - Dense layer 2: 4096 neurons, ReLU
 - Output layer: 1000 neurons (one per ImageNet category)
 
-Apply softmax to convert to probabilities. If the cat is clearly visible, the "cat" neuron fires strongest, and softmax returns ~0.99 for cat, ~0.01 split among others.
+During training, dropout (randomly zeroing 50% of the neurons) is applied to these dense layers to prevent overfitting.
+
+Apply softmax, which turns the raw scores into probabilities that add up to 1. If the cat is clearly visible, the "cat" neuron fires strongest, and softmax returns ~0.99 for cat, ~0.01 split among others.
 
 **Step 5: Inference**
 
-The predicted class is argmax(output probabilities) = "cat".
+The predicted class is whichever output neuron has the highest probability (its argmax), here "cat".
 
 Network predicts "cat" with 99% confidence.
 
@@ -92,7 +92,7 @@ CS231n teaches this entire pipeline from scratch. You don't just use a library; 
 - How backpropagation trains weights
 - What the network actually learns
 
-This understanding transfers to other domains. Computer vision techniques inspired NLP (transformers are related to convolutions). Principles of overfitting apply everywhere.
+This understanding transfers to other domains. Ideas move between fields: the transformer architecture that reshaped language processing was later adapted to images too. And principles like overfitting and regularization apply everywhere.
 
 CS231n is foundational because it builds intuition. Once you understand how a CNN works, adapting it to new tasks or understanding new architectures is straightforward.
 
@@ -113,8 +113,8 @@ Fifteen posts ago, you didn't know what image classification meant. Now you unde
 - How to visualize what networks learn
 - How to reuse trained networks
 
-This is deep learning. You've just walked from first principles to a production-ready technique.
+This is deep learning. You've now followed the whole path, from representing an image as numbers to a working image classifier.
 
-The next step: go build something. Take a pre-trained ResNet or ViT. Fine-tune it on your data. Deploy it. The theory you've learned applies directly.
+The next step: go build something. Take a pre-trained model off the shelf (a ResNet, which is a deep CNN, or a Vision Transformer, ViT). Fine-tune it on your data. Deploy it. The theory you've learned applies directly.
 
 Welcome to computer vision.
