@@ -52,6 +52,8 @@ The fix CS231n recommends is to split your data into three groups:
 
 **Test set** (typically 15-20%): You don't look at this until the very end, after all decisions are made. It represents "real world" images your classifier has truly never seen. Your final accuracy number comes from here, and this is what you report.
 
+<img src="/experiments/train-test-split/data-split.svg" alt="A horizontal bar representing all your labeled images, divided into three segments: Training (about 60 to 70 percent) in blue, Validation (15 to 20 percent) in amber, and Test (15 to 20 percent) in slate with a dashed sealed border. A legend below explains: Training, the model learns from these and sets its weights; Validation, compare designs and tune hyperparameters; Test, sealed until the very end, the final score looked at once, never used to make decisions." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
 Weights and hyperparameters are the two kinds of setting I mentioned, and they're easy to mix up. Think of baking a cake. You set a few dials yourself: the oven temperature, the timer, the pan size. Inside, as it bakes, thousands of tiny chemical bonds form and set the crumb, far too many to arrange by hand.
 
 - **The dials are hyperparameters**: the handful of choices you make before baking.

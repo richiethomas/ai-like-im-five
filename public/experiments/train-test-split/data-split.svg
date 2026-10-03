@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 262" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs><marker id="dn" markerWidth="8" markerHeight="8" refX="3" refY="5" orient="auto"><path d="M0,0 L6,0 L3,5 Z" fill="#94a3b8"/></marker></defs>
+<rect x="0" y="0" width="680" height="262" rx="10" fill="#ffffff"/>
+<text x="340.0" y="30" text-anchor="middle" font-size="16" fill="#334155" font-weight="600">One dataset, three jobs</text>
+<path d="M 40 70 L 40 64 L 640 64 L 640 70" fill="none" stroke="#cbd5e1" stroke-width="1.3"/>
+<text x="340.0" y="58" text-anchor="middle" font-size="11.5" fill="#64748b">all your labeled images</text>
+<rect x="40.0" y="90" width="396.0" height="52" fill="#2f7fcf"/>
+<text x="238.0" y="112" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">Training</text>
+<text x="238.0" y="129" text-anchor="middle" font-size="11" fill="#ffffff" fill-opacity="0.9">60-70%</text>
+<rect x="436.0" y="90" width="102.0" height="52" fill="#d98a2b"/>
+<text x="487.0" y="112" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">Validation</text>
+<text x="487.0" y="129" text-anchor="middle" font-size="11" fill="#ffffff" fill-opacity="0.9">15-20%</text>
+<rect x="538.0" y="90" width="102.0" height="52" fill="#64748b"/>
+<rect x="542.0" y="94" width="94.0" height="44" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-dasharray="5 4" stroke-opacity="0.9"/>
+<text x="589.0" y="112" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">Test</text>
+<text x="589.0" y="129" text-anchor="middle" font-size="11" fill="#ffffff" fill-opacity="0.9">15-20%</text>
+<line x1="436.0" y1="90" x2="436.0" y2="142" stroke="#ffffff" stroke-width="2"/>
+<line x1="538.0" y1="90" x2="538.0" y2="142" stroke="#ffffff" stroke-width="2"/>
+<rect x="54" y="160" width="13" height="13" rx="3" fill="#2f7fcf"/>
+<text x="76" y="171" font-size="12.5"><tspan fill="#334155" font-weight="700">Training</tspan><tspan fill="#64748b">   the model learns from these (it sets its weights)</tspan></text>
+<rect x="54" y="186" width="13" height="13" rx="3" fill="#d98a2b"/>
+<text x="76" y="197" font-size="12.5"><tspan fill="#334155" font-weight="700">Validation</tspan><tspan fill="#64748b">   compare designs and tune hyperparameters</tspan></text>
+<rect x="54" y="212" width="13" height="13" rx="3" fill="#64748b"/>
+<text x="76" y="223" font-size="12.5"><tspan fill="#334155" font-weight="700">Test</tspan><tspan fill="#64748b">   sealed until the very end; the final score, looked at once, never used to make decisions</tspan></text>
+</svg>
