@@ -25,7 +25,7 @@ First thing: normalize. Divide by 255, or standardize using ImageNet statistics.
 
 First convolutional layer: 64 filters, each detecting simple patterns (edges, corners, colors).
 
-Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its weights and sums them into a single number. So one filter produces one 2D feature map, not three. (This is the same depth-spanning idea from Part 12, where a deeper filter spans all the feature maps beneath it; here the depth is just the 3 color channels.)
+Each filter spans all three color channels: a 3×3 filter is really 3×3×3, covering a small patch across red, green, and blue at once. Slide it across the image, and at each position it multiplies those 27 values by its weights and sums them into a single number. So one filter produces one 2D feature map, not three. (This is the same depth-spanning idea from [Part 12](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), where a deeper filter spans all the feature maps beneath it; here the depth is just the 3 color channels.)
 
 Output: 64 feature maps, 224×224 (or 222×222 depending on padding).
 
