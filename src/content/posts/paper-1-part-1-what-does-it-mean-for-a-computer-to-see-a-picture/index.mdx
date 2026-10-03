@@ -25,9 +25,9 @@ What we're going to build is the same idea, just bigger. The input, x, is a pict
 
 That is all a model is: a picture goes in, a guess comes out, and in between is a function we built from examples. Everything else in this series (turning input pictures into numbers the function can work with, scoring them, measuring the mistakes, improving the guesses, and turning the output numbers back into a result a person can understand and finds useful) is detail in service of building that one function.
 
-To see what "adjusting it until its guesses are right" looks like, picture each example as a dot on a graph, blue for cats and orange for dogs, placed so that similar pictures sit near each other. The function is a line: it guesses "cat" on one side and "dog" on the other. A dot on the correct side is a right guess; a dot on the wrong side is a mistake.
+To see what "adjusting it until its guesses are right" looks like, picture each example as a dot on a graph, blue for cats and orange for dogs, where each axis is some measurement of the image, so similar pictures sit near each other. The model becomes a dividing line: "cat" on one side, "dog" on the other. A dot on the correct side is a right guess; a dot on the wrong side is a mistake.
 
-That line is just `y = mx + b` again. Training adjusts its two knobs, the slope `m` and the intercept `b` (also called the **bias**), to get more dots on the correct side.
+That dividing line is just `y = mx + b` again. Training adjusts its two knobs, the slope `m` and the intercept `b` (also called the **bias**), to get more dots on the correct side.
 
 Slide the bias up or down, and the same-angle line separates the dots well or badly:
 
@@ -63,7 +63,7 @@ So an 800 × 600 image is really an 800 × 600 × 3 grid of numbers. That's **1.
 
 When you scroll through your photos, your phone is shuffling around millions of numbers. And when you compress an image for email (that is, when you shrink its file size so it uploads faster and takes up less storage), you're playing one of two tricks with those numbers:
 
-- **Write the repeats as shorthand.** A clear blue sky means the same three numbers repeated thousands of times in a row. A format can store that as, in effect, "sky color, five thousand times" instead of writing it out five thousand times. Reversing the shorthand gives back every original number exactly. This is a simplified version of what is called "lossless compression": real formats like PNG use a more elaborate method (called DEFLATE), but the idea of storing repeats compactly is the same.
+- **Write the repeats as shorthand.** A clear blue sky means the same three numbers repeated thousands of times in a row. A format can store that as, in effect, "sky color, five thousand times" instead of writing it out five thousand times. Reversing the shorthand gives back every original number exactly. This is a simplified version of what is called "lossless compression" (no detail is lost; you can rebuild the original exactly): real formats like PNG use a more elaborate method (called DEFLATE), but the idea of storing repeats compactly is the same.
 - **Throw away detail your eye won't miss.** A format can also smooth over tiny differences between neighboring pixels and store the simpler result. The numbers that come back are close to the originals, but not identical. This is called lossy compression, it's what JPEG files do, and it's why JPEGs are so small.
 
 Either way, compressing a picture is just doing arithmetic on a grid of numbers.
@@ -89,7 +89,7 @@ Things to look for when you open it:
 - Scroll down until the numbers change to `100 60 30`. More red than green, very little blue: that's the dark brown of the dog's ears.
 - Keep scrolling and you'll find `25 25 25` (the nearly-black eyes and nose) and `230 120 140` (the pink tongue).
 
-The dog you see and the wall of numbers are the same thing. That single idea powers everything in this series.
+The dog you see and the wall of numbers are the same thing. Every method in the rest of this series works on those numbers.
 
 ## What's Next
 
