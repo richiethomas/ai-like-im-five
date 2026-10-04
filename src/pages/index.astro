@@ -1,90 +1,343 @@
 ---
 import { getCollection } from "astro:content";
 import NewsletterSignup from "@/components/NewsletterSignup.astro";
-import PostCard from "@/components/PostCard.astro";
+import PapersRoadmap from "@/components/PapersRoadmap.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site";
-import { categoryHref, getCategoryList, getFeatured, visiblePosts } from "@/lib/posts";
+import { papers } from "@/config/papers";
+import { paperHref, papersWithPosts } from "@/lib/papers";
+import { postHref, visiblePosts } from "@/lib/posts";
 
 const allPosts = visiblePosts(await getCollection("posts"));
-const oldestFirst = [...allPosts].reverse();
-const [lead, ...rest] = oldestFirst;
-const feed = rest.slice(0, 8);
-const featured = getFeatured(allPosts, 4).filter((post) => post.id !== lead?.id);
-const categoryList = getCategoryList(allPosts);
-const hasMore = rest.length > feed.length;
+const series = papersWithPosts(allPosts);
+const firstEntry = series[0];
+const latestEntry = series[series.length - 1];
+const firstPost = firstEntry?.posts[0];
+const doneCount = papers.filter((paper) => paper.status === "done").length;
+const totalPapers = papers.length;
+
+const spine = ["Seeing", "Remembering", "Attention", "Reasoning", "Scale", "The deep why"];
 ---
 
 <BaseLayout>
   <SiteHeader posts={allPosts} />
   <main id="content" class="outer">
-    <div class="inner">
-      <h1 class="sr-only">{siteConfig.name}: {siteConfig.tagline}</h1>
+    <div class="inner wrap">
+      <!-- Above the fold: the welcome and two doors. -->
+      <section class="hero">
+        <p class="eyebrow">A learning log</p>
+        <h1 class="hero-title">Modern AI, explained one paper at a time.</h1>
+        <p class="hero-lede">{siteConfig.description}</p>
+      </section>
 
-      {lead && (
-        <section class="pt-10 pb-[var(--space-section)] md:pt-14" aria-label="Where to start">
-          <PostCard post={lead} variant="lead" headingLevel="h2" dateLabel="Start here" />
-        </section>
-      )}
+      <section class="doors" aria-label="Where to start">
+        {
+          firstPost && (
+            <a class="door" href={postHref(firstPost)}>
+              <span class="door-kicker">New here?</span>
+              <span class="door-label">Start at the beginning</span>
+              <span class="door-meta">
+                Paper #{firstEntry.paper.number} &middot; {firstEntry.paper.title}
+              </span>
+              <span class="door-title">{firstPost.data.title}</span>
+              <span class="door-cta">
+                Start reading <span aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          )
+        }
 
-      <div class="grid gap-[var(--space-section)] lg:grid-cols-[minmax(0,4fr)_minmax(0,2fr)] lg:gap-12">
-        <section aria-labelledby="more-posts">
-          <h2 id="more-posts" class="section-title">More posts</h2>
+        {
+          latestEntry && (
+            <a class="door door-alt" href={paperHref(latestEntry.paper)}>
+              <span class="door-kicker">Latest series</span>
+              <span class="door-label">
+                Paper #{latestEntry.paper.number}: {latestEntry.paper.title}
+              </span>
+              <span class="door-meta">
+                {latestEntry.posts.length} posts &middot; {latestEntry.paper.year}
+              </span>
+              <span class="door-title">{latestEntry.paper.blurb}</span>
+              <span class="door-cta">
+                Read the series <span aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          )
+        }
+      </section>
 
-          {feed.length > 0 ? (
-            <div class="feed">
-              {feed.map((post) => <PostCard post={post} />)}
-            </div>
-          ) : (
-            <p class="text-muted-foreground">More posts are coming soon.</p>
-          )}
+      <!-- Underneath: the whole map. -->
+      <section class="map" aria-labelledby="map-heading">
+        <header class="map-head">
+          <h2 id="map-heading" class="map-title">The journey from a single pixel to modern AI.</h2>
+          <p class="map-lede">
+            A plain-language walk through the <a class="link-sweep" href="https://30papers.com">30papers.com</a>
+            reading list, one paper at a time. Each one builds on the last. Here is the whole map, and where
+            things stand.
+          </p>
 
-          {hasMore && (
-            <a href="/posts/" class="btn btn-outline btn-block mt-16">Browse the archive</a>
-          )}
-        </section>
+          <ul class="spine" aria-label="Chapters in order">
+            {
+              spine.map((label, index) => (
+                <li class="spine-step">
+                  <span class="spine-label">{label}</span>
+                  {index < spine.length - 1 && (
+                    <span class="spine-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
 
-        <aside class="sidebar">
-          <section aria-labelledby="about-heading">
-            <h2 id="about-heading" class="section-title">About</h2>
-            <p class="text-lg font-semibold tracking-tight">{siteConfig.name}</p>
-            <p class="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">{siteConfig.about}</p>
-            <div class="mt-7 border-t border-border pt-6">
-              <NewsletterSignup />
-            </div>
-          </section>
+          <p class="progress">
+            <strong>{doneCount}</strong> of {totalPapers} papers &middot;
+            <strong>{allPosts.length}</strong> posts published &middot;
+            <a class="link-sweep" href="/papers/">full roadmap &rarr;</a>
+          </p>
+        </header>
 
-          {featured.length > 0 && (
-            <section aria-labelledby="featured-heading">
-              <h2 id="featured-heading" class="section-title">Featured</h2>
-              <div class="grid gap-7">
-                {featured.map((post) => <PostCard post={post} variant="compact" headingLevel="h3" />)}
-              </div>
-            </section>
-          )}
+        <PapersRoadmap posts={allPosts} />
+      </section>
 
-          {categoryList.length > 0 && (
-            <section aria-labelledby="categories-heading">
-              <h2 id="categories-heading" class="section-title">Categories</h2>
-              <ul class="grid gap-4">
-                {categoryList.map((category) => (
-                  <li>
-                    <a href={categoryHref(category.name)} class="link-title flex items-center justify-between gap-3">
-                      <span class="link-title__text text-base font-semibold tracking-tight">{category.name}</span>
-                      <span class="pill shrink-0">
-                        {category.count} {category.count === 1 ? "post" : "posts"}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </aside>
-      </div>
+      <!-- Closing band: keep the newsletter reachable from the home page. -->
+      <section class="signup" aria-labelledby="signup-heading">
+        <div>
+          <h2 id="signup-heading" class="signup-title">Follow along</h2>
+          <p class="signup-text">{siteConfig.newsletter.description}</p>
+        </div>
+        <div class="signup-form">
+          <NewsletterSignup />
+        </div>
+      </section>
     </div>
   </main>
   <SiteFooter />
 </BaseLayout>
+
+<style>
+  .wrap {
+    padding-bottom: var(--space-section);
+  }
+
+  /* ----- hero ----- */
+  .hero {
+    padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem);
+    max-width: 48rem;
+  }
+
+  .hero-title {
+    margin: 1rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6.5vw, 4.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .hero-lede {
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.125rem, 2.2vw, 1.4rem);
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+
+  /* ----- doors ----- */
+  .doors {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 720px) {
+    .doors {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .door {
+    display: grid;
+    align-content: start;
+    gap: 0.4rem;
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--card);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color var(--duration) var(--ease-out),
+      background-color var(--duration) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  .door:hover,
+  .door:focus-visible {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    outline: none;
+  }
+
+  .door-alt {
+    background: color-mix(in srgb, var(--accent) 5%, var(--card));
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  }
+
+  .door-kicker {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .door-label {
+    margin-top: 0.1rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .door-meta {
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .door-title {
+    margin-top: 0.85rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    text-wrap: pretty;
+  }
+
+  .door-cta {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .door-cta span {
+    display: inline-block;
+    transition: transform var(--duration) var(--ease-out);
+  }
+
+  .door:hover .door-cta span,
+  .door:focus-visible .door-cta span {
+    transform: translateX(0.25rem);
+  }
+
+  /* ----- map ----- */
+  .map {
+    margin-top: var(--space-section);
+    padding-top: clamp(2.5rem, 5vw, 3.75rem);
+    border-top: 1px solid var(--border);
+  }
+
+  .map-head {
+    max-width: 50rem;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .map-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .map-lede {
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+
+  .spine {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .spine-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .spine-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+  }
+
+  .spine-arrow {
+    color: var(--muted-foreground);
+  }
+
+  .progress {
+    margin: 1.75rem 0 0;
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+
+  .progress strong {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  /* ----- signup band ----- */
+  .signup {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: var(--space-section);
+    padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .signup {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 3rem;
+      align-items: center;
+    }
+  }
+
+  .signup-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .signup-text {
+    margin: 0.5rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+</style>

@@ -1,0 +1,245 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import PostCard from "@/components/PostCard.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { siteConfig } from "@/config/site";
+import type { Paper } from "@/config/papers";
+import { paperHref, paperPosts, papersWithPosts } from "@/lib/papers";
+import { postHref, visiblePosts } from "@/lib/posts";
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("posts");
+  const series = papersWithPosts(posts);
+  return series.map(({ paper }, index) => ({
+    params: { paper: paper.slug },
+    props: {
+      paper,
+      prev: series[index - 1]?.paper,
+      next: series[index + 1]?.paper,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  paper: Paper;
+  prev?: Paper;
+  next?: Paper;
+}
+
+const { paper, prev, next } = Astro.props;
+const allPosts = visiblePosts(await getCollection("posts"));
+const posts = paperPosts(paper, allPosts);
+const firstPost = posts[0];
+
+const title = `Paper #${paper.number}: ${paper.title}`;
+const description = paper.blurb;
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteHeader posts={allPosts} />
+  <main id="content" class="outer">
+    <div class="canvas wrap">
+      <nav class="crumb" aria-label="Breadcrumb">
+        <a class="link-sweep" href="/papers/">All papers</a>
+      </nav>
+
+      <header class="head">
+        <p class="eyebrow">Paper #{paper.number} &middot; {paper.year}</p>
+        <h1 class="head-title">{paper.title}</h1>
+        <p class="head-full">{paper.full}</p>
+        <p class="head-blurb">{paper.blurb}</p>
+
+        <div class="head-meta">
+          <span>{posts.length} {posts.length === 1 ? "post" : "posts"}</span>
+          {
+            paper.sourceUrl && (
+              <a class="link-sweep" href={paper.sourceUrl} target="_blank" rel="noopener">
+                Read the source
+              </a>
+            )
+          }
+        </div>
+
+        {
+          firstPost && (
+            <a class="btn btn-solid start" href={postHref(firstPost)}>
+              Start reading <span aria-hidden="true">&rarr;</span>
+            </a>
+          )
+        }
+      </header>
+
+      <ol class="series">
+        {
+          posts.map((post, index) => (
+            <li class="series-item">
+              <span class="series-index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <PostCard post={post} />
+            </li>
+          ))
+        }
+      </ol>
+
+      {
+        (prev || next) && (
+          <nav class="jump" aria-label="Other papers">
+            {prev ? (
+              <a class="jump-link" href={paperHref(prev)}>
+                <span class="jump-dir">&larr; Previous paper</span>
+                <span class="jump-name">{prev.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {next && (
+              <a class="jump-link jump-next" href={paperHref(next)}>
+                <span class="jump-dir">Next paper &rarr;</span>
+                <span class="jump-name">{next.title}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .wrap {
+    padding-top: 2.5rem;
+    padding-bottom: var(--space-section);
+  }
+
+  .crumb {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .head {
+    padding: 1.5rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .head-title {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 4rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+
+  .head-full {
+    margin: 0.75rem 0 0;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--muted-foreground);
+  }
+
+  .head-blurb {
+    margin: 1.25rem 0 0;
+    max-width: 38rem;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .head-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .start {
+    margin-top: 1.75rem;
+  }
+
+  .series {
+    display: grid;
+    gap: 3.5rem;
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .series-item {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .series-index {
+    padding-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .jump {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: var(--space-section);
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .jump-link {
+    display: grid;
+    gap: 0.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .jump-next {
+    text-align: right;
+  }
+
+  .jump-dir {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .jump-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .jump-link:hover .jump-name,
+  .jump-link:focus-visible .jump-name {
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .series-item {
+      grid-template-columns: 1fr;
+    }
+
+    .series-index {
+      padding-top: 0;
+    }
+  }
+</style>

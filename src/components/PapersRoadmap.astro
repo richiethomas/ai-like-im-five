@@ -1,0 +1,251 @@
+---
+import { chaptersWithPapers, paperHref, paperPosts, type Paper } from "@/lib/papers";
+import type { Post } from "@/lib/posts";
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+const structure = chaptersWithPapers();
+const countFor = (paper: Paper) => paperPosts(paper, posts).length;
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<div class="roadmap">
+  {
+    structure.map((chapter) => (
+      <section class="chapter">
+        <header class="chapter-head">
+          <span class="chapter-index">{pad(chapter.index)}</span>
+          <div>
+            <h3 class="chapter-title">{chapter.title}</h3>
+            <p class="chapter-blurb">{chapter.blurb}</p>
+          </div>
+        </header>
+
+        <ol class="papers">
+          {chapter.papers.map((paper) => {
+            const count = countFor(paper);
+            const done = count > 0;
+            const Tag = done ? "a" : "div";
+            return (
+              <li>
+                <Tag
+                  class:list={["row", `is-${paper.status}`, done && "is-linked"]}
+                  href={done ? paperHref(paper) : undefined}
+                >
+                  <span class="row-num">{pad(paper.number)}</span>
+                  <span class="row-body">
+                    <span class="row-title">
+                      {paper.title}
+                      {paper.year && <span class="row-year"> · {paper.year}</span>}
+                    </span>
+                    <span class="row-blurb">{paper.blurb}</span>
+                  </span>
+                  <span class="row-aside">
+                    {done ? (
+                      <>
+                        <span class="row-count">
+                          {count} {count === 1 ? "post" : "posts"}
+                        </span>
+                        <span class="row-arrow" aria-hidden="true">
+                          &rarr;
+                        </span>
+                      </>
+                    ) : (
+                      <span class:list={["chip", `chip-${paper.status}`]}>
+                        {paper.status === "next" ? "Up next" : "Planned"}
+                      </span>
+                    )}
+                  </span>
+                </Tag>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .roadmap {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .chapter-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .chapter-index {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  .chapter-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .chapter-blurb {
+    margin: 0.3rem 0 0;
+    max-width: 40rem;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .papers {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--card);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color var(--duration) var(--ease-out),
+      background-color var(--duration) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  .row-num {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    text-align: right;
+  }
+
+  .row-title {
+    display: block;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .row-year {
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+
+  .row-blurb {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .row-aside {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .row-count {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .row-arrow {
+    display: inline-block;
+    color: var(--accent);
+    transition: transform var(--duration) var(--ease-out);
+  }
+
+  /* Linked (completed) papers get the accent treatment and a nudging arrow. */
+  .row.is-linked {
+    border-left: 3px solid var(--accent);
+  }
+
+  .row.is-linked:hover,
+  .row.is-linked:focus-visible {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 5%, var(--card));
+    outline: none;
+  }
+
+  .row.is-linked:hover .row-arrow,
+  .row.is-linked:focus-visible .row-arrow {
+    transform: translateX(0.25rem);
+  }
+
+  .row.is-linked:hover .row-count,
+  .row.is-linked:focus-visible .row-count {
+    color: var(--accent);
+  }
+
+  /* The paper being written next sits between done and planned. */
+  .row.is-next {
+    border-left: 3px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  }
+
+  /* Planned papers recede. */
+  .row.is-upcoming {
+    background: transparent;
+    border-style: dashed;
+  }
+
+  .row.is-upcoming .row-title {
+    font-weight: 500;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+  }
+
+  .chip-next {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .row {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .row-aside {
+      grid-column: 2;
+      margin-top: 0.1rem;
+    }
+  }
+</style>

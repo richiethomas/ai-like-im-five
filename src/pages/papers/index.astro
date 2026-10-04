@@ -1,0 +1,66 @@
+---
+import { getCollection } from "astro:content";
+import PapersRoadmap from "@/components/PapersRoadmap.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { siteConfig } from "@/config/site";
+import { papers } from "@/config/papers";
+import { visiblePosts } from "@/lib/posts";
+
+const allPosts = visiblePosts(await getCollection("posts"));
+const doneCount = papers.filter((paper) => paper.status === "done").length;
+const totalPapers = papers.length;
+const postCount = allPosts.length;
+
+const title = "The papers";
+const description = `The reading path through ${siteConfig.name}, grouped into chapters. ${doneCount} of ${totalPapers} papers covered so far.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteHeader posts={allPosts} />
+  <main id="content" class="outer">
+    <div class="inner wrap">
+      <header class="pagehead">
+        <p class="eyebrow">The series</p>
+        <h1 class="pagehead-title">The papers</h1>
+        <p class="pagehead-description">
+          This blog works through <a class="link-sweep" href="https://30papers.com">30papers.com</a>, the
+          reading list Ilya Sutskever reportedly gave John Carmack. The order below is a planned path, built
+          so each paper leans on the ones before it. Completed papers link to their full series.
+        </p>
+        <p class="progress">
+          <span class="progress-stat"><strong>{doneCount}</strong> of {totalPapers} papers</span>
+          <span class="progress-stat"><strong>{postCount}</strong> posts published</span>
+        </p>
+      </header>
+
+      <PapersRoadmap posts={allPosts} />
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .wrap {
+    padding-bottom: var(--space-section);
+  }
+
+  .progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin: 1.75rem 0 0;
+  }
+
+  .progress-stat {
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+
+  .progress-stat strong {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+</style>
