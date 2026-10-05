@@ -17,7 +17,7 @@ Paper #1 was a course: it taught how the pieces work. Paper #2 is a real researc
 
 ## Before 2012: computer vision done by hand
 
-For decades, from the field's start in the 1960s until about 2012, getting a computer to recognize objects meant designing the clues by hand ([Part 1](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/) flagged this contrast). A person decided, ahead of time, what to measure in a picture, and wrote code to measure it.
+For decades, from the field's start in the 1960s until about 2012, getting a computer to recognize objects meant designing the clues by hand. A person decided, ahead of time, what to measure in a picture, and wrote code to measure it.
 
 Say you wanted to find faces. You might write code that looks for two small dark circles side by side and decide those are probably eyes. You, the human, picked that clue. The computer just ran your code and reported what it found. Real systems used more careful hand-designed detectors that measured things like edges at particular angles and sharp corners. A person designed the detectors; the computer never worked out on its own what was worth looking for. Only the last step, a simple [classifier](/post/paper-1-part-5-giving-the-computer-a-scorecard-linear-classifiers/) that sorted images using those hand-picked measurements, did any learning.
 
