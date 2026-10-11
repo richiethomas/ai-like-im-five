@@ -42,6 +42,10 @@ One finding is worth pulling out. The authors tried removing a single one of the
 
 So the depth is doing real work. Two percentage points may not sound like much, but at this level of competition it is the difference between first place and forgotten. It is not that the network is big for the sake of being big; each layer builds on the patterns found by the one before it, and removing one weakens everything above it.
 
+A fair question follows: if removing a layer hurts, why not add more? The authors were direct about the limit. The network's size, they wrote, was capped by the memory on 2012's GPUs and the training time they could tolerate; they expected their results to keep improving on their own as faster GPUs and bigger datasets arrived. They wanted bigger and could not get there yet.
+
+The exact recipe, five convolutional layers and three fully-connected with those filter counts, was tuned by experiment, not derived from theory; the only structural claim the paper backs with evidence is the layer-removal test above. Going much deeper would have hit a different wall. Training works by passing a "how wrong you were" signal backward from the end of the network to the front ([Part 8](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/)). Across dozens of layers that signal fades, like a whisper passed down a long line, until the earliest layers barely hear it and stop improving. Letting the signal skip layers is what the next paper, ResNet, adds.
+
 ## What's next
 
 The shape, then, is the shape you already know. The challenge was training something this large without the training stalling or the network just memorizing its examples. The next post starts with the change that made the training fast enough to be possible at all.
