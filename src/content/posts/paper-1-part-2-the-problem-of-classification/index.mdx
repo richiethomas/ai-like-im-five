@@ -13,7 +13,7 @@ tags: ["image classification", "computer vision basics"]
 
 > **Where we are:** Part [1](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/) showed that an image is just a grid of numbers to a computer. Now we ask the actual task: given those numbers, how do we label the picture?
 
-In [the last post](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/), we established the one idea this whole series stands on: to a computer, a picture is a grid of numbers. You opened the file and saw them yourself.
+In [the last post](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/), we established the one idea this whole series stands on: to a computer, a picture is a grid of numbers. That post opened the file and showed them.
 
 Now comes the task CS231n spends a semester on: **image <Term k="classification">classification</Term>**. The goal is simple to state:
 
@@ -25,7 +25,7 @@ For example:
 - Is this a photograph of a car, a bike, or a truck?
 - Does this X-ray show a broken bone: yes or no?
 
-Your brain does this instantly and without effort. For a computer it is hard, hard enough that the seven challenges below are the reason simply comparing grids of numbers fails on real-world photos.
+A human brain does this instantly and without effort. For a computer it is hard, hard enough that the seven challenges below are the reason simply comparing grids of numbers fails on real-world photos.
 
 ## The Seven Things That Make It Hard
 
@@ -55,9 +55,9 @@ We need methods whose predicted label stays correct even when the picture change
 
 This is what CS231n teaches us to build, one idea per post: first nearest neighbor (guess by finding the most similar stored example), then linear classifiers (score each possible label with a simple weighted recipe), then the convolutional networks built to handle these challenges.
 
-## Try It Yourself
+## The Same Dog, Different Numbers
 
-In the last post you met this 64 × 64 cartoon dog and [its file of numbers](/experiments/picture-is-numbers/dog.ppm.txt):
+The last post introduced this 64 × 64 cartoon dog and [its file of numbers](/experiments/picture-is-numbers/dog.ppm.txt):
 
 ![The original 64 by 64 cartoon dog](/experiments/picture-is-numbers/dog.png)
 
@@ -67,12 +67,12 @@ Here is the same dog, just moved down and to the right, and the same dog behind 
 
 ![The same dog, behind a fence](/experiments/classification/dog-fence.png)
 
-Now open their number files side by side with the original:
+Here are their number files, to compare side by side with the original:
 
 - [dog-moved.ppm.txt](/experiments/classification/dog-moved.ppm.txt): the dog only shifted position, yet **more than half the numbers in the file changed**. Every pixel the dog moved onto, and every pixel it moved off of, has new values.
-- [dog-fence.ppm.txt](/experiments/classification/dog-fence.ppm.txt): scan for the stripes of `140 140 140`. Those gray columns replaced whole stretches of dog numbers.
+- [dog-fence.ppm.txt](/experiments/classification/dog-fence.ppm.txt): the fence shows up as stripes of `140 140 140`. Those gray columns replaced whole stretches of dog numbers.
 
-To you, all three pictures show the same dog. To a program comparing numbers, they barely agree. A classifier has to answer "dog" for all three anyway. Each of the seven challenges is one more way the numbers can change while the dog stays the same.
+To a person, all three pictures show the same dog. To a program comparing numbers, they barely agree. A classifier has to answer "dog" for all three anyway. Each of the seven challenges is one more way the numbers can change while the dog stays the same.
 
 ## What's Next
 

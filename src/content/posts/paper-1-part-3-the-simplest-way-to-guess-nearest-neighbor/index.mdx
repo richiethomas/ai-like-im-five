@@ -1,6 +1,6 @@
 ---
 title: "Paper #1, Part 3: The Simplest Way to Guess (Nearest Neighbor)"
-excerpt: "Before we build anything clever, let's try the dumbest possible approach to image classification. It's simpler than you'd think, and it teaches us something crucial about why this problem is hard."
+excerpt: "Before we build anything clever, let's try the dumbest possible approach to image classification. It's simpler than it sounds, and it teaches us something crucial about why this problem is hard."
 category: "Vision"
 date: 2023-09-06T23:59:59Z
 author:
@@ -66,7 +66,7 @@ distance = sqrt((100 - 101)² + (150 - 151)² + (200 - 199)²)
          ≈ 1.73
 ```
 
-This is the distance you learned in high school geometry: the straight-line distance between two points. It's called Euclidean after Euclidean geometry, the ordinary flat-space geometry going back to the Greek mathematician Euclid. It punishes large differences more than small ones (because of the squaring).
+This is the distance from high school geometry: the straight-line distance between two points. It's called Euclidean after Euclidean geometry, the ordinary flat-space geometry going back to the Greek mathematician Euclid. It punishes large differences more than small ones (because of the squaring).
 
 On the CIFAR-10 dataset (a standard benchmark of 60,000 small images: 50,000 for training and 10,000 for testing), L1 scored about 38% accuracy and L2 about 35%. That's nearly four times better than random guessing (10% on 10 categories), and still nowhere near good enough to use.
 

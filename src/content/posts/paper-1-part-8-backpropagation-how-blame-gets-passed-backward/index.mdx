@@ -17,7 +17,7 @@ tags: ["backpropagation", "chain rule"]
 Backpropagation is the chain rule applied to the whole network: each layer passes its share of the blame backward to the layer before it, and every weight's share of that blame tells [gradient descent](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/) which way to nudge it. This is the longest post in the series; the rest of it builds that idea up slowly, with a worked example, so take it a section at a time.
 </Callout>
 
-From [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/): <Term k="gradient-descent">gradient descent</Term> adjusts <Term k="weights">weights</Term> using <Term k="gradient">gradients</Term>, the slope of the <Term k="loss">loss</Term> for each weight. So the job now is to compute those slopes. If you remember some calculus, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
+From [Part 7](/post/paper-1-part-7-learning-by-trial-and-error-gradient-descent/): <Term k="gradient-descent">gradient descent</Term> adjusts <Term k="weights">weights</Term> using <Term k="gradient">gradients</Term>, the slope of the <Term k="loss">loss</Term> for each weight. So the job now is to compute those slopes. In calculus terms, that might sound easy (just differentiate the loss), so why does it need a special algorithm at all?
 
 For a simple function, it is easy. Take a loss like:
 
@@ -99,7 +99,7 @@ Backpropagation does exactly this for a neural network: it works out how much ea
 
 ## How Backpropagation Works
 
-A <Term k="linear-classifier">linear classifier</Term> (such as our cat / dog / bird image classifier) is really just one step: for each class (i.e. "cat", "dog", "bird"), multiply every pixel by that class's weight *for that pixel*, add the results into a single score, then add a "bias" for that class on top. (If you remember `y = mx + b` from school, the <Term k="bias">bias</Term> is the `+ b`, a constant that shifts the score up or down regardless of the pixels; the weights are the `m`. It was introduced in Part 5.)
+A <Term k="linear-classifier">linear classifier</Term> (such as our cat / dog / bird image classifier) is just one step: for each class (i.e. "cat", "dog", "bird"), multiply every pixel by that class's weight *for that pixel*, add the results into a single score, then add a "bias" for that class on top. (In the school-algebra line `y = mx + b`, the <Term k="bias">bias</Term> is the `+ b`, a constant that shifts the score up or down regardless of the pixels; the weights are the `m`. It was introduced in Part 5.)
 
 Then compute the loss:
 
