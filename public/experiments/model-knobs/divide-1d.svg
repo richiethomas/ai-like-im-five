@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="348" rx="10" fill="#ffffff"/>
+<circle cx="260.0" cy="22" r="5" fill="#2563eb"/><text x="270.0" y="26" font-size="13" fill="#334155">cat</text>
+<circle cx="335.0" cy="22" r="5" fill="#ea580c"/><text x="345.0" y="26" font-size="13" fill="#334155">dog</text>
+<text x="320.0" y="54" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Number line, one knob: any 2 dots can be divided, but not any 3</text>
+<text x="36" y="84" text-anchor="start" font-size="12.5" fill="#334155" font-weight="600">Any 2 dots, any labels: some cut divides them</text>
+<text x="36" y="100" text-anchor="start" font-size="10.5" fill="#64748b">the dots can sit anywhere on the line</text>
+<rect x="36" y="112" width="118.8" height="12" rx="6" fill="#dbeafe"/>
+<rect x="154.8" y="112" width="131.2" height="12" rx="6" fill="#ffedd5"/>
+<line x1="154.8" y1="105" x2="154.8" y2="131" stroke="#334155" stroke-width="2.5"/>
+<circle cx="73.5" cy="118.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="236.0" cy="118.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="296" y="122" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<rect x="36" y="152" width="106.2" height="12" rx="6" fill="#ffedd5"/>
+<rect x="142.2" y="152" width="143.8" height="12" rx="6" fill="#dbeafe"/>
+<line x1="142.2" y1="145" x2="142.2" y2="171" stroke="#334155" stroke-width="2.5"/>
+<circle cx="111.0" cy="158.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="173.5" cy="158.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="296" y="162" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<rect x="36" y="192" width="250" height="12" rx="6" fill="#dbeafe"/>
+<circle cx="61.0" cy="198.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="261.0" cy="198.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="296" y="202" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<rect x="36" y="232" width="250" height="12" rx="6" fill="#ffedd5"/>
+<circle cx="186.0" cy="238.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="248.5" cy="238.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="296" y="242" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<text x="360" y="84" text-anchor="start" font-size="12.5" fill="#334155" font-weight="600">Add a third: a dog between two cats</text>
+<text x="360" y="100" text-anchor="start" font-size="10.5" fill="#64748b">no cut divides this, wherever it goes</text>
+<rect x="360" y="172.0" width="220" height="12" rx="6" fill="#dbeafe"/>
+<circle cx="393.0" cy="178.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="470.0" cy="178.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="470.0" cy="178.0" r="10.5" fill="none" stroke="#dc2626" stroke-width="2"/>
+<circle cx="547.0" cy="178.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="470.0" y="212.0" text-anchor="middle" font-size="10.5" fill="#dc2626" font-weight="600">at least one dot always ends up on the wrong side</text>
+<text x="320.0" y="332" text-anchor="middle" font-size="11" fill="#64748b">Blue is the cut's cat side, orange its dog side. Red rings mark dots on the wrong side.</text>
+</svg>

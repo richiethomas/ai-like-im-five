@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 682" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="682" rx="10" fill="#ffffff"/>
+<circle cx="260.0" cy="22" r="5" fill="#2563eb"/><text x="270.0" y="26" font-size="13" fill="#334155">cat</text>
+<circle cx="335.0" cy="22" r="5" fill="#ea580c"/><text x="345.0" y="26" font-size="13" fill="#334155">dog</text>
+<text x="320.0" y="54" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Flat graph, two knobs: any 3 dots can be divided, but not any 4</text>
+<text x="320.0" y="94" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">Any 3 dots, any labels: some straight line divides them</text>
+<text x="320.0" y="110" text-anchor="middle" font-size="10.5" fill="#64748b">all 8 possible labelings of the same 3 dots (any 3 work, as long as they are not in one straight row)</text>
+<polygon points="65.0,234.0 173.0,234.0 173.0,126.0 65.0,126.0" fill="#dbeafe"/>
+<rect x="65.0" y="126" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<circle cx="86.6" cy="207.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="151.4" cy="201.6" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="113.6" cy="145.4" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="119.0" y="249" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="199.0,234.0 307.0,234.0 307.0,170.7 199.0,178.2" fill="#dbeafe"/>
+<polygon points="307.0,170.7 307.0,126.0 199.0,126.0 199.0,178.2" fill="#ffedd5"/>
+<rect x="199.0" y="126" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="199.4" y1="178.2" x2="306.6" y2="170.7" stroke="#334155" stroke-width="2.4"/>
+<circle cx="220.6" cy="207.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="285.4" cy="201.6" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="247.6" cy="145.4" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="253.0" y="249" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="333.0,234.0 373.8,234.0 421.9,126.0 333.0,126.0" fill="#dbeafe"/>
+<polygon points="373.8,234.0 441.0,234.0 441.0,126.0 421.9,126.0" fill="#ffedd5"/>
+<rect x="333.0" y="126" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="421.7" y1="126.3" x2="373.8" y2="233.9" stroke="#334155" stroke-width="2.4"/>
+<circle cx="354.6" cy="207.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="419.4" cy="201.6" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="381.6" cy="145.4" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="387.0" y="249" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="467.0,234.0 541.0,234.0 468.2,126.0 467.0,126.0" fill="#dbeafe"/>
+<polygon points="541.0,234.0 575.0,234.0 575.0,126.0 468.2,126.0" fill="#ffedd5"/>
+<rect x="467.0" y="126" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="468.4" y1="126.3" x2="540.8" y2="233.7" stroke="#334155" stroke-width="2.4"/>
+<circle cx="488.6" cy="207.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="553.4" cy="201.6" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="515.6" cy="145.4" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="521.0" y="249" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="139.0,372.0 173.0,372.0 173.0,264.0 66.2,264.0" fill="#dbeafe"/>
+<polygon points="65.0,372.0 139.0,372.0 66.2,264.0 65.0,264.0" fill="#ffedd5"/>
+<rect x="65.0" y="264" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="138.8" y1="371.7" x2="66.4" y2="264.3" stroke="#334155" stroke-width="2.4"/>
+<circle cx="86.6" cy="345.0" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="151.4" cy="339.6" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="113.6" cy="283.4" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="119.0" y="387" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="239.8,372.0 307.0,372.0 307.0,264.0 287.9,264.0" fill="#dbeafe"/>
+<polygon points="199.0,372.0 239.8,372.0 287.9,264.0 199.0,264.0" fill="#ffedd5"/>
+<rect x="199.0" y="264" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="239.8" y1="371.9" x2="287.7" y2="264.3" stroke="#334155" stroke-width="2.4"/>
+<circle cx="220.6" cy="345.0" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="285.4" cy="339.6" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="247.6" cy="283.4" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="253.0" y="387" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="441.0,308.7 441.0,264.0 333.0,264.0 333.0,316.2" fill="#dbeafe"/>
+<polygon points="333.0,372.0 441.0,372.0 441.0,308.7 333.0,316.2" fill="#ffedd5"/>
+<rect x="333.0" y="264" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<line x1="440.6" y1="308.7" x2="333.4" y2="316.2" stroke="#334155" stroke-width="2.4"/>
+<circle cx="354.6" cy="345.0" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="419.4" cy="339.6" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="381.6" cy="283.4" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<text x="387.0" y="387" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<polygon points="467.0,372.0 575.0,372.0 575.0,264.0 467.0,264.0" fill="#ffedd5"/>
+<rect x="467.0" y="264" width="108" height="108" fill="none" stroke="#e2e8f0"/>
+<circle cx="488.6" cy="345.0" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="553.4" cy="339.6" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="515.6" cy="283.4" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<text x="521.0" y="387" text-anchor="middle" font-size="10.5" fill="#15803d" font-weight="600">divided</text>
+<line x1="40" y1="416" x2="600" y2="416" stroke="#e2e8f0"/>
+<text x="320.0" y="436" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">Add a fourth: a dog inside a triangle of cats</text>
+<text x="320.0" y="452" text-anchor="middle" font-size="10.5" fill="#64748b">no straight line divides this, at any angle or height</text>
+<polygon points="245.0,616.0 395.0,616.0 395.0,466.0 245.0,466.0" fill="#dbeafe"/>
+<rect x="245.0" y="466" width="150" height="150" fill="none" stroke="#e2e8f0"/>
+<circle cx="267.5" cy="593.5" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="372.5" cy="586.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="320.0" cy="484.0" r="5.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="320.0" cy="553.0" r="5.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="320.0" cy="553.0" r="10.0" fill="none" stroke="#dc2626" stroke-width="2"/>
+<text x="320.0" y="632" text-anchor="middle" font-size="10.5" fill="#dc2626" font-weight="600">at least one dot always ends up on the wrong side</text>
+<text x="320.0" y="668" text-anchor="middle" font-size="11" fill="#64748b">Blue shading is the line's cat side, orange its dog side. Red rings mark dots on the wrong side.</text>
+</svg>

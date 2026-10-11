@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="600" height="480" rx="10" fill="#ffffff"/>
+<circle cx="190.0" cy="22" r="5" fill="#2563eb"/><text x="200.0" y="26" font-size="13" fill="#334155">cat</text>
+<circle cx="265.0" cy="22" r="5" fill="#ea580c"/><text x="275.0" y="26" font-size="13" fill="#334155">dog</text>
+<circle cx="340.0" cy="22" r="5" fill="#ffffff" stroke="#2563eb" stroke-width="2"/><text x="350.0" y="26" font-size="13" fill="#334155">new cat photo</text>
+<text x="300.0" y="54" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Bends: corners let the boundary wind around odd images</text>
+<polygon points="84.0,229.6 201.5,224.0 225.0,140.0 248.5,224.0 366.0,229.6 389.5,296.8 413.0,229.6 554.0,224.0 554.0,84.0 84.0,84.0" fill="#dbeafe"/>
+<polygon points="84.0,229.6 201.5,224.0 225.0,140.0 248.5,224.0 366.0,229.6 389.5,296.8 413.0,229.6 554.0,224.0 554.0,364.0 84.0,364.0" fill="#ffedd5"/>
+<line x1="178.0" y1="84" x2="178.0" y2="364" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="84" y1="140.0" x2="554" y2="140.0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="272.0" y1="84" x2="272.0" y2="364" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="84" y1="196.0" x2="554" y2="196.0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="366.0" y1="84" x2="366.0" y2="364" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="84" y1="252.0" x2="554" y2="252.0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="460.0" y1="84" x2="460.0" y2="364" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<line x1="84" y1="308.0" x2="554" y2="308.0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="1"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+<line x1="84" y1="364" x2="570" y2="364" stroke="#334155" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="84" y1="364" x2="84" y2="68" stroke="#334155" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="84.0" y1="364" x2="84.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="84.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">0</text>
+<line x1="79" y1="364.0" x2="84" y2="364.0" stroke="#334155" stroke-width="1.2"/>
+<line x1="178.0" y1="364" x2="178.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="178.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">2</text>
+<line x1="79" y1="308.0" x2="84" y2="308.0" stroke="#334155" stroke-width="1.2"/>
+<text x="75" y="311.5" text-anchor="end" font-size="10" fill="#64748b">2</text>
+<line x1="272.0" y1="364" x2="272.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="272.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">4</text>
+<line x1="79" y1="252.0" x2="84" y2="252.0" stroke="#334155" stroke-width="1.2"/>
+<text x="75" y="255.5" text-anchor="end" font-size="10" fill="#64748b">4</text>
+<line x1="366.0" y1="364" x2="366.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="366.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">6</text>
+<line x1="79" y1="196.0" x2="84" y2="196.0" stroke="#334155" stroke-width="1.2"/>
+<text x="75" y="199.5" text-anchor="end" font-size="10" fill="#64748b">6</text>
+<line x1="460.0" y1="364" x2="460.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="460.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">8</text>
+<line x1="79" y1="140.0" x2="84" y2="140.0" stroke="#334155" stroke-width="1.2"/>
+<text x="75" y="143.5" text-anchor="end" font-size="10" fill="#64748b">8</text>
+<line x1="554.0" y1="364" x2="554.0" y2="369" stroke="#334155" stroke-width="1.2"/>
+<text x="554.0" y="382" text-anchor="middle" font-size="10" fill="#64748b">10</text>
+<line x1="79" y1="84.0" x2="84" y2="84.0" stroke="#334155" stroke-width="1.2"/>
+<text x="75" y="87.5" text-anchor="end" font-size="10" fill="#64748b">10</text>
+<text x="319.0" y="402" text-anchor="middle" font-size="11.5" fill="#334155">measurement 1</text>
+<text x="50" y="224.0" text-anchor="middle" font-size="11.5" fill="#334155" transform="rotate(-90 50 224.0)">measurement 2</text>
+<polyline points="84.0,229.6 201.5,224.0 225.0,140.0 248.5,224.0 366.0,229.6 389.5,296.8 413.0,229.6 554.0,224.0" fill="none" stroke="#334155" stroke-width="2.6" stroke-linejoin="miter"/>
+<circle cx="201.5" cy="224.0" r="2.6" fill="#334155"/>
+<circle cx="225.0" cy="140.0" r="2.6" fill="#334155"/>
+<circle cx="248.5" cy="224.0" r="2.6" fill="#334155"/>
+<circle cx="366.0" cy="229.6" r="2.6" fill="#334155"/>
+<circle cx="389.5" cy="296.8" r="2.6" fill="#334155"/>
+<circle cx="413.0" cy="229.6" r="2.6" fill="#334155"/>
+<circle cx="131.0" cy="134.4" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="178.0" cy="190.4" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="295.5" cy="126.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="342.5" cy="184.8" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="436.5" cy="140.0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="497.6" cy="179.2" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="225.0" cy="103.6" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="389.5" cy="268.8" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="131.0" cy="280.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="201.5" cy="322.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="272.0" cy="274.4" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="319.0" cy="308.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="460.0" cy="280.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="507.0" cy="322.0" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="441.2" cy="330.4" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="225.0" cy="162.4" r="6" fill="#ea580c" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="232.1" cy="196.0" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="2.2"/>
+<circle cx="232.1" cy="196.0" r="10.5" fill="none" stroke="#dc2626" stroke-width="2"/>
+<text x="300.0" y="434" text-anchor="middle" font-size="11" fill="#64748b">Each dark corner comes from a neuron with an activation function.</text>
+<text x="300.0" y="450" text-anchor="middle" font-size="11" fill="#64748b">A peak around one dog and a pocket around one cat put every training dot on its side,</text>
+<text x="300.0" y="466" text-anchor="middle" font-size="11" fill="#64748b">but they trace single photos, not a pattern: the new cat photo lands in the peak and is called a dog.</text>
+</svg>
