@@ -29,15 +29,17 @@ This is called **<Term k="model-parallelism">model parallelism</Term>**: instead
 
 ## The clever part: they talk only sometimes
 
-Here is the detail that makes it work. The two halves mostly stay in their own lanes. At most layers, a filter on GPU 1 reads only from the maps on GPU 1, and the same for GPU 2. The two cards do not communicate.
+The two halves mostly stay in their own lanes. At most layers, a filter on GPU 1 reads only from the maps on GPU 1, and the same for GPU 2. The two cards do not communicate.
 
 At a few specific layers, though, the halves are allowed to mix, so a filter can read from both cards' maps. This happens at the third convolutional layer and again at the fully-connected layers near the end. The authors chose exactly where to open these crossovers so the network could still combine information from both halves, while keeping the expensive cross-card chatter down to a small fraction of the work.
+
+One way to picture it: two teams in separate buildings, both studying the same photo, each responsible for spotting half of the features. Inside its own building a team works quickly. Comparing notes means carrying papers across the street, which is slow. So the teams meet only at a few planned points, the third layer and the final layers, and otherwise work alone. (Working mostly alone is also why each team drifted toward its own specialty, which comes up at the end of this post.)
 
 <img src="/experiments/two-gpu-split/two-gpu.svg" alt="A diagram with two horizontal lanes labeled GPU 1 and GPU 2, each carrying half of the network's layers as a row of blocks. At most layers the two lanes run in parallel without connecting. At one middle convolutional layer and at the fully-connected layers, crossover arrows link the two lanes, showing where the halves are allowed to share information." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "680px" }} />
 
 ## A historical workaround that pointed forward
 
-This kind of hand-splitting across two cards has largely disappeared. GPUs today have far more memory, and when a model really is too big for one, software handles the splitting automatically. So this particular trick is now just a historical detail.
+This kind of hand-splitting across two cards has largely disappeared. GPUs today have far more memory, and when a model is too big for one, software handles the splitting automatically. So this particular two-card setup is now mostly a historical detail.
 
 But the idea underneath it, spreading a single model across several devices because it is too big for one, did not go away. It is now a central concern in training the largest models, which run across thousands of chips at once. The scale is wildly different, but the reason is the same one AlexNet faced: a model too big for a single piece of hardware. We will see a cleaner version of the same idea much later in this series.
 
@@ -45,4 +47,4 @@ One last thing worth remembering: splitting the network in two had an odd side e
 
 ## What's next
 
-Training was now fast enough and fit in memory. That left the problem Paper #1 warned about: with 60 million weights, the network could simply [memorize](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) its training images. The next post is the campaign against that.
+Training was now fast enough and fit in memory. That left the problem Paper #1 warned about: with 60 million weights, the network could simply [memorize](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) its training images. The next post covers how they prevented it.
