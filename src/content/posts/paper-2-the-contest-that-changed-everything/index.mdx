@@ -35,13 +35,13 @@ A thousand categories is a lot to tell apart. Many look alike (think of all the 
 
 With 1,000 possible labels, demanding the single exact answer every time would be harsh. So the contest used **<Term k="top-5-error">top-5 error</Term>**: a guess counts as correct if the right label is among the model's five most confident answers. Top-5 error is the fraction of test images it still gets wrong even by that generous measure. (The stricter version, top-1 error, counts only whether your single best guess was right.) Lower is better.
 
-Before 2012, the best systems, those hand-built feature pipelines, sat around 26% top-5 error on the contest. Nobody was moving that number by much.
+Before 2012, the best systems, those hand-built feature pipelines, sat around 26% top-5 error on the contest, and that number was barely moving: the winning error had crept from about 28% in 2010 to about 26% in 2011, roughly two points in a year.
 
 ## 2012: a neural network wins, and not by a little
 
 Then a deep convolutional network, later nicknamed **AlexNet** after its lead author Alex Krizhevsky, entered the 2012 contest and scored **15.3%** top-5 error. The runner-up, still built on hand-designed clues, managed 26.2%, almost exactly where hand-built systems had been stuck for years.
 
-That eleven-point jump was far bigger than the usual year-to-year gains, which had been a point or two. By 2014, nearly every serious entry in the contest was a deep neural network, and hand-built features stopped winning.
+That eleven-point jump was several times any gain the contest had seen before. By 2014, nearly every serious entry in the contest was a deep neural network, and hand-built features stopped winning.
 
 ## What made it work
 
