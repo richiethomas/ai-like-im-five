@@ -1,0 +1,46 @@
+---
+title: "Paper #3: Deeper Networks That Did Worse"
+excerpt: "After AlexNet, adding layers kept helping, up to a point. Past about twenty layers, plain networks started scoring worse, even on the images they were trained on. ResNet starts from that puzzle."
+category: "Vision"
+date: 2023-09-27T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "CNNs", "depth"]
+---
+
+> **Where we are:** [AlexNet](/post/paper-2-what-alexnet-learned/) showed that a deep network could beat hand-designed vision systems. Paper #3 is **ResNet**, the 2015 paper "[Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)" by Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun of Microsoft Research. It starts from a problem that showed up when people tried to go much deeper.
+
+## Depth helped, at first
+
+AlexNet had eight layers with weights. Two years later, a network from Oxford called VGG stacked 16 to 19 layers of small 3×3 filters and reached 7.32% top-5 error in the 2014 contest, about half of AlexNet's 15.3%. The [architecture post](/post/paper-2-the-architecture-scaled-up/) showed the same effect on a small scale: removing one of AlexNet's middle layers cost about two points of accuracy. Each extra layer can build on the patterns found by the one before it, so a deeper network can describe more complicated things.
+
+So the next step was to keep stacking layers.
+
+The ResNet authors built their plain networks the VGG way, with two simple rules: use small 3×3 filters, and whenever the feature maps are shrunk to half their width and height, double the number of filters, so each layer does about the same amount of work. Making a network deeper is then a matter of adding more of these layers.
+
+## Then depth hurt
+
+When the ResNet authors stacked more layers onto a plain network, one built like VGG with its layers simply placed one after another, the results got worse. On ImageNet, their 18-layer plain network had 27.94% top-1 error on the validation images (the share of images where its single best guess was wrong), and their 34-layer plain network had 28.54%. Sixteen more layers made it slightly worse, not better. They saw the same pattern on CIFAR-10, the small 10-category dataset from [Part 3](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), where a 56-layer plain network did worse than a 20-layer one.
+
+<img src="/experiments/resnet-degradation/plain-18-vs-34.svg" alt="A bar chart of top-1 error on ImageNet validation images for two plain networks. The 18-layer plain network has 27.94% error and the 34-layer plain network has 28.54%, so the deeper network is slightly worse. The vertical axis starts at 25% so the difference is visible, and the chart says so." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
+
+## Not overfitting
+
+The first guess would be [overfitting](/post/paper-2-fighting-overfitting-at-scale/): a bigger network memorizing its training images. But overfitting has a signature. The network does well on the images it trained on and badly on new ones. Here, the deeper network did worse on its own training images too. The authors write that the 34-layer plain network "has higher training error throughout the whole training procedure." A network that fits its training data worse than a smaller one is not overfitting.
+
+They also checked whether more training time would fix it. Training three times as long still showed the same problem.
+
+## A deeper network should never be worse
+
+The authors then make an argument from construction. Take the trained 18-layer network. Build a 34-layer network by copying those 18 layers and adding 16 more after them that pass their input through unchanged. That deeper network computes exactly what the shallow one does, so its error is exactly the same. A layer that passes its input through unchanged is called an **identity** layer, because what comes out is identical to what went in.
+
+So a 34-layer network at least as good as the 18-layer one exists. Training did not find it. In the paper's words, the training methods "are unable to find solutions that are comparably good or better than the constructed solution." The paper calls this problem **degradation**: accuracy that gets worse as plain networks get deeper, even on their training data.
+
+That narrows down the difficulty. A stack of layers trained from scratch apparently has trouble learning to do nothing, to pass its input through unchanged, even when doing nothing would be the best choice.
+
+## What's next
+
+A natural suspect is the fading learning signal described in the [architecture post](/post/paper-2-the-architecture-scaled-up/). The paper argues that this was not the cause by 2015, and the next post explains why, along with the tool that had dealt with that signal by then: batch normalization.

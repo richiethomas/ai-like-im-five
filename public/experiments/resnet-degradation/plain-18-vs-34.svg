@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="520" height="340" rx="10" fill="#ffffff"/>
+<text x="260.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Adding 16 layers made a plain network worse</text>
+<line x1="80" y1="270.0" x2="470" y2="270.0" stroke="#f1f5f9"/>
+<text x="72" y="274.0" text-anchor="end" font-size="11" fill="#64748b">25%</text>
+<line x1="80" y1="220.0" x2="470" y2="220.0" stroke="#f1f5f9"/>
+<text x="72" y="224.0" text-anchor="end" font-size="11" fill="#64748b">26%</text>
+<line x1="80" y1="170.0" x2="470" y2="170.0" stroke="#f1f5f9"/>
+<text x="72" y="174.0" text-anchor="end" font-size="11" fill="#64748b">27%</text>
+<line x1="80" y1="120.0" x2="470" y2="120.0" stroke="#f1f5f9"/>
+<text x="72" y="124.0" text-anchor="end" font-size="11" fill="#64748b">28%</text>
+<line x1="80" y1="70.0" x2="470" y2="70.0" stroke="#f1f5f9"/>
+<text x="72" y="74.0" text-anchor="end" font-size="11" fill="#64748b">29%</text>
+<line x1="80" y1="270" x2="470" y2="270" stroke="#64748b"/>
+<rect x="145.0" y="123.0" width="90" height="147.0" rx="3" fill="#94a3b8"/>
+<text x="190" y="115.0" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">27.94%</text>
+<text x="190" y="288" text-anchor="middle" font-size="12" fill="#334155">18-layer plain</text>
+<rect x="315.0" y="93.0" width="90" height="177.0" rx="3" fill="#94a3b8"/>
+<text x="360" y="85.0" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">28.54%</text>
+<text x="360" y="288" text-anchor="middle" font-size="12" fill="#334155">34-layer plain</text>
+<text x="22" y="170.0" text-anchor="middle" font-size="11" fill="#64748b" transform="rotate(-90 22 170.0)">top-1 error (lower is better)</text>
+<text x="260.0" y="310" text-anchor="middle" font-size="11" fill="#64748b">ImageNet validation images. The deeper plain network is slightly worse.</text>
+<text x="260.0" y="326" text-anchor="middle" font-size="11" fill="#64748b">The axis starts at 25% so the difference is visible.</text>
+</svg>

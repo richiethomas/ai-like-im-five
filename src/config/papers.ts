@@ -112,6 +112,7 @@ export const papers: Paper[] = [
     blurb: "Skip connections that let networks go hundreds of layers deep without breaking.",
     chapter: "seeing",
     status: "next",
+    slugPrefix: "paper-3-",
     sourceUrl: "https://30papers.com/papers/deep-residual-learning/",
   },
   {

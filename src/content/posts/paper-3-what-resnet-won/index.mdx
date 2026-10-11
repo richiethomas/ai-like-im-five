@@ -1,0 +1,48 @@
+---
+title: "Paper #3: What ResNet Won, and Where It Stopped"
+excerpt: "ResNet won the 2015 ImageNet contest with 3.57% top-5 error. On a small dataset, a 1,202-layer version did worse than a 110-layer one, and the paper says why."
+category: "Vision"
+date: 2023-10-02T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "ImageNet", "overfitting"]
+---
+
+> **Where we are:** with [bottleneck blocks](/post/paper-3-going-to-152-layers/), the authors trained networks of 50, 101, and 152 layers. This last post covers the results, the limit they found, and where the idea goes next.
+
+## The 2015 contest
+
+The ImageNet contest from [the AlexNet posts](/post/paper-2-the-contest-that-changed-everything/) was still running in 2015. Top-5 error over those years:
+
+- 2012, AlexNet: 15.3%
+- 2014, VGG: 7.32%, and that year's winner, GoogLeNet: 6.66%
+- 2015, ResNet: 3.57%
+
+The 3.57% came from an **ensemble**: six networks of different depths, trained separately, with their predictions averaged. AlexNet did the same with its [seven networks](/post/paper-2-relu-made-big-networks-trainable/). The best single network, ResNet-152, reached 4.49% top-5 error on the validation images. The authors note that this single-network result "outperforms all previous ensemble results."
+
+The same networks also took first place in four other 2015 contests: ImageNet detection (finding and boxing each object in an image), ImageNet localization, and detection and segmentation on a dataset called COCO. The authors credit the deeper features. Swapping VGG-16 for ResNet-101 in their detection system gave a 28% relative improvement on COCO object detection.
+
+## Where depth stopped helping
+
+On CIFAR-10, the authors pushed much further. A 110-layer residual network reached 6.43% error. Then they trained one with 1,202 layers. It had no trouble training: its training error fell below 0.1%. But its error on test images was 7.93%, worse than the 110-layer network.
+
+This time the cause was [overfitting](/post/paper-2-fighting-overfitting-at-scale/). Both networks fit their training images almost perfectly, and the bigger one did worse on new images. The authors say so directly: the 1,202-layer network "may be unnecessarily large (19.4M) for this small dataset." CIFAR-10 has 50,000 training images, so 19.4 million weights is about 390 weights per image, far more knobs than the data can pin down. The 110-layer network had 1.7 million.
+
+So shortcuts addressed degradation, the problem of deeper plain networks fitting their training data worse than shallower ones. They did not remove the older limit of having too many knobs for too little data.
+
+## The recipe, compared with AlexNet's
+
+The training recipe looks familiar from [AlexNet's](/post/paper-2-the-finer-points/): stochastic gradient descent with momentum 0.9 and weight decay, a learning rate cut by a factor of 10 whenever progress stalled, and data augmentation with random crops, flips, and AlexNet's own color jitter. Two things changed. Batches were 256 images instead of 128, and there was no dropout at all. The authors left it out following the batch normalization paper, which reported that <Term k="batch-normalization">batch normalization</Term> reduces the need for it.
+
+## What was new, and what was not
+
+Shortcuts that skip layers were not new in 2015. Earlier networks had used them, and a design published around the same time, highway networks, had shortcuts with gates that learned when to open and close. What ResNet added was the simplest version, shortcuts that are always open and have no weights, along with evidence that they let networks go past a hundred layers and keep improving. The authors point out that highway networks "have not demonstrated accuracy gains with extremely increased depth (e.g., over 100 layers)."
+
+## Where this goes next
+
+This paper shows that residual learning works and offers a hypothesis about why, but it does not establish why the shortcuts help. The next paper on the list, "Identity Mappings in Deep Residual Networks," is by the same authors a year later, and looks more closely at how signals travel through the shortcuts.
+
+Residual connections also come back much later in this series. The Transformer, the design behind modern language models and Paper #13 on the list, puts a shortcut around each of its blocks to make a deep stack of them trainable.

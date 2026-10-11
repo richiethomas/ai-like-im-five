@@ -1,0 +1,58 @@
+---
+title: "Paper #3: Going to 152 Layers (The Bottleneck Block)"
+excerpt: "To go past 34 layers without the cost growing too fast, ResNet changed the shape of its blocks: shrink the data, do the main work, then expand it again. ResNet-152 ended up cheaper to run than the 19-layer VGG."
+category: "Vision"
+date: 2023-10-01T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "CNNs", "efficiency"]
+---
+
+> **Where we are:** shortcuts [let a 34-layer network beat an 18-layer one](/post/paper-3-the-evidence-18-vs-34-layers/). The authors then went much deeper, to 50, 101, and 152 layers. Doing that with the blocks from the earlier posts would have been expensive, so they designed a different block.
+
+## The cost of a convolution
+
+A [convolutional layer](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) runs many filters across a stack of feature maps, and each filter spans the full depth of that stack. So a layer's cost grows with how many maps go in and how many come out. A 3×3 layer that takes 256 maps and produces 256 has 3 × 3 × 256 × 256 = 589,824 weights, and it applies all of them at every position in the image.
+
+Deep in the network the stacks are wide, 256 maps or more, and stacking many layers like that gets expensive fast.
+
+## The 1×1 convolution
+
+The tool for this is a filter only one pixel wide. A **1×1 convolution** looks at one position at a time, takes the values of all the feature maps at that position, and combines them into one new value. It finds no patterns across space, since it never looks at neighboring pixels. What it does is mix and resize the stack: 64 of these filters turn 256 maps into 64, and 256 of them turn 64 maps back into 256.
+
+## The bottleneck block
+
+The new block has three layers instead of two:
+
+1. a 1×1 layer that shrinks 256 maps down to 64,
+2. a 3×3 layer that does the pattern-finding on just those 64,
+3. a 1×1 layer that expands the 64 back to 256.
+
+The shortcut still carries the original input around all three layers and adds it back. The block is called a **bottleneck** because its middle is narrow, the way a bottle narrows at the neck. The narrowing is what saves computation: the expensive 3×3 layer runs on 64 maps instead of 256.
+
+<img src="/experiments/resnet-bottleneck/bottleneck.svg" alt="A bottleneck block drawn as three stacked layers whose widths show the number of feature maps: a 1x1 layer that narrows 256 maps to 64, a 3x3 layer that works on 64, and a 1x1 layer that widens back to 256. A shortcut path carries the 256-map input around all three layers and adds it to their output." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
+
+The savings are large. This three-layer block has 69,632 weights (16,384 + 36,864 + 16,384). The two-layer block from the earlier posts, used on just 64 maps (the comparison the paper makes), has 73,728. So the bottleneck handles four times as many maps at about the same cost. The authors describe the choice as "mainly due to practical considerations": an engineering choice that makes more depth affordable.
+
+## 152 layers, cheaper than 19
+
+With bottleneck blocks, the authors built ResNet-50, ResNet-101, and ResNet-152. The 152-layer network needs 11.3 billion operations (multiply-adds) to process one image. VGG-16 needs 15.3 billion and VGG-19 needs 19.6 billion. So ResNet-152 is eight times as deep as VGG-19 and needs a little more than half the computation.
+
+Error kept dropping as they went deeper. Measured the same way as before, by averaging the predictions over ten crops of each test image as AlexNet did, top-1 error was 22.85% for ResNet-50, 21.75% for ResNet-101, and 21.43% for ResNet-152, down from 24.52% for the 34-layer network with the same kind of shortcut.
+
+## When the shortcut needs help
+
+Some blocks change the size of the data, for example by doubling the number of feature maps. Then x and the block's output no longer have the same shape and cannot be added directly. The paper tried three fixes on the 34-layer network:
+
+- fill the extra maps with zeros, which adds no weights (25.03% top-1 error),
+- use a 1×1 convolution on the shortcut only where sizes change (24.52%),
+- use one on every shortcut (24.19%).
+
+The differences are small, and the authors conclude that these extra weights "are not essential for addressing the degradation problem." The deeper networks use the middle option.
+
+## What's next
+
+The last post looks at what these networks won, where going deeper stopped helping, and how this paper leads into the next one on the list.
