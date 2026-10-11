@@ -37,6 +37,7 @@ export const siteConfig = {
   },
   socials: [
     { label: "LinkedIn", href: "https://linkedin.com/in/heyrichie" },
+    { label: "GitHub", href: "https://github.com/richiethomas" },
     { label: "RSS", href: "/rss.xml" },
   ],
 };
