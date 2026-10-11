@@ -11,7 +11,7 @@ draft: false
 tags: ["AlexNet", "ReLU", "activation functions"]
 ---
 
-> **Where we are:** we've seen that [AlexNet's shape](/post/paper-2-the-architecture-scaled-up/) is an ordinary convolutional network, just large. The surprise was never the diagram; it was training something that big. This post covers the first change that made it possible.
+> **Where we are:** we've seen that [AlexNet's shape](/post/paper-2-the-architecture-scaled-up/) is an ordinary convolutional network, just large. The open question is how something that big could be trained at all. This post covers the first change that made it possible.
 
 In Paper #1 we met [ReLU](/post/paper-1-part-9-neurons-and-networks-stacking-simple-decisions-into-something-smart/) as one activation function among a few. It is very simple: for each neuron, it takes the weighted sum coming in, keeps it if it is positive, and outputs zero if it is negative. AlexNet's contribution here was not the idea. It was showing, at scale, how much that simple choice matters.
 
