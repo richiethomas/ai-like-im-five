@@ -15,7 +15,7 @@ tags: ["ResNet", "CNNs", "depth"]
 
 ## Depth helped, at first
 
-AlexNet had eight layers with weights. Two years later, a network from Oxford called VGG stacked 16 to 19 layers of small 3×3 filters and reached 7.32% top-5 error in the 2014 contest, about half of AlexNet's 15.3%. The [architecture post](/post/paper-2-the-architecture-scaled-up/) showed the same effect on a small scale: removing one of AlexNet's middle layers cost about two points of accuracy. Each extra layer can build on the patterns found by the one before it, so a deeper network can describe more complicated things.
+AlexNet had eight layers with weights. Two years later, a network from Oxford called VGG, built in versions with 16 and 19 layers of small 3×3 filters, reached 7.32% top-5 error in the 2014 contest, about half of AlexNet's 15.3%. The [architecture post](/post/paper-2-the-architecture-scaled-up/) showed the same effect on a small scale: removing one of AlexNet's middle layers cost about two points of accuracy. Each extra layer can build on the patterns found by the one before it, [from edges to textures to object parts](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/), so a deeper network can describe more complicated things.
 
 So the next step was to keep stacking layers.
 
@@ -23,7 +23,7 @@ The ResNet authors built their plain networks the VGG way, with two simple rules
 
 ## Then depth hurt
 
-When the ResNet authors stacked more layers onto a plain network, one built like VGG with its layers simply placed one after another, the results got worse. On ImageNet, their 18-layer plain network had 27.94% top-1 error on the validation images (the share of images where its single best guess was wrong), and their 34-layer plain network had 28.54%. Sixteen more layers made it slightly worse, not better. They saw the same pattern on CIFAR-10, the small 10-category dataset from [Part 3](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), where a 56-layer plain network did worse than a 20-layer one.
+The ResNet authors compared two of their own plain networks, built like VGG with their layers simply placed one after another: one with 18 layers and one with 34. The deeper network scored worse. On ImageNet, the 18-layer network had 27.94% top-1 error on the validation images (the share of images where its single best guess was wrong), and the 34-layer network had 28.54%. Sixteen more layers made it slightly worse, not better. Top-1 is a stricter measure than the top-5 numbers above; measured the same way, VGG-16 had 28.07%, so these networks are in the same range as VGG. They saw the same pattern on CIFAR-10, the small 10-category dataset from Paper #1's [post on nearest neighbor](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), where a 56-layer plain network did worse than a 20-layer one.
 
 <img src="/experiments/resnet-degradation/plain-18-vs-34.svg" alt="A bar chart of top-1 error on ImageNet validation images for two plain networks. The 18-layer plain network has 27.94% error and the 34-layer plain network has 28.54%, so the deeper network is slightly worse. The vertical axis starts at 25% so the difference is visible, and the chart says so." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "520px" }} />
 
@@ -35,11 +35,11 @@ They also checked whether more training time would fix it. Training three times 
 
 ## A deeper network should never be worse
 
-The authors then make an argument from construction. Take the trained 18-layer network. Build a 34-layer network by copying those 18 layers and adding 16 more after them that pass their input through unchanged. That deeper network computes exactly what the shallow one does, so its error is exactly the same. A layer that passes its input through unchanged is called an **identity** layer, because what comes out is identical to what went in.
+Maybe a 34-layer network is just unable to do as well as an 18-layer one. The authors show that it can, with a thought experiment. Take the trained 18-layer network. Build a 34-layer network by copying those 18 layers and adding 16 more after them that pass their input through unchanged. That deeper network computes exactly what the shallow one does, so its error is exactly the same. A layer that passes its input through unchanged is called an **identity** layer, because what comes out is identical to what went in.
 
-So a 34-layer network at least as good as the 18-layer one exists. Training did not find it. In the paper's words, the training methods "are unable to find solutions that are comparably good or better than the constructed solution." The paper calls this problem **degradation**: accuracy that gets worse as plain networks get deeper, even on their training data.
+So, according to the thought experiment, a 34-layer network at least as good as the 18-layer one exists. If that's the case, the standard training process of the time should have eventually ended up with a 34-layer network that scored at least as well. It didn't. In the paper's words, the training methods "are unable to find solutions that are comparably good or better than the constructed solution." The paper calls this problem **degradation**: accuracy that gets worse as plain networks get deeper, even on their training data.
 
-That narrows down the difficulty. A stack of layers trained from scratch apparently has trouble learning to do nothing, to pass its input through unchanged, even when doing nothing would be the best choice.
+So the problem is not overfitting, and not too little training time. A stack of layers trained from scratch apparently has trouble learning to do nothing, i.e. learning to simply pass its input through unchanged, even when doing nothing would be the best choice.
 
 ## What's next
 

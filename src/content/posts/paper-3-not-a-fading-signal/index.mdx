@@ -11,25 +11,25 @@ draft: false
 tags: ["ResNet", "batch normalization", "training"]
 ---
 
-> **Where we are:** the [last post](/post/paper-3-deeper-networks-that-did-worse/) found that plain networks got worse as they got deeper, even on their own training images. Before ResNet's fix, it helps to rule out the most common explanation.
+> **Where we are:** the [last post](/post/paper-3-deeper-networks-that-did-worse/) found that plain networks got worse as they got deeper, even on their own training images. Before we discuss ResNet's fix, it helps to rule out the most common explanation.
 
 ## The usual suspect
 
-The [architecture post](/post/paper-2-the-architecture-scaled-up/) described one way depth can break training. The "how wrong you were" signal from [backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/) shrinks a little at each layer it passes back through, until the earliest layers barely change. The [ReLU post](/post/paper-2-relu-made-big-networks-trainable/) showed one cause: S-shaped activation functions that flatten out. The usual name for this is the **vanishing gradient** problem, and for networks around 2012 it was a real obstacle.
+The [architecture post](/post/paper-2-the-architecture-scaled-up/) described one way depth can break training. The "how wrong you were" signal from [backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/) shrinks a little at each layer it passes back through, until the earliest layers barely change. The [ReLU post](/post/paper-2-relu-made-big-networks-trainable/) showed one cause: S-shaped activation functions that flatten out. The usual name for this is the **vanishing gradient** problem, and it had been an obstacle for many years before 2012.
 
-It would be natural to assume this is also what broke the deeper networks in the last post. The ResNet authors say it is not, and their reason is a technique published early in 2015.
+It would be natural to assume a fading signal is also what broke the deeper networks in the last post. The ResNet authors say it is not, and their reason is a technique published early in 2015.
 
 ## Batch normalization
 
-[Part 10](/post/paper-1-part-10-garbage-in-garbage-out-why-data-prep-matters/) normalized the inputs before training: shift each input so its average is 0, and scale it so its spread is about 1, so no input dominates just because its numbers are bigger. **Batch normalization** applies the same idea inside the network, after a layer, while training runs.
+Back in Paper #1, the [post on preparing data](/post/paper-1-part-10-garbage-in-garbage-out-why-data-prep-matters/) normalized the inputs before training: shift each input so its average is 0, and scale it so its spread is about 1, so no input dominates just because its numbers are bigger. **Batch normalization** applies the same idea inside the network, after a layer, while training runs.
 
-It works on the [small, randomly chosen batch](/post/paper-2-the-finer-points/) of images the network sees in each training step. For each of a layer's outputs, it takes that output's values across the batch, subtracts their average, and divides by their spread. Then it multiplies and shifts the result by two numbers the network learns, so a layer can still produce larger or smaller values when that helps. The ResNet authors put a batch-normalization step right after every convolutional layer, before the ReLU.
+It works on the [small, randomly chosen batch](/post/paper-2-the-finer-points/) of images the network sees in each training step. For each of a layer's feature maps, it takes all of that map's values, at every position and across every image in the batch, subtracts their average, and divides by their spread. Then it multiplies and shifts the result by two numbers the network learns, so a layer can still produce larger or smaller values when that helps. The ResNet authors put a batch-normalization step right after every convolutional layer, before the ReLU.
 
-The effect is that the numbers flowing through the network tend to stay in a steady range, layer after layer, instead of shrinking toward zero or growing out of control. Together with better rules for choosing the starting weights, the authors write, this let networks with tens of layers "start converging," meaning start learning normally.
+The effect is that the numbers flowing through the network tend to stay in a steady range, layer after layer, instead of shrinking toward zero or growing out of control. Together with better rules for choosing the starting weights, the authors write, this let networks with tens of layers "start converging," meaning their training error started going down.
 
 ## What the authors checked
 
-The plain networks from the last post were trained with batch normalization. The authors measured what traveled through them in both directions. The forward signals kept a nonzero spread. The backward signals, the gradients, "exhibit healthy norms," meaning they had not shrunk away. Their conclusion: "neither forward nor backward signals vanish."
+The plain networks from the last post were trained with batch normalization, which makes it far less likely that the forward signals shrink toward zero. The authors also checked the backward signals, the gradients, and found that they "exhibit healthy norms," meaning they had not shrunk away. Their conclusion: "neither forward nor backward signals vanish."
 
 So the deeper networks were getting a learning signal at every layer, and they still trained worse. Whatever degradation is, it is not the signal fading out.
 
@@ -39,7 +39,7 @@ The paper does not claim to know. The authors offer a guess: very deep plain net
 
 So ResNet does not start from a full explanation of the problem. It starts from two things: a measured fact, that deeper plain networks train worse even with healthy signals, and the argument from the last post, that a deeper network should be able to copy a shallower one and do no worse. The fix in the next post is built directly on that argument.
 
-The fading signal described in the architecture post was the obstacle for networks like AlexNet in 2012. By the time of ResNet, batch normalization and better starting weights had largely handled it, and the problem left over is the one this paper takes on.
+The fading signal described in the architecture post was an obstacle for networks around 2012. By the time of ResNet, batch normalization and better starting weights had largely handled it, and the problem left over is the one this paper takes on.
 
 ## What's next
 
