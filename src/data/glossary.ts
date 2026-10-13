@@ -83,7 +83,7 @@ export const glossary: Record<string, string> = {
   epoch: "one full pass through the entire training set.",
 
   // Residual networks (Paper #3)
-  "batch-normalization": "rescaling a layer's outputs across each training batch to an average of 0 and a spread of 1, then letting the network learn its own scale and shift; it keeps signals in a steady range through many layers.",
+  "batch-normalization": "rescaling a layer's outputs across each training batch to an average of 0 and a standard deviation of 1, then letting the network learn its own scale and shift; it keeps signals in a steady range through many layers.",
   "vanishing-gradient": "the learning signal shrinking as it is passed back through many layers, so the earliest layers barely change.",
   degradation: "deeper plain networks scoring worse than shallower ones even on their own training data; the problem ResNet set out to fix.",
   residual: "the difference between what a block should output and what came in; a residual block learns only this change.",

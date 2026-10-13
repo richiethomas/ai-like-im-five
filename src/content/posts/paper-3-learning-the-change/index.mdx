@@ -35,7 +35,7 @@ When the block learns F well, the output is H(x), the same thing the plain block
 
 Go back to the problem from the first post. A deeper network should be able to make its extra layers pass their input through unchanged, and training could not get plain layers to do that.
 
-In a residual block, passing the input through unchanged means F(x) = 0, so the output is just x. A block can get F close to zero by pushing its weights toward zero. Doing nothing becomes the easy default, instead of a precise setting the layers have to find.
+In a residual block, passing the input through unchanged means F(x) = 0, so the output is just x. A block can get F close to zero by pushing its weights toward zero. The authors' hypothesis is that this makes doing nothing the easy default, instead of a precise setting the layers have to find.
 
 The authors also tried shortcuts around single layers and "have not observed advantages": with only one layer inside, the block plus its shortcut behaves much like a single linear layer. So their blocks use two or more layers.
 
