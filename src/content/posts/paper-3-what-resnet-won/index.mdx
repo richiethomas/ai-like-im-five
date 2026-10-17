@@ -23,7 +23,7 @@ The ImageNet contest from [the AlexNet posts](/post/paper-2-the-contest-that-cha
 
 The 3.57% came from an **ensemble**: six networks of different depths, trained separately, with their predictions averaged. AlexNet did the same with its [seven networks](/post/paper-2-relu-made-big-networks-trainable/). The best single network, ResNet-152, reached 4.49% top-5 error on the validation images. The authors note that this single-network result "outperforms all previous ensemble results."
 
-The same networks also took first place in four other 2015 contests: ImageNet detection (finding and boxing each object in an image), ImageNet localization, and detection and segmentation on a dataset called COCO. The authors credit the deeper features. Swapping VGG-16 for ResNet-101 in their detection system gave a 28% relative improvement on COCO object detection.
+The same networks also took first place in four other 2015 contests: ImageNet detection (finding and boxing each object in an image), ImageNet localization, and two on a dataset called COCO: detection and segmentation. The authors credit the deeper features. Swapping VGG-16 for ResNet-101 in their detection system raised its COCO detection score from 21.2 to 27.2, a 28% relative improvement.
 
 ## Where depth stopped helping
 
@@ -35,7 +35,7 @@ So shortcuts addressed degradation, the problem of deeper plain networks fitting
 
 ## The recipe, compared with AlexNet's
 
-The training recipe looks familiar from [AlexNet's](/post/paper-2-the-finer-points/): stochastic gradient descent with momentum 0.9 and weight decay, a learning rate cut by a factor of 10 whenever progress stalled, and data augmentation with random crops, flips, and AlexNet's own color jitter. Two things changed. Batches were 256 images instead of 128, and there was no dropout at all. The authors left it out following the batch normalization paper, which reported that <Term k="batch-normalization">batch normalization</Term> reduces the need for it.
+The training recipe looks familiar from [AlexNet's](/post/paper-2-the-finer-points/): stochastic gradient descent with momentum 0.9 and weight decay, a learning rate cut by a factor of 10 whenever progress stalled, and data augmentation with random crops, flips, and AlexNet's own color jitter. Two things changed. Batches were 256 images instead of 128, and there was no dropout at all. The authors left it out following the batch normalization paper, which reported that <Term k="batch-normalization">batch normalization</Term> reduces the need for dropout.
 
 ## What was new, and what was not
 
