@@ -17,7 +17,7 @@ tags: ["ResNet", "residual connections", "CNNs"]
 
 Picture a line of artists drawing a cat, each one there to improve the picture a little. Before ResNet, networks worked like a line where each artist looks at the drawing they receive, but has to make their version on a fresh sheet, copying from the one in front of them. To keep what the earlier artists drew, they have to copy all of it exactly, then add their own improvement. ResNet's change was to hand the drawing itself down the line, so each artist only makes their change on top: adding, erasing, or adjusting. An artist with nothing useful to add just hands it on.
 
-Copying exactly is hard for a plain layer, so in practice its copy of the earlier work comes out a little off. A deeper network has more layers that each have to copy, so it has more chances to distort the earlier work. That fits what the paper measured: the 34-layer plain network did worse than the 18-layer one, even on its training images. ResNet removes the need to copy: the earlier work goes forward on its own, and each layer only adds its change to it.
+The paper suggests that copying exactly is hard for a plain network's layers, so in practice their copy of the earlier work comes out a little off. A deeper network has more layers that each have to copy, so it has more chances to distort the earlier work. That fits what the paper measured: the 34-layer plain network did worse than the 18-layer one, even on its training images. ResNet removes the need to copy: the earlier work goes forward on its own, and each layer only adds its change to it.
 
 ## Same layers, a different job
 
@@ -45,15 +45,20 @@ When the layers learn F well, the output is H(x), the same thing the plain block
 
 ## Why that should help
 
-Go back to the problem from the first post. A deeper network should be able to make its extra layers pass their input through unchanged, and training could not get plain layers to do that. The two kinds of block ask for different things when the best choice is to do nothing.
+The authors' reason for expecting the fix to help comes from the identity idea in the first post, because passing the input through unchanged was the specific thing plain networks couldn't learn:
 
-**In a plain block, doing nothing takes one exact pattern of weights.** Take a layer with 64 feature maps in and 64 out. Its 64 filters hold 36,864 weights. To pass its input through unchanged, each filter has to copy exactly one incoming map and ignore the rest: 64 particular weights must be exactly 1, and the other 36,800 exactly 0. Both layers in the block need that pattern, and the batch-normalization and ReLU steps between them have to leave the values alone too.
+- If the best a block can do is nothing (identity), a residual block reaches it by outputting 0.
+- If the best is close to nothing (a small change), a residual block only has to find that small change, starting from identity.
+
+With many blocks sharing the job, each block's part of it is usually small, even when the total change across all of them is large.
+
+**In a plain block, doing nothing takes an exact pattern of weights.** Take a layer with 3×3 filters, 64 feature maps in, and 64 out. Its 64 filters hold 36,864 weights (3 × 3 × 64 × 64). To pass its input through unchanged, each filter has to copy exactly one incoming map and ignore the rest: 64 particular weights must be exactly 1, and the other 36,800 exactly 0. Both layers in the block need that pattern, and the batch-normalization and ReLU steps between them have to leave the values alone too.
 
 **In a residual block, doing nothing means the layers output 0.** The input is added back at the end, so if 5.0 comes in and 5.0 is the best output, the layers only have to produce 0. The paper says they can get there by pushing their weights toward zero. No weight has to land on an exact value like 1. The authors' hypothesis is that this makes doing nothing the easy default, instead of a precise setting the layers have to find.
 
-They present it as a hypothesis, not a proof: "We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping." They also note that doing exactly nothing is unlikely to be the best choice in practice. Their argument is that the best output is usually closer to the input than to zero, so a small change on top of the input is easier to learn than the whole output.
+They present it as a hypothesis, not a proof: "We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping." They also note that doing exactly nothing is unlikely to be the best choice in practice.
 
-The authors also tried shortcuts around single layers and "have not observed advantages": with only one layer inside, the block plus its shortcut behaves much like a single linear layer. So their blocks use two or more layers.
+The authors also tried shortcuts around single layers and "have not observed advantages": with only one layer inside, the layer's result plus the input is no different from what a single plain layer can already produce. So their blocks use two or more layers.
 
 ## The shortcut
 
@@ -61,7 +66,7 @@ The path that carries x around the block and adds it back is called a **shortcut
 
 <img src="/experiments/resnet-block/plain-vs-residual.svg" alt="Two blocks side by side. On the left, a plain block: input x goes through a weight layer, a ReLU, and a second weight layer, then a final ReLU produces the output. On the right, a residual block with the same layers, plus a separate path that carries x around both weight layers and adds it to their output just before the final ReLU." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "560px" }} />
 
-Two details about the shortcut. First, it has no weights of its own. It passes x through unchanged and adds it, so a residual network has the same number of weights as the plain network it was built from. (When a block changes the size of its data, the shortcut needs a small adjustment; that comes up two posts from now.) Second, in the paper's design, the ReLU comes after the addition, so the layers' output and the added input are combined before the activation.
+Two details about the shortcut. First, it has no weights of its own. It passes x through unchanged and adds it, so a residual network has the same number of weights as a plain network with the same layers. (When a block changes the size of its data, the shortcut needs a small adjustment; that comes up two posts from now.) Second, in the paper's design, the ReLU comes after the addition, so the layers' output and the added input are combined before the activation.
 
 A residual network is a stack of these blocks, each one adding its own learned change to what the blocks before it produced.
 

@@ -11,11 +11,11 @@ draft: false
 tags: ["ResNet", "residual connections", "ImageNet"]
 ---
 
-> **Where we are:** [the residual block](/post/paper-3-learning-the-change/) asks layers to learn only a change to their input, with a shortcut adding the input back. This post checks whether that fixed the problem from [the first post](/post/paper-3-deeper-networks-that-did-worse/).
+> **Where we are:** in a [residual block](/post/paper-3-learning-the-change/), the layers learn only a change to their input, and a shortcut adds the input back. This post checks whether that fixed the problem from [the first post](/post/paper-3-deeper-networks-that-did-worse/).
 
 ## The comparison
 
-The authors ran a controlled test. They took their 18-layer and 34-layer plain networks, the ones where depth made things worse, and added a shortcut around every pair of layers. Nothing else changed: same layers, same training, and, because the shortcuts have no weights, the same number of weights. The paper calls the shortcut versions ResNet-18 and ResNet-34.
+The authors ran a controlled test. They took their 18-layer and 34-layer plain networks, the pair where depth made things worse, and added a shortcut around every pair of layers. Nothing else changed: same layers, same training setup, and, because the shortcuts have no weights, the same number of weights. The paper calls the shortcut versions ResNet-18 and ResNet-34.
 
 Here is top-1 error on the ImageNet validation images, the share of images where the network's single best guess was wrong:
 
@@ -27,7 +27,7 @@ Reading across:
 - With shortcuts, adding the same 16 layers lowered error from 27.88% to 25.03%, a drop of about 2.8 points.
 - At 34 layers, the version with shortcuts beat the plain one by about 3.5 points.
 
-With shortcuts, the deeper network did what depth was supposed to do. The training data agreed: the authors report that the 34-layer residual network "exhibits considerably lower training error," the reverse of what happened with the plain networks. In the paper's training curves, the 34-layer plain network's error sits above the 18-layer one for the entire run; with shortcuts, the 34-layer curve ends up below.
+With shortcuts, the deeper network did what depth was supposed to do. The training data agreed: the authors report that the 34-layer residual network "exhibits considerably lower training error" than the 18-layer one, the reverse of what happened with the plain networks. In the paper's training curves (plots of error over the course of training), the 34-layer plain network's error sits above the 18-layer one for the entire run; with shortcuts, the 34-layer curve ends up below.
 
 At 18 layers, the two versions were nearly tied (plain 27.94%, with shortcuts 27.88%). The authors note that the residual version still helped there in a different way: it "converges faster," reaching its final accuracy sooner. Their reading is that at 18 layers, ordinary training could still find a good solution for the plain network; the shortcuts mattered most once the network got deeper.
 
@@ -37,16 +37,16 @@ The authors repeated the test on the small CIFAR-10 dataset, where training is c
 
 ## Did the layers learn small changes?
 
-The hypothesis from the last post was that residual layers would only need to make small adjustments to what came in. The authors checked this on CIFAR-10 by measuring how strongly each layer responded, the spread of its outputs, in plain and residual networks.
+The hypothesis from the last post was that residual layers would only need to make small adjustments to what came in. The authors checked this on CIFAR-10 by measuring how strongly each layer responded, the <Term k="standard-deviation">standard deviation</Term> of its outputs, in plain and residual networks.
 
-A layer whose outputs barely vary from image to image is changing its input very little. The residual layers responded more weakly than the plain ones. And the deeper the residual network, the smaller each layer's response: in the paper's words, "an individual layer of ResNets tends to modify the signal less." That is what the hypothesis predicts. When many blocks share the work, each one only needs to nudge what it receives.
+In a residual block, that output is the change the layers add to x before the shortcut adds x back, so a weak response means a small change. The residual layers responded more weakly than the plain ones. And the deeper the residual network, the smaller each layer's response: in the paper's words, "an individual layer of ResNets tends to modify the signal less." That is what the hypothesis predicts. When many blocks share the work, each one only needs to nudge what it receives.
 
 This supports the explanation without proving it, and the paper words it that way: the measurements "support our basic motivation."
 
 ## Same cost, better result
 
-The comparison held one more thing equal. Adding x back costs one addition per number, which is negligible next to the multiplications inside the layers. The residual networks used the same weights and almost the same amount of computation as the plain ones. The improvement came from how the layers were connected, not from more resources.
+The comparison held one more thing equal. Adding x back costs one addition per number, which is negligible next to the multiplications inside the layers. The residual networks used the same number of weights and almost the same amount of computation as the plain ones. The improvement came from how the layers were connected, not from more resources.
 
 ## What's next
 
-Thirty-four layers was a test. The next post is about how the authors went to 152 layers while keeping the computation manageable, using a different kind of block.
+Thirty-four layers was a test. The next post is about how the authors went to 152 layers while keeping the computation manageable, using a cheaper kind of block called a bottleneck block.
