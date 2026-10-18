@@ -17,47 +17,43 @@ tags: ["ResNet", "identity mappings", "backpropagation"]
 
 Suppose the shortcut passes x unchanged and nothing comes after the addition. Then each block does exactly one thing: it takes its input and adds its change.
 
-```
-next block's input = x + F(x)
-```
+<p style={{ textAlign: "center", fontSize: "1.2rem", margin: "1.5rem 0" }}>next block's input = x + F(x)</p>
 
 Here is a stack of 3 blocks, with made-up numbers for a single value:
 
-```
-block 1:  5.0 + 0.2    = 5.2
-block 2:  5.2 + (−0.1) = 5.1
-block 3:  5.1 + 0.3    = 5.4
-```
+<img src="/experiments/identity-mappings/changes-add-up.svg" alt="A chain of three blocks. The starting value 5.0, in blue, goes into block 1, which adds 0.2, giving 5.2. Block 2 adds minus 0.1, giving 5.1. Block 3 adds 0.3, giving 5.4 at the end. Below, the equation 5.4 = 5.0 + 0.2 − 0.1 + 0.3, with the 5.0 in blue, and a caption: the end value is the starting value, still intact, plus each block's change." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
 
-The final 5.4 is the starting 5.0 plus every block's change: 5.0 + 0.2 − 0.1 + 0.3. That holds for any number of blocks. The paper writes it like this, where x_l is the input at some earlier block l and x_L is the input at a later block L:
+That holds for any number of blocks. The paper writes it like this, where x<sub>l</sub> is the input at some earlier block l and x<sub>L</sub> is the input at a later block L:
 
-```
-x_L = x_l + F(x_l) + F(x_l+1) + ... + F(x_L−1)
-```
+<p style={{ textAlign: "center", fontSize: "1.2rem", margin: "1.5rem 0" }}>x<sub>L</sub> = x<sub>l</sub> + F(x<sub>l</sub>) + F(x<sub>l+1</sub>) + … + F(x<sub>L−1</sub>)</p>
 
 In the artist picture from Paper #3, the drawing at the end of the line is the original sketch with every artist's marks on top, and the original sketch is still there underneath.
 
 A plain network has nothing like the 5.0 in that sum. Each block computes a new output from its input, so the 5.0 survives only as well as every block along the way manages to rebuild it.
 
-## Backward: the "1 +"
+## Backward: a route that doesn't fade
 
 Training runs the other way too. [Backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/) starts with a correction at the end of the network, how much and in which direction the error would change if each value moved, and passes it back toward the earliest layers. In a plain network, each layer the correction passes through multiplies it by some number. If those numbers tend to be below 1, the correction fades, like a [photocopy of a photocopy](/post/paper-2-the-architecture-scaled-up/). At 0.5 per layer, after 20 layers it is about a millionth of its starting size.
 
-In a residual stack, look at the sum again. The starting 5.0 appears in the final 5.4 directly. So if the starting value moves up by 0.1, the final value moves up by 0.1 through that direct term alone, plus whatever the blocks' changes do in response. The correction reaching an early block is the correction at the end multiplied by:
+In a residual stack, look at the sum again. The starting 5.0 appears in the final 5.4 directly. So if the starting value moves up by 0.1, the final value moves up by 0.1 through that direct term alone, plus whatever the blocks' changes do in response. So the correction reaching an early block works out to:
 
-```
-1 + (the part that goes through the layers)
-```
+<p style={{ textAlign: "center", fontSize: "1.2rem", margin: "1.5rem 0" }}>correction at an early block = correction at the end × (1 + the part that goes through the layers)</p>
 
-<img src="/experiments/identity-mappings/backward-routes.svg" alt="Six blocks in a row, with block 1 the earliest and block 6 at the end, where the error is measured. Two rows of circles show the correction moving backward from block 6 to block 1. In the top row, the route through the layers, a made-up multiplier of 0.5 per block shrinks the value from 1 to 0.5, 0.25, 0.125, 0.062, and 0.031, and the circles fade. In the bottom row, the route through the shortcuts, every circle reads 1. A caption says the shortcut route reaches the earliest block at full size, so the correction there is 1 plus the other route." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
+The 1 is the shortcut route. The part that goes through the layers can fade like any photocopy, but the 1 does not depend on any layer's weights.
 
-The 1 is the shortcut route. The part that goes through the layers can fade like any photocopy, but the 1 does not depend on any layer's weights. The paper's version, where ∂E/∂x means "how much the error E changes when x changes":
+In a real network, the correction gets multiplied at each step as it passes back through a block's layers:
 
-```
-∂E/∂x_l = ∂E/∂x_L × (1 + ∂/∂x_l [F(x_l) + ... + F(x_L−1)])
-```
+- by that layer's weights;
+- by the slope of each ReLU (1 where the value was positive, 0 where it was zero);
+- by whatever [batch normalization](/post/paper-3-not-a-fading-signal/) does to it.
+
+Combined, one block's layers multiply the correction by some overall amount. That amount varies from block to block and over the course of training, and it can be above or below 1. To keep things simple, the figure assumes it is always 0.5 per block:
+
+<img src="/experiments/identity-mappings/backward-routes.svg" alt="Two routes backward through the same six residual blocks, with block 1 the earliest and block 6 at the end, where the error is measured. In the top row, the route through the layers, each arrow is labeled times 0.5, so the value shrinks from 1 to 0.5, 0.25, 0.125, 0.062, and 0.031, and the circles fade. In the bottom row, the route through the shortcuts, each arrow is labeled times 1 and every circle reads 1. A caption says both routes run through the same residual blocks, and a plain network has no shortcuts, so it has only the top route." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
 
 In the authors' words, the 1 "ensures that information is directly propagated back to any shallower unit," meaning any earlier block, and as a result "the gradient of a layer does not vanish even when the weights are arbitrarily small." The only way to cancel it would be for the through-the-layers part to equal exactly −1, and the paper notes that it "cannot be always −1 for all samples in a mini-batch," the [batch](/post/paper-2-the-finer-points/) of images used in each training step.
+
+This doesn't solve the <Term k="vanishing-gradient">vanishing gradient</Term> problem completely. The correction can still shrink inside a block, on its way through that block's own 2 or 3 layers. But with the two requirements met, the number of layers in the network can no longer be the cause: however many blocks there are, the shortcut route carries the correction from the end to each block unchanged.
 
 ## How this fits Paper #3
 

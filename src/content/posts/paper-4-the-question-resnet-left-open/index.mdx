@@ -19,8 +19,6 @@ Paper #3 described ResNet as a [line of artists](/post/paper-3-learning-the-chan
 
 This paper looks at the handing-on. In ResNet's original design, between one artist and the next, the drawing passes through one more step that can alter it. With a handful of artists that barely matters. With hundreds, the paper finds, it starts to get in the way. The paper's main change is to move that step off the path between artists, so the drawing reaches each artist exactly as the last one left it.
 
-<img src="/experiments/identity-mappings/relu-between-blocks.svg" alt="Two rows of three blocks. In the top row, Original ResNet, a highlighted ReLU sits on the arrow between each pair of blocks, labeled on the path between blocks. In the bottom row, Pre-activation, the arrows between blocks have nothing on them, labeled nothing in between. A caption says the ReLU is still in the network but moves inside each block, before the weight layers, so what one block hands on is exactly what the next block receives." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
-
 ## What ResNet left open
 
 ResNet showed that shortcuts work, but its explanation was a hypothesis: that learning a small change to the input is easier than learning the whole output. Its [last post](/post/paper-3-what-resnet-won/) also ended on a result that did not fit neatly. On CIFAR-10, a 1,202-layer ResNet had 7.93% error, worse than the 110-layer version's 6.43%. The authors suspected overfitting.
@@ -57,6 +55,10 @@ The paper asks the same question of both pieces on the path from one block to th
 - **The step after the addition.** Can the block be rearranged so that nothing comes after the addition?
 
 The paper's answers: none of the other shortcuts it tried did better than the one that passes x unchanged, and yes, the block can be rearranged so that nothing comes after the addition. In both cases, the version that left the signal alone did best. The next post shows why, by following the signal through a stack of blocks where both pieces do nothing.
+
+Here is the rearranged block, from later in the paper. Nothing is deleted: it still has two BN steps and two ReLUs. The BN and ReLU that ended the original block now start it, so each BN-and-ReLU pair runs before its weight layer instead of after. That takes the last ReLU off the shortcut's path; it now acts only on the layers' path:
+
+<img src="/experiments/identity-mappings/preact-block.svg" alt="The rearranged pre-activation block. Input x goes down through BN, ReLU, weight layer, BN, ReLU, and weight layer, labeled F(x). The first BN and ReLU are highlighted, with the note: moved here from the end of the original block. A blue shortcut carries x around the layers, unchanged, to a plus sign, giving x + F(x). Below the plus sign, a note says nothing after the addition, and the result is the next block's x." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "380px" }} />
 
 ## What's next
 

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="250" rx="10" fill="#ffffff"/>
+<text x="320.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Three blocks, each adding its change</text>
+<defs><marker id="a334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+<defs><marker id="a2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+<defs><marker id="ac2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker></defs>
+<defs><marker id="a94a3b8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+<text x="44" y="116" text-anchor="middle" font-size="17" fill="#2563eb" font-weight="700">5.0</text>
+<line x1="68" y1="110" x2="90" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="92" y="84" width="88" height="52" rx="7" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="136" y="104" text-anchor="middle" font-size="12" fill="#334155">block 1</text>
+<text x="136" y="125" text-anchor="middle" font-size="14" fill="#15803d" font-weight="700">+0.2</text>
+<line x1="180" y1="110" x2="204" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<text x="228" y="116" text-anchor="middle" font-size="17" fill="#334155" font-weight="700">5.2</text>
+<line x1="252" y1="110" x2="274" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="276" y="84" width="88" height="52" rx="7" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="320" y="104" text-anchor="middle" font-size="12" fill="#334155">block 2</text>
+<text x="320" y="125" text-anchor="middle" font-size="14" fill="#c2410c" font-weight="700">−0.1</text>
+<line x1="364" y1="110" x2="388" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<text x="412" y="116" text-anchor="middle" font-size="17" fill="#334155" font-weight="700">5.1</text>
+<line x1="436" y1="110" x2="458" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="460" y="84" width="88" height="52" rx="7" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="504" y="104" text-anchor="middle" font-size="12" fill="#334155">block 3</text>
+<text x="504" y="125" text-anchor="middle" font-size="14" fill="#15803d" font-weight="700">+0.3</text>
+<line x1="548" y1="110" x2="572" y2="110" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<text x="596" y="116" text-anchor="middle" font-size="17" fill="#334155" font-weight="700">5.4</text>
+<text x="44" y="140" text-anchor="middle" font-size="10.5" fill="#64748b">start</text>
+<text x="596" y="140" text-anchor="middle" font-size="10.5" fill="#64748b">end</text>
+<text x="320.0" y="192" text-anchor="middle" font-size="17" font-weight="700" xml:space="preserve"><tspan fill="#334155">5.4</tspan><tspan fill="#334155"> = </tspan><tspan fill="#2563eb">5.0</tspan><tspan fill="#15803d"> + 0.2</tspan><tspan fill="#c2410c"> − 0.1</tspan><tspan fill="#15803d"> + 0.3</tspan></text>
+<text x="320.0" y="220" text-anchor="middle" font-size="11" fill="#64748b">The end value is the starting value, still intact, plus each block's change.</text>
+</svg>
