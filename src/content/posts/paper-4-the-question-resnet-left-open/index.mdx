@@ -17,15 +17,17 @@ tags: ["ResNet", "identity mappings", "residual connections"]
 
 Paper #3 described ResNet as a [line of artists](/post/paper-3-learning-the-change/): each artist is one block, and each one receives the drawing, makes a change on top, and hands the drawing on.
 
-This paper looks at the handing-on. In ResNet's original design, between one artist and the next, the drawing passes through one more step that can alter it. With a handful of artists that barely matters. With hundreds, the paper finds, it starts to get in the way. The paper's main change is to remove that step, so the drawing reaches each artist exactly as the last one left it.
+This paper looks at the handing-on. In ResNet's original design, between one artist and the next, the drawing passes through one more step that can alter it. With a handful of artists that barely matters. With hundreds, the paper finds, it starts to get in the way. The paper's main change is to move that step off the path between artists, so the drawing reaches each artist exactly as the last one left it.
+
+<img src="/experiments/identity-mappings/relu-between-blocks.svg" alt="Two rows of three blocks. In the top row, Original ResNet, a highlighted ReLU sits on the arrow between each pair of blocks, labeled on the path between blocks. In the bottom row, Pre-activation, the arrows between blocks have nothing on them, labeled nothing in between. A caption says the ReLU is still in the network but moves inside each block, before the weight layers, so what one block hands on is exactly what the next block receives." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
 
 ## What ResNet left open
 
 ResNet showed that shortcuts work, but its explanation was a hypothesis: that learning a small change to the input is easier than learning the whole output. Its [last post](/post/paper-3-what-resnet-won/) also ended on a result that did not fit neatly. On CIFAR-10, a 1,202-layer ResNet had 7.93% error, worse than the 110-layer version's 6.43%. The authors suspected overfitting.
 
-This paper takes a closer look. Instead of only training networks and comparing scores, the authors write down how a signal moves through a stack of residual blocks, forward (from the image to the answer) and backward (the correction from [backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/)), and ask what the shortcut path needs for that movement to be clean.
+This paper takes a closer look. Instead of only training networks and comparing scores, the authors write down how a signal moves through a stack of residual blocks, forward (from the image to the answer) and backward (the correction from [backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/)), and ask what the path between blocks needs so that nothing changes the signal on its way through except the blocks' own changes.
 
-Their summary, from the abstract: "the forward and backward signals can be directly propagated from one block to any other block, when using identity mappings as the skip connections and after-addition activation." That sentence names two conditions:
+Their summary, from the abstract: "the forward and backward signals can be directly propagated from one block to any other block, when using identity mappings as the skip connections and after-addition activation." So the signal passes straight through only when two things are true. Both are about leaving the signal alone:
 
 1. **The shortcut is an <Term k="identity-mapping">identity mapping</Term>.** It carries x, the block's input, forward with nothing multiplied or added.
 2. **Nothing after the addition changes the result.** Whatever comes out of "x plus the layers' change" goes to the next block as it is.
@@ -36,16 +38,9 @@ ResNet's original block meets the 1st condition but not the 2nd.
 
 Here is one block from the original ResNet, in the order its steps run. The weight layers are 3×3 [convolutions](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), BN is [batch normalization](/post/paper-3-not-a-fading-signal/), and ReLU is the [activation](/post/paper-2-relu-made-big-networks-trainable/) that turns every negative value into 0.
 
-```
-input x
-  path 1 (the layers):  weight → BN → ReLU → weight → BN   = the change, F(x)
-  path 2 (the shortcut): x, unchanged
-add the two paths:  x + F(x)
-ReLU
-output (the next block's x)
-```
+<img src="/experiments/identity-mappings/original-block.svg" alt="A single residual block from the original ResNet. Input x goes down through weight layer, BN, ReLU, weight layer, and BN, labeled F(x). A blue shortcut carries x around those steps, unchanged, to a plus sign, giving x + F(x). A final ReLU after the plus sign is highlighted, with the note that it acts on the sum, so it also acts on x. Its result is the next block's x." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "360px" }} />
 
-The last line is the step the metaphor described. The ReLU after the addition applies to the sum, so it applies to what the shortcut carried too. When the sum is 0 or more, it changes nothing. x itself comes out of an earlier ReLU and is never negative, but the layers' change can be, and then the sum can drop below 0:
+The highlighted ReLU is the step the metaphor described. The ReLU after the addition applies to the sum, so it applies to what the shortcut carried too. When the sum is 0 or more, it changes nothing. x itself comes out of an earlier ReLU and is never negative, but the layers' change can be, and then the sum can drop below 0:
 
 ```
 x = 5.0,  F(x) = −0.2   →  sum 4.8   →  ReLU  →  4.8   (unchanged)
@@ -61,7 +56,7 @@ The paper asks the same question of both pieces on the path from one block to th
 - **The shortcut.** ResNet chose a shortcut that passes x unchanged, but other designs had put gates and weights on their shortcuts. Would any of those do better?
 - **The step after the addition.** Can the block be rearranged so that nothing comes after the addition?
 
-The paper's answer to both is "nothing," and the next post shows why, by following the signal through a stack of blocks where both pieces do nothing.
+The paper's answers: none of the other shortcuts it tried did better than the one that passes x unchanged, and yes, the block can be rearranged so that nothing comes after the addition. In both cases, the version that left the signal alone did best. The next post shows why, by following the signal through a stack of blocks where both pieces do nothing.
 
 ## What's next
 

@@ -15,14 +15,9 @@ tags: ["ResNet", "identity mappings", "pre-activation"]
 
 ## What is still on the path
 
-Here is the original block again:
+Here is the original block again, from the [1st post](/post/paper-4-the-question-resnet-left-open/):
 
-```
-path 1 (the layers):   weight → BN → ReLU → weight → BN   = F(x)
-path 2 (the shortcut): x
-add:   x + F(x)
-ReLU                    ← still on the path between blocks
-```
+<img src="/experiments/identity-mappings/original-block.svg" alt="A single residual block from the original ResNet. Input x goes down through weight layer, BN, ReLU, weight layer, and BN, labeled F(x). A blue shortcut carries x around those steps, unchanged, to a plus sign, giving x + F(x). A final ReLU after the plus sign is highlighted, with the note that it acts on the sum, so it also acts on x. Its result is the next block's x." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "360px" }} />
 
 That last ReLU turns any negative value in the sum into 0. When the layers' change is negative enough to pull the sum below 0, the next block receives 0 instead of what the layers produced. The authors wanted this step to do nothing, like the shortcut, and tried four ways of rearranging the same pieces.
 
@@ -30,22 +25,13 @@ That last ReLU turns any negative value in the sum into 0. When the layers' chan
 
 The same experiment setup as the last post: ResNet-110 on CIFAR-10, original error 6.61%. They also ran a 164-layer version built from [bottleneck blocks](/post/paper-3-going-to-152-layers/), original error 5.93%.
 
-**1. Batch normalization after the addition.** Move the last BN from inside path 1 to after the addition. Worse: 8.17% (110 layers) and 6.50% (164). Now BN sits on the shortcut path and rescales everything that passes through it. In the paper's words, it "alters the signal that passes through the shortcut and impedes information propagation."
+**1. Batch normalization after the addition.** Move the last BN from inside the layers' path to after the addition. Worse: 8.17% (110 layers) and 6.50% (164). Now BN sits on the shortcut path and rescales everything that passes through it. In the paper's words, it "alters the signal that passes through the shortcut and impedes information propagation."
 
-**2. ReLU before the addition.** Move the last ReLU into path 1, so it runs before the addition and nothing runs after it. Also worse: 7.84% and 6.14%. The problem is that the change F(x) now comes out of a ReLU, so it can never be negative. A block can only add to x, never subtract. The paper: "intuitively a 'residual' function should take values in (−∞, +∞)." A block whose best output is 4.8 when 5.0 comes in has no way to get there.
+**2. ReLU before the addition.** Move the last ReLU into the layers' path, so it runs before the addition and nothing runs after it. Also worse: 7.84% and 6.14%. The problem is that the change F(x) now comes out of a ReLU, so it can never be negative. A block can only add to x, never subtract. The paper: "intuitively a 'residual' function should take values in (−∞, +∞)." A block whose best output is 4.8 when 5.0 comes in has no way to get there.
 
-**3. ReLU-only pre-activation.** Put the ReLU at the start of path 1, before the 1st weight layer, and keep BN where it was. A ReLU still comes after the addition in this version. About the same as the original: 6.71% and 5.91%.
+**3. ReLU-only pre-activation.** Put the ReLU at the start of the layers' path, before the 1st weight layer, and keep BN where it was. A ReLU still comes after the addition in this version. About the same as the original: 6.71% and 5.91%.
 
-**4. Full pre-activation.** Put both BN and ReLU before each weight layer:
-
-```
-path 1 (the layers):   BN → ReLU → weight → BN → ReLU → weight   = F(x)
-path 2 (the shortcut): x
-add:   x + F(x)
-(nothing after)
-```
-
-Better than the original: 6.37% (110 layers) and 5.46% (164 layers). This is the block the paper recommends, called full pre-activation. "Activation" means the BN-and-ReLU step, and "pre" means it now comes before each weight layer instead of after.
+**4. Full pre-activation.** Put both BN and ReLU before each weight layer, so the layers' path runs BN, ReLU, weight, BN, ReLU, weight, and nothing comes after the addition. Better than the original: 6.37% (110 layers) and 5.46% (164 layers). This is the block the paper recommends, called full pre-activation. "Activation" means the BN-and-ReLU step, and "pre" means it now comes before each weight layer instead of after.
 
 <img src="/experiments/identity-mappings/original-vs-preact.svg" alt="Two residual blocks side by side. The original block runs weight layer, BN, ReLU, weight layer, BN, then adds the shortcut x, then a final ReLU, highlighted and labeled on the path between blocks, before the output. The full pre-activation block runs BN, ReLU, weight layer, BN, ReLU, weight layer, then adds the shortcut x, with nothing after the addition. A caption says the steps are the same in a different order, and that in the original block the last ReLU acts on x plus F(x), so it sits on the shortcut's route." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "560px" }} />
 
@@ -53,7 +39,7 @@ Better than the original: 6.37% (110 layers) and 5.46% (164 layers). This is the
 
 It might seem that moving BN and ReLU to the front of the block changes what the network computes. In a plain network, it would not. The paper points out that in a plain stack of layers, the BN and ReLU between two weight layers come after one layer and before the next, so it "does not matter whether we think of them as post- or pre-activations."
 
-The addition is what makes the position matter. The ReLU after the addition is also on the shortcut path; the same ReLU at the start of path 1 is only on the layers' path. Moving it from one to the other removes it from the shortcut's route without removing it from the network. The layers still get their ReLUs, and the shortcut's x arrives at the next block untouched.
+The addition is what makes the position matter. The ReLU after the addition is also on the shortcut path; the same ReLU at the start of the layers' path is only on the layers' path. Moving it from one to the other removes it from the shortcut's route without removing it from the network. The layers still get their ReLUs, and the shortcut's x arrives at the next block untouched.
 
 In the artist picture, where each artist is one block, the step between artists is gone. Each artist works on the drawing exactly as the last one left it.
 
