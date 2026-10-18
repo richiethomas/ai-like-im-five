@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 390" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="600" height="390" rx="10" fill="#ffffff"/>
+<text x="300.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Changing the shortcut of ResNet-110: test error on CIFAR-10</text>
+<defs><marker id="a334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+<defs><marker id="a2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+<defs><marker id="ac2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker></defs>
+<defs><marker id="a94a3b8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+<line x1="230.0" y1="58" x2="230.0" y2="302" stroke="#f1f5f9"/>
+<text x="230.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">0%</text>
+<line x1="292.0" y1="58" x2="292.0" y2="302" stroke="#f1f5f9"/>
+<text x="292.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">5%</text>
+<line x1="354.0" y1="58" x2="354.0" y2="302" stroke="#f1f5f9"/>
+<text x="354.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">10%</text>
+<line x1="416.0" y1="58" x2="416.0" y2="302" stroke="#f1f5f9"/>
+<text x="416.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">15%</text>
+<line x1="478.0" y1="58" x2="478.0" y2="302" stroke="#f1f5f9"/>
+<text x="478.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">20%</text>
+<line x1="540.0" y1="58" x2="540.0" y2="302" stroke="#f1f5f9"/>
+<text x="540.0" y="318" text-anchor="middle" font-size="11" fill="#64748b">25%</text>
+<line x1="230" y1="58" x2="230" y2="302" stroke="#64748b"/>
+<text x="222" y="85.0" text-anchor="end" font-size="12" fill="#334155" font-weight="600">identity (original)</text>
+<rect x="230" y="71" width="81.964" height="20" rx="3" fill="#2563eb"/>
+<text x="317.964" y="85.0" font-size="12" fill="#2563eb" font-weight="600">6.61%</text>
+<text x="222" y="119.0" text-anchor="end" font-size="12" fill="#334155">shortcut-only gate, started open</text>
+<rect x="230" y="105" width="85.68399999999997" height="20" rx="3" fill="#94a3b8"/>
+<text x="321.68399999999997" y="119.0" font-size="12" fill="#334155" font-weight="600">6.91%</text>
+<text x="222" y="153.0" text-anchor="end" font-size="12" fill="#334155">exclusive gate, best setting</text>
+<rect x="230" y="139" width="107.88" height="20" rx="3" fill="#94a3b8"/>
+<text x="343.88" y="153.0" font-size="12" fill="#334155" font-weight="600">8.70%</text>
+<text x="222" y="187.0" text-anchor="end" font-size="12" fill="#334155">1×1 convolution</text>
+<rect x="230" y="173" width="151.52800000000002" height="20" rx="3" fill="#94a3b8"/>
+<text x="387.528" y="187.0" font-size="12" fill="#334155" font-weight="600">12.22%</text>
+<text x="222" y="221.0" text-anchor="end" font-size="12" fill="#334155">both paths scaled by 0.5</text>
+<rect x="230" y="207" width="153.14" height="20" rx="3" fill="#94a3b8"/>
+<text x="389.14" y="221.0" font-size="12" fill="#334155" font-weight="600">12.35%</text>
+<text x="222" y="255.0" text-anchor="end" font-size="12" fill="#334155">shortcut scaled by 0.5</text>
+<rect x="230" y="241" width="248.0" height="20" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="4 3"/>
+<text x="484.0" y="255.0" font-size="11.5" fill="#64748b">failed (above 20%)</text>
+<text x="222" y="289.0" text-anchor="end" font-size="12" fill="#334155">dropout on the shortcut</text>
+<rect x="230" y="275" width="248.0" height="20" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="4 3"/>
+<text x="484.0" y="289.0" font-size="11.5" fill="#64748b">failed (above 20%)</text>
+<text x="385.0" y="336" text-anchor="middle" font-size="11" fill="#64748b">test error (lower is better)</text>
+<text x="300.0" y="372" text-anchor="middle" font-size="11" fill="#64748b">Every change was applied to all 54 blocks. None beat the shortcut that passes x through unchanged.</text>
+</svg>

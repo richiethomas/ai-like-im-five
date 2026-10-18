@@ -1,0 +1,72 @@
+---
+title: "Paper #4: Leave the Shortcut Alone"
+excerpt: "The authors tried scaling, gating, a 1×1 convolution, and dropout on the shortcuts of a 110-layer ResNet. Every one did worse than a shortcut that passes its input through unchanged."
+category: "Vision"
+date: 2023-10-05T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "identity mappings", "experiments"]
+---
+
+> **Where we are:** the [last post](/post/paper-4-a-path-straight-through/) showed that when the shortcut passes x through unchanged, the correction from backpropagation reaches early blocks multiplied by "1 + something," and the 1 cannot fade. This post covers the experiments that test it by putting something on the shortcut.
+
+## The test
+
+The authors used ResNet-110 on [CIFAR-10](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), a network with "54 two-layer Residual Units," meaning 54 blocks. With the original identity shortcut it had 6.61% test error. For each experiment they changed only the shortcut, the same way in all 54 blocks, and trained again.
+
+## Scaling the shortcut by 0.5
+
+The simplest change: multiply x by 0.5 on its way around each block. The paper tried this two ways.
+
+- **Shortcut scaled, layers not:** the network "does not converge well." The paper marks it as a failure, meaning test error above 20%.
+- **Both scaled by 0.5:** it trains, but reaches 12.35%, almost twice the original error.
+
+The last post's formula shows why. With the shortcut scaled, the 1 in "1 + something" becomes 0.5 at every block it passes. Going back across all 54 blocks, the shortcut route carries:
+
+```
+0.5 × 0.5 × ... (54 times) = 0.5⁵⁴ ≈ 0.00000000000000006
+```
+
+That is the [photocopy problem](/post/paper-2-the-architecture-scaled-up/) again, this time on the path that was supposed to avoid it. The paper says the same about any scale other than 1: below 1, the factor "can be exponentially small and vanish, which blocks the backpropagated signal from the shortcut," and above 1 it "can be exponentially large." A scale of 2 would give 2⁵⁴, about 18 quadrillion.
+
+The scaled networks also had higher training error than the original, so the problem was training, not overfitting.
+
+## Gates
+
+[Highway networks](/post/paper-3-what-resnet-won/), published around the same time as ResNet, put a learned <Term k="gating">gate</Term> on the shortcut: a number between 0 and 1 that sets how much of x passes through. The authors tried two versions.
+
+- **Exclusive gating:** the shortcut gets the gate's opposite (1 − g) and the layers get the gate (g). The best result was 8.70%.
+- **Shortcut-only gating:** only the shortcut is gated. When the gate started out at about 0.5, the error was 12.86%. When it started out almost fully open, passing about 99.75% of x, the error was 6.91%, close to the original 6.61%.
+
+The pattern runs in one direction. The closer the gate stayed to passing everything, the closer the result came to the plain identity shortcut, and none of them beat it.
+
+## A 1×1 convolution
+
+In ResNet, a [1×1 convolution](/post/paper-3-going-to-152-layers/) on every shortcut (option C) had done slightly better than identity, 24.19% top-1 error on ImageNet against 25.03%, at 34 layers with 16 blocks. At 110 layers it did much worse: 12.22%. The authors' explanation: "When stacking so many Residual Units (54 for ResNet-110), even the shortest path may still impede signal propagation." A 1×1 convolution multiplies x by learned weights, so the shortcut route no longer carries a plain 1.
+
+## Dropout
+
+Last, they applied dropout to the shortcut, randomly zeroing half its values during training. The network "fails to converge to a good solution." On average, dropping half the values scales the shortcut by 0.5, so this is the scaling experiment again in a random form.
+
+## All the results together
+
+Test error on CIFAR-10 with ResNet-110, lower is better:
+
+- identity shortcut (original): 6.61%
+- shortcut-only gate, started almost fully open: 6.91%
+- exclusive gate, best setting: 8.70%
+- 1×1 convolution: 12.22%
+- both paths scaled by 0.5: 12.35%
+- shortcut scaled by 0.5, layers not: failed (above 20%)
+- dropout on the shortcut: failed (above 20%)
+
+<img src="/experiments/identity-mappings/shortcut-variants.svg" alt="A horizontal bar chart of test error on CIFAR-10 for ResNet-110 with different shortcuts, on an axis from 0% to 25%. Identity, the original, is 6.61% and highlighted. Shortcut-only gate started open is 6.91%, exclusive gate best setting 8.70%, 1x1 convolution 12.22%, both paths scaled by 0.5 12.35%. Shortcut scaled by 0.5 and dropout on the shortcut are drawn as dashed bars labeled failed, above 20%. A caption says every change was applied to all 54 blocks and none beat the unchanged shortcut." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
+
+Every change to the shortcut is repeated in all 54 blocks, so even a small change multiplies up. A shortcut that does nothing is the only one whose effect stays 1 no matter how many blocks there are.
+
+## What's next
+
+That is the paper's evidence for the 1st condition: the shortcut should pass x through unchanged. The 2nd is the ReLU that sits after the addition in the original block. The next post covers how the authors rearranged the block to get rid of it.

@@ -91,4 +91,9 @@ export const glossary: Record<string, string> = {
   "bottleneck-block": "a residual block that shrinks the feature maps with a 1×1 layer, works on the smaller stack, then expands it back, to save computation.",
   "one-by-one-convolution": "a convolution with a filter one pixel wide, which mixes the feature maps at each position without looking at neighbors.",
   ensemble: "several separately trained models whose predictions are averaged, usually more accurate than any one of them.",
+
+  // Identity mappings (Paper #4)
+  "identity-mapping": "an operation whose output equals its input; in ResNet, a shortcut that passes x through with nothing multiplied or added.",
+  gating: "a learned number between 0 and 1 that scales how much of a signal passes through; highway networks put gates on their shortcuts.",
+  "pre-activation": "a residual block that applies batch normalization and ReLU before each weight layer, so nothing comes after the addition.",
 };

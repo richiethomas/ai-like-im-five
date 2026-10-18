@@ -1,0 +1,68 @@
+---
+title: "Paper #4: The Question ResNet Left Open"
+excerpt: "ResNet showed that shortcuts work but offered only a hypothesis about why. A year later, the same authors followed the signal through the shortcuts, and found one step in the original block that got in the way."
+category: "Vision"
+date: 2023-10-03T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "identity mappings", "residual connections"]
+---
+
+> **Where we are:** Paper #3, [ResNet](/post/paper-3-deeper-networks-that-did-worse/), added shortcuts that let networks train at 152 layers. Paper #4 is "[Identity Mappings in Deep Residual Networks](https://arxiv.org/abs/1603.05027)," by the same four authors (Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun), published at the European Conference on Computer Vision (ECCV) in 2016, one year after ResNet.
+
+## The idea first- a metaphor
+
+Paper #3 described ResNet as a [line of artists](/post/paper-3-learning-the-change/): each artist is one block, and each one receives the drawing, makes a change on top, and hands the drawing on.
+
+This paper looks at the handing-on. In ResNet's original design, between one artist and the next, the drawing passes through one more step that can alter it. With a handful of artists that barely matters. With hundreds, the paper finds, it starts to get in the way. The paper's main change is to remove that step, so the drawing reaches each artist exactly as the last one left it.
+
+## What ResNet left open
+
+ResNet showed that shortcuts work, but its explanation was a hypothesis: that learning a small change to the input is easier than learning the whole output. Its [last post](/post/paper-3-what-resnet-won/) also ended on a result that did not fit neatly. On CIFAR-10, a 1,202-layer ResNet had 7.93% error, worse than the 110-layer version's 6.43%. The authors suspected overfitting.
+
+This paper takes a closer look. Instead of only training networks and comparing scores, the authors write down how a signal moves through a stack of residual blocks, forward (from the image to the answer) and backward (the correction from [backpropagation](/post/paper-1-part-8-backpropagation-how-blame-gets-passed-backward/)), and ask what the shortcut path needs for that movement to be clean.
+
+Their summary, from the abstract: "the forward and backward signals can be directly propagated from one block to any other block, when using identity mappings as the skip connections and after-addition activation." That sentence names two conditions:
+
+1. **The shortcut is an <Term k="identity-mapping">identity mapping</Term>.** It carries x, the block's input, forward with nothing multiplied or added.
+2. **Nothing after the addition changes the result.** Whatever comes out of "x plus the layers' change" goes to the next block as it is.
+
+ResNet's original block meets the 1st condition but not the 2nd.
+
+## The original block, step by step
+
+Here is one block from the original ResNet, in the order its steps run. The weight layers are 3×3 [convolutions](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/), BN is [batch normalization](/post/paper-3-not-a-fading-signal/), and ReLU is the [activation](/post/paper-2-relu-made-big-networks-trainable/) that turns every negative value into 0.
+
+```
+input x
+  path 1 (the layers):  weight → BN → ReLU → weight → BN   = the change, F(x)
+  path 2 (the shortcut): x, unchanged
+add the two paths:  x + F(x)
+ReLU
+output (the next block's x)
+```
+
+The last line is the step the metaphor described. The ReLU after the addition applies to the sum, so it applies to what the shortcut carried too. When the sum is 0 or more, it changes nothing. x itself comes out of an earlier ReLU and is never negative, but the layers' change can be, and then the sum can drop below 0:
+
+```
+x = 5.0,  F(x) = −0.2   →  sum 4.8   →  ReLU  →  4.8   (unchanged)
+x = 0.3,  F(x) = −0.5   →  sum −0.2  →  ReLU  →  0     (changed)
+```
+
+In the 2nd case the next block receives 0, not −0.2. The block's result should have been −0.2, and the step after the addition replaced it with 0. Each of these cases is small, but a 1,001-layer network has 333 blocks, and every value passes through that ReLU 333 times on its way to the answer.
+
+## Two questions
+
+The paper asks the same question of both pieces on the path from one block to the next: should this piece do anything at all?
+
+- **The shortcut.** ResNet chose a shortcut that passes x unchanged, but other designs had put gates and weights on their shortcuts. Would any of those do better?
+- **The step after the addition.** Can the block be rearranged so that nothing comes after the addition?
+
+The paper's answer to both is "nothing," and the next post shows why, by following the signal through a stack of blocks where both pieces do nothing.
+
+## What's next
+
+The next post works through the paper's two formulas with small numbers: one for the forward signal and one for the backward correction, and why a shortcut that does nothing keeps the correction from fading.

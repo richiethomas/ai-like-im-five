@@ -1,0 +1,56 @@
+---
+title: "Paper #4: 1,001 Layers, and Why It Helped"
+excerpt: "With the original blocks, a 1,001-layer network did worse than a 110-layer one. With pre-activation blocks, it reached 4.92% error on CIFAR-10, the best in the paper. The authors give two reasons."
+category: "Vision"
+date: 2023-10-07T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["ResNet", "identity mappings", "pre-activation"]
+---
+
+> **Where we are:** the [last post](/post/paper-4-moving-the-activation/) rearranged the block so that nothing comes after the addition, a design called <Term k="pre-activation">pre-activation</Term>. At 110 and 164 layers it lowered error by a few tenths of a point. This post covers the deepest test.
+
+## The 1,001-layer test
+
+ResNet-1001 is built from [bottleneck blocks](/post/paper-3-going-to-152-layers/) of 3 layers each, "333 Residual Units," plus a 1st and last layer. It has 10.2 million weights. The authors trained it twice on CIFAR-10, once with the original blocks and once with pre-activation blocks, and did the same on CIFAR-100, a version of the dataset with 100 categories instead of 10:
+
+- CIFAR-10: original 7.61%, pre-activation 4.92%
+- CIFAR-100: original 27.82%, pre-activation 22.71%
+
+With the original blocks, the 1,001-layer network did worse than the 110-layer network's 6.61%. That is similar to what Paper #3 found at [1,202 layers](/post/paper-3-what-resnet-won/), where the authors suspected overfitting. With pre-activation blocks, the 1,001-layer network beat both the 110-layer (6.37%) and 164-layer (5.46%) pre-activation networks. Going deeper helped again.
+
+The paper gives two reasons.
+
+## Reason 1: training gets going faster
+
+With the original blocks, the paper says, "the training error is reduced very slowly at the beginning of training." The cause is the ReLU after the addition. Each one zeroes any negative value in the sum, and "when there are many Residual Units, this effect becomes prominent." A value on its way through ResNet-1001 passes 333 of those ReLUs.
+
+With pre-activation, nothing sits between the blocks, so the shortcut path matches the paper's formulas exactly: the forward signal is the starting input plus every change, and the backward correction keeps its "1 +" at every block. The authors report that their 1,001-layer network "reduces the training loss very quickly" and reaches the lowest training loss of any model they tried.
+
+## Reason 2: less overfitting
+
+The 2nd effect shows up on the networks that already trained fine. At 110 and 164 layers, the pre-activation versions ended with slightly higher training loss than the originals, but lower test error. A smaller gap between how well a network fits its training images and how well it does on new ones is what less [overfitting](/post/paper-2-fighting-overfitting-at-scale/) looks like.
+
+The authors' explanation is about [batch normalization](/post/paper-3-not-a-fading-signal/), and they present it as a guess: it is "presumably caused by BN's regularization effect." In the original block, BN normalizes the layers' output, but that output is then added to the shortcut's x, so what reaches the next weight layer is not normalized. In the pre-activation block, BN comes right before each weight layer, so "the inputs to all weight layers have been normalized."
+
+## On ImageNet
+
+The authors also compared the two designs on ImageNet, measuring top-1 error on one 320×320 crop of each validation image. That is a different setup from Paper #3's numbers, so the two sets should not be compared directly.
+
+- ResNet-152: original 21.3%, pre-activation 21.1%
+- ResNet-200: original 21.8%, pre-activation 20.7%
+
+With the original blocks, the 200-layer network did worse than the 152-layer one. The authors note that it had lower training error than ResNet-152, "suggesting that it suffers from overfitting." With pre-activation blocks, the 200-layer network had the best result of the four, 1.1 points better than the original ResNet-200.
+
+## What this paper added to ResNet
+
+ResNet showed that shortcuts work. This paper explained why the shortcut should be left alone, by following the signal: when both the shortcut and the step after the addition do nothing, every block's input is the original input plus the changes so far, and the correction from the end reaches every block with a 1 that does not fade (the "1 +" from the [2nd post](/post/paper-4-a-path-straight-through/)). The experiments matched that analysis. Every change to the shortcut that the authors tried made things worse, and moving the activation off the shortcut's path made things better, by the most at the greatest depth.
+
+In the authors' summary, identity shortcuts and an identity step after the addition "are essential for making information propagation smooth."
+
+## What's next
+
+Paper #5, "Multi-Scale Context Aggregation by Dilated Convolutions," turns from depth to a different question: how a network can take in a wide area of an image without shrinking its feature maps and losing detail.
