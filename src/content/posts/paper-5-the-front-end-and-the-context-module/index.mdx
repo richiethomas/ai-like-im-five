@@ -1,0 +1,68 @@
+---
+title: "Paper #5: The Front End and the Context Module"
+excerpt: "The authors removed VGG-16's last two shrinking steps and beat earlier segmentation networks by more than 5 points. Then they added a small stack of dilated layers, started so each one passes its input through unchanged, and gained more."
+category: "Vision"
+date: 2023-10-11T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["dilated convolutions", "semantic segmentation", "VGG"]
+---
+
+> **Where we are:** the [last post](/post/paper-5-dilated-convolutions/) showed how a dilated convolution reads from a wider area without shrinking the map, and how stacking them with growing gaps makes the area grow exponentially. This post covers the two pieces the authors built with it.
+
+The paper's network has two parts:
+
+1. a **front end**, adapted from a classification network, that turns the image into a map of category scores;
+2. a **context module**, a small stack of dilated layers placed after the front end, that improves those scores by looking at wider areas.
+
+## The front end: remove the last two shrinking steps
+
+The front end starts from [VGG-16](/post/paper-3-deeper-networks-that-did-worse/#depth-helped-at-first), the 16-layer classification network from Oxford. VGG-16 halves its maps five times with pooling. The authors removed the last two of those pooling steps entirely.
+
+Removing them would normally change what the later layers see: without the shrinking, each 3 × 3 filter after that point would cover a smaller part of the image than it did during VGG's original training. To make up for it, the authors dilated those later convolutions, "by a factor of 2 for each pooling layer that was ablated," so the layers after both removed steps use dilation 4. Each filter then reads from the same area of the image as before, which means the layers can start from VGG-16's already-trained weights. The output is 64 × 64 instead of the much smaller map a fully shrinking network would produce.
+
+They also removed some other pieces left over from classification, such as padding between layers, and describe the result as removing "vestiges of the classification network that are counterproductive for dense prediction."
+
+**Result.** The simplified front end was more accurate than the earlier segmentation networks built from VGG-16, on the PASCAL VOC 2012 test set:
+
+- FCN-8s (Long et al.): 62.2% <Term k="mean-iou">mean IoU</Term>
+- DeepLab (Chen et al.): 62.1%
+- the paper's front end: 67.6%
+
+That is more than 5 points better, from a network that is simpler than the ones it beat. In the authors' words: "We found that simplifying the network by removing the pooling layers made it more accurate."
+
+## The context module
+
+The context module is a separate stack that takes the front end's category maps and refines them. Its job is to bring in wider context: for example, a patch whose label is unsure between road and sidewalk can be settled by what is around it. The basic version has 8 layers:
+
+- layers 1 to 7: 3 × 3 convolutions with dilations 1, 1, 2, 4, 8, 16, and 1;
+- layer 8: a 1 × 1 convolution that produces the final scores.
+
+After layer 6, each output depends on a 65 × 65 area of the front end's 64 × 64 map, so the module stops widening there; a wider view would cover more than the whole map. Every layer keeps the map at 64 × 64.
+
+Its input and output have the same form, one map per category, so the module can be "plugged into existing dense prediction architectures." It is also small: about 64 weights for each pair of maps (9 in each of the seven 3 × 3 layers, plus 1 in the last), "≈ 64C² parameters in total."
+
+## Starting the module as a pass-through
+
+The authors' first attempts to train the context module "failed to yield an improvement." The usual way to start a network, with small random weights, did not work for it.
+
+What worked was starting every layer so that it passes its input through unchanged: each filter starts with a single 1 in the center, on its own map, and 0 everywhere else. In the paper's words, this "sets all filters such that each layer simply passes the input directly to the next." Training then moves the weights away from that starting point only where wider context helps.
+
+This is close to the idea behind Paper #4's [shortcut that leaves the signal alone](/post/paper-4-a-path-straight-through/#backward-a-route-that-doesnt-fade): start from "do nothing" and let training learn the change. Here it is done with the starting weights rather than with a shortcut. The authors raise a natural concern, that training might never move away from passing the input through, and report that "experiments indicate that this is not the case."
+
+## How much the context module helped
+
+On the PASCAL VOC 2012 validation images, with a front end trained on more data (VOC plus images from Microsoft's COCO dataset):
+
+- front end alone: 69.8% mean IoU
+- with the basic context module: 71.3%
+- with a larger context module, which uses more maps in its middle layers, up to 32 times as many: 72.1%
+
+The module also helped when added to systems that already used a separate clean-up step (a CRF) on top of the network, which adjusts the labels so that neighboring pixels with similar colors tend to share one, raising them from 71.6% to 73.3% and from 72.5% to 73.9%.
+
+## What's next
+
+The final post covers the test-set and street-scene results, where the idea came from, and what the paper's approach still leaves open.

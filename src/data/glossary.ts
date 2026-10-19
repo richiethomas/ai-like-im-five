@@ -96,4 +96,12 @@ export const glossary: Record<string, string> = {
   "identity-mapping": "an operation whose output equals its input; in ResNet, a shortcut that passes x through with nothing multiplied or added.",
   gating: "a learned number between 0 and 1 that scales how much of a signal passes through; highway networks put gates on their shortcuts.",
   "pre-activation": "a residual block that applies batch normalization and ReLU before each weight layer, so nothing comes after the addition.",
+
+  // Dilated convolutions (Paper #5)
+  "semantic-segmentation": "labeling every pixel of an image with a category, such as road, car, or sky, instead of giving the whole image one label.",
+  "dilated-convolution": "a convolution whose filter taps are spaced apart, so the same number of weights covers a wider area of the input without shrinking it.",
+  "instance-level-iou": "ordinary IoU lets a big, close car count far more than a small, distant pedestrian, because the car covers more pixels; instance-level IoU weights each object's pixels by its size, so small, distant objects count about as much as large ones.",
+  "frequency-weighted-iou": "IoU for each category, weighted by how many pixels the category covers, so large categories like road and sky count more. The FCN paper reports it alongside mean IoU.",
+  "task-specific-weights": "scores with weights chosen to match a particular system's costs, such as counting a missed pedestrian much more heavily than a mislabeled tree. There is no single standard for this, and published benchmarks rarely use it.",
+  "mean-iou":"a segmentation score: for each category, the overlap between the predicted and true regions divided by their combined area, averaged over the categories.",
 };

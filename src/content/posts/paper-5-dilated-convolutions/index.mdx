@@ -1,0 +1,62 @@
+---
+title: "Paper #5: Dilated Convolutions, a Filter with Gaps"
+excerpt: "A dilated convolution spreads a filter's taps apart, so the same few weights cover a wider area. Stack a few with growing gaps, and the area each output sees grows exponentially, while the map never shrinks."
+category: "Vision"
+date: 2023-10-10T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["dilated convolutions", "convolutions", "receptive field"]
+---
+
+> **Where we are:** the [last post](/post/paper-5-why-classification-networks-shrink-the-image/) showed that classification networks shrink their maps so later layers can see wide areas, and that segmentation needs the wide view without the shrinking. This post covers the paper's tool for that: the dilated convolution.
+
+## A filter on a single row
+
+Start with one row of 9 numbers and a filter with 3 weights, all set to 1, so the filter just adds up the values it lands on. A regular [convolution](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) centered on the middle value reads it and its two neighbors. A dilated convolution reads values that are a fixed distance apart instead. That distance is the dilation.
+
+The row is 2, 7, 1, 8, 2, 8, 1, 8, 2, and the filter is centered on the middle value, 2.
+
+- **Dilation 1** (a regular convolution) reads the 3 values next to each other: 8 + 2 + 8 = 18. It spans 3 positions.
+- **Dilation 2** reads every 2nd value: 1 + 2 + 1 = 4. It spans 5 positions.
+- **Dilation 4** reads every 4th value: 2 + 2 + 2 = 6. It spans 9 positions, the whole row.
+
+<img src="/experiments/dilated-convolutions/row-dilation.svg" alt="The row 2, 7, 1, 8, 2, 8, 1, 8, 2 drawn three times. At dilation 1, the three middle values 8, 2, 8 are highlighted, spanning 3 positions, summing to 18. At dilation 2, the values 1, 2, 1 at every 2nd position are highlighted, spanning 5 positions, summing to 4. At dilation 4, the values 2, 2, 2 at the ends and middle are highlighted, spanning all 9 positions, summing to 6. A caption says the filter weights are all 1 and only the spacing changes." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
+The filter has the same 3 weights every time. Only the spacing between the positions it reads changes. No larger filter is built; the convolution just reads its inputs farther apart.
+
+## Why the map does not shrink
+
+The filter then slides one position at a time and produces an output at every position, the same as a regular convolution. Near the edges, where some taps would fall off the row, the row is padded. The output row has as many values as the input row.
+
+That is the difference from pooling and striding. A 2 × 2 pooling step turns a 56 × 56 map into a 28 × 28 map; a dilated convolution with dilation 2 turns a 56 × 56 map into another 56 × 56 map, while still reading from a wider area.
+
+## In two dimensions
+
+On an image or a feature map, a 3 × 3 filter has 9 weights. At dilation 1 its taps sit next to each other and cover a 3 × 3 area. At dilation 2 they spread out to cover 5 × 5, with a gap between each pair. At dilation 4 they cover 9 × 9. It is still 9 weights each time.
+
+<img src="/experiments/dilated-convolutions/taps-2d.svg" alt="Three 9 by 9 grids. In each, 9 blue dots mark the positions a 3 by 3 filter reads. At dilation 1 the dots are adjacent and cover a 3 by 3 area. At dilation 2 they are spaced 2 apart and cover 5 by 5. At dilation 4 they are spaced 4 apart and cover the whole 9 by 9 grid. Each is labeled 9 weights." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
+## Stacking them
+
+The gain shows up when layers are stacked. Each layer reads from the layer below it, and each position in the layer below already summarizes an area of the image. The area a single output depends on is called its <Term k="receptive-field">receptive field</Term>.
+
+The paper's Figure 1 stacks three 3 × 3 layers with dilations 1, 2, and 4:
+
+- **Layer 1, dilation 1:** each output depends on a 3 × 3 area.
+- **Layer 2, dilation 2:** each output reads 3 × 3 positions from layer 1, spaced 2 apart, so they span 5 × 5 positions, and each of those already covers 3 × 3. Together: 7 × 7.
+- **Layer 3, dilation 4:** by the same reasoning, 15 × 15.
+
+Doubling the dilation at each layer roughly doubles the receptive field each time. In the paper's words, "the receptive field grows exponentially while the number of parameters grows linearly": every layer adds the same 9 weights per filter, but the area it covers keeps doubling. Three regular 3 × 3 layers, with the same number of weights, would cover only 7 × 7, against 15 × 15 for the dilated stack.
+
+The context module in a later post uses dilations 1, 1, 2, 4, 8, 16, which gives receptive fields of 3 × 3, 5 × 5, 9 × 9, 17 × 17, 33 × 33, and 65 × 65 after each layer. Those are the numbers in the [1st post](/post/paper-5-from-one-label-to-every-pixel/).
+
+## An old idea under a new name
+
+The operation itself was not new. It appears in the "algorithme à trous," French for "algorithm with holes," a method for analyzing signals with wavelets from 1987. DeepLab, a segmentation network from 2015, also used it. The authors chose the name "dilated convolution" and built a network that, in their words, "systematically uses dilated convolutions for multi-scale context aggregation," meaning combining information from both small and large areas around each position.
+
+## What's next
+
+The next post covers how the authors used this: first to stop VGG-16 from shrinking its last maps, and then to build a small "context module" that stacks dilated layers to see wide areas at full resolution.

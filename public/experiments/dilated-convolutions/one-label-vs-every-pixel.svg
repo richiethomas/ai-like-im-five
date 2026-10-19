@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="700" height="330" rx="10" fill="#ffffff"/>
+<text x="350.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Classification vs. segmentation of the same street image</text>
+<rect x="24" y="78" width="190" height="82.5" fill="#bfdbfe"/>
+<rect x="33.5" y="100.5" width="66.5" height="63.0" fill="#d6c7a1"/>
+<rect x="41.099999999999994" y="111.0" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<rect x="41.099999999999994" y="130.5" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<rect x="60.099999999999994" y="111.0" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<rect x="60.099999999999994" y="130.5" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<rect x="79.1" y="111.0" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<rect x="79.1" y="130.5" width="9.5" height="10.500000000000002" fill="#78716c"/>
+<circle cx="172.20000000000002" cy="132.0" r="21.000000000000004" fill="#16a34a"/>
+<rect x="170.3" y="141.0" width="3.8000000000000003" height="22.5" fill="#78350f"/>
+<rect x="24" y="160.5" width="190" height="15.0" fill="#e5e7eb"/>
+<rect x="24" y="175.5" width="190" height="52.5" fill="#6b7280"/>
+<rect x="43.0" y="201.0" width="22.8" height="3.0" fill="#f8fafc"/><rect x="119.0" y="201.0" width="22.8" height="3.0" fill="#f8fafc"/>
+<rect x="103.8" y="168.0" width="57.0" height="19.5" rx="4" fill="#dc2626"/>
+<rect x="115.2" y="156.0" width="32.300000000000004" height="15.0" rx="4" fill="#dc2626"/>
+<circle cx="115.2" cy="189.0" r="6.0" fill="#111827"/><circle cx="149.4" cy="189.0" r="6.0" fill="#111827"/>
+<rect x="24" y="78" width="190" height="150" fill="none" stroke="#334155" stroke-width="1.2"/>
+<text x="119.0" y="68" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">input image</text>
+<text x="349.0" y="68" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">classification output</text>
+<rect x="299.0" y="131.0" width="100" height="44" rx="8" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
+<text x="349.0" y="159.0" text-anchor="middle" font-size="16" fill="#334155" font-weight="700">"car"</text>
+<text x="349.0" y="197.0" text-anchor="middle" font-size="11" fill="#64748b">one label for the whole image</text>
+<rect x="484" y="78" width="190" height="82.5" fill="#7dd3fc"/>
+<rect x="493.5" y="100.5" width="66.5" height="63.0" fill="#a16207"/>
+<circle cx="632.2" cy="132.0" r="21.000000000000004" fill="#22c55e"/>
+<rect x="630.3" y="141.0" width="3.8000000000000003" height="22.5" fill="#22c55e"/>
+<rect x="484" y="160.5" width="190" height="15.0" fill="#f472b6"/>
+<rect x="484" y="175.5" width="190" height="52.5" fill="#7c3aed"/>
+<rect x="563.8" y="168.0" width="57.0" height="19.5" rx="4" fill="#2563eb"/>
+<rect x="575.2" y="156.0" width="32.300000000000004" height="15.0" rx="4" fill="#2563eb"/>
+<rect x="484" y="78" width="190" height="150" fill="none" stroke="#334155" stroke-width="1.2"/>
+<text x="579.0" y="68" text-anchor="middle" font-size="12.5" fill="#334155" font-weight="600">segmentation output</text>
+<rect x="474" y="241" width="10" height="10" fill="#7dd3fc"/>
+<text x="488" y="250" font-size="10.5" fill="#334155">sky</text>
+<rect x="546" y="241" width="10" height="10" fill="#a16207"/>
+<text x="560" y="250" font-size="10.5" fill="#334155">building</text>
+<rect x="618" y="241" width="10" height="10" fill="#22c55e"/>
+<text x="632" y="250" font-size="10.5" fill="#334155">tree</text>
+<rect x="474" y="259" width="10" height="10" fill="#f472b6"/>
+<text x="488" y="268" font-size="10.5" fill="#334155">sidewalk</text>
+<rect x="546" y="259" width="10" height="10" fill="#7c3aed"/>
+<text x="560" y="268" font-size="10.5" fill="#334155">road</text>
+<rect x="618" y="259" width="10" height="10" fill="#2563eb"/>
+<text x="632" y="268" font-size="10.5" fill="#334155">car</text>
+<text x="119.0" y="258" text-anchor="middle" font-size="11" fill="#64748b">a simplified drawing</text>
+<text x="350.0" y="316" text-anchor="middle" font-size="11" fill="#64748b">Segmentation gives every pixel a category, so the output is a full-size map, one color per category.</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 344" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="640" height="344" rx="10" fill="#ffffff"/>
+<text x="320.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">The same 3 weights, read farther apart</text>
+<text x="134" y="101" text-anchor="end" font-size="13" fill="#334155" font-weight="600">dilation 1</text>
+<rect x="150" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="170.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">2</text>
+<rect x="194" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="214.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">7</text>
+<rect x="238" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="258.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">1</text>
+<rect x="282" y="74" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="302.0" y="100" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">8</text>
+<rect x="326" y="74" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="346.0" y="100" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">2</text>
+<rect x="370" y="74" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="390.0" y="100" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">8</text>
+<rect x="414" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="434.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">1</text>
+<rect x="458" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="478.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="502" y="74" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="522.0" y="100" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">2</text>
+<path d="M 282 122 L 282 128 L 410 128 L 410 122" fill="none" stroke="#64748b" stroke-width="1"/>
+<text x="346.0" y="142" text-anchor="middle" font-size="11.5" fill="#64748b">spans 3 positions: 8 + 2 + 8 = 18</text>
+<text x="134" y="179" text-anchor="end" font-size="13" fill="#334155" font-weight="600">dilation 2</text>
+<rect x="150" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="170.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">2</text>
+<rect x="194" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="214.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">7</text>
+<rect x="238" y="152" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="258.0" y="178" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">1</text>
+<rect x="282" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="302.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="326" y="152" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="346.0" y="178" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">2</text>
+<rect x="370" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="390.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="414" y="152" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="434.0" y="178" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">1</text>
+<rect x="458" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="478.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="502" y="152" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="522.0" y="178" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">2</text>
+<path d="M 238 200 L 238 206 L 454 206 L 454 200" fill="none" stroke="#64748b" stroke-width="1"/>
+<text x="346.0" y="220" text-anchor="middle" font-size="11.5" fill="#64748b">spans 5 positions: 1 + 2 + 1 = 4</text>
+<text x="134" y="257" text-anchor="end" font-size="13" fill="#334155" font-weight="600">dilation 4</text>
+<rect x="150" y="230" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="170.0" y="256" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">2</text>
+<rect x="194" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="214.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">7</text>
+<rect x="238" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="258.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">1</text>
+<rect x="282" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="302.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="326" y="230" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="346.0" y="256" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">2</text>
+<rect x="370" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="390.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="414" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="434.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">1</text>
+<rect x="458" y="230" width="40" height="40" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="478.0" y="256" text-anchor="middle" font-size="15" fill="#64748b" font-weight="400">8</text>
+<rect x="502" y="230" width="40" height="40" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="522.0" y="256" text-anchor="middle" font-size="15" fill="#2563eb" font-weight="700">2</text>
+<path d="M 150 278 L 150 284 L 542 284 L 542 278" fill="none" stroke="#64748b" stroke-width="1"/>
+<text x="346.0" y="298" text-anchor="middle" font-size="11.5" fill="#64748b">spans 9 positions: 2 + 2 + 2 = 6</text>
+<text x="320.0" y="332" text-anchor="middle" font-size="11" fill="#64748b">Filter weights all 1, centered on the middle value. Only the spacing changes; the weights stay the same.</text>
+</svg>

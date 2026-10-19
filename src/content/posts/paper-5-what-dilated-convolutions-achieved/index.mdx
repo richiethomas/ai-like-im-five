@@ -1,0 +1,65 @@
+---
+title: "Paper #5: What It Achieved, and What It Left Open"
+excerpt: "The context module raised accuracy on everyday photos and on street scenes from car cameras. The bigger result was the argument behind it: a network that has to label every pixel can keep its maps large all the way through."
+category: "Vision"
+date: 2023-10-12T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["dilated convolutions", "semantic segmentation", "results"]
+---
+
+> **Where we are:** the [last post](/post/paper-5-the-front-end-and-the-context-module/) covered the simplified front end and the context module, and how much each improved accuracy on the validation images. This post covers the final test results, the street-scene results, and what the paper did and did not settle.
+
+## On the PASCAL VOC test set
+
+The full system on the PASCAL VOC 2012 test set, scored in <Term k="mean-iou">mean IoU</Term>:
+
+- front end alone: 71.3%
+- front end with the large context module: 73.5%
+- adding a CRF clean-up step on top: 74.7%
+- adding CRF-RNN, a trainable version of that clean-up step from other researchers: 75.3%
+
+For comparison, the strongest DeepLab system the paper lists scored 73.9%, and the CRF-RNN system on its own scored 74.7%. The paper points out that the front end plus context module, at 73.5%, beat the 72.7% of a DeepLab system that used a CRF, without using one itself. Adding the context module to the CRF-RNN system raised that system from 74.7% to 75.3%.
+
+## On street scenes
+
+The paper also tested on three datasets of street scenes recorded from cars, the setting where per-pixel labels matter for driving. These results use the front end and the basic context module, with no clean-up step:
+
+- **CamVid:** 65.3% mean IoU, against 61.6% for DeepLab and 46.4% for SegNet.
+- **KITTI:** 59.2%, against 54.2% for DeepLab.
+- **Cityscapes:** 67.1% on the test set. Cityscapes images are 2048 × 1024 pixels, so the authors added two more layers to the context module to cover the larger images.
+
+The per-category numbers show where the gains came from. On CamVid, for example, the score for pedestrians rose to 56.3% from DeepLab's 48.4%, and for bicyclists to 55.5% from 50.1%.
+
+## What was new and what was not
+
+The dilated convolution itself was decades old: it appears in the "algorithme à trous," a method for analyzing signals with wavelets from 1987. DeepLab had also used it, to replace some of the striding in its network while keeping the pooling.
+
+What this paper added:
+
+- **A network built around it.** The context module stacks dilated layers on purpose, to widen the view exponentially with a small number of weights.
+- **A cleaner front end.** Removing VGG-16's last two pooling steps, instead of working around them, made the starting network both simpler and more accurate.
+- **A module that fits anywhere.** Because it takes and returns the same kind of maps, it raised accuracy when added to three different setups: the front end alone, the front end with a CRF, and the front end with CRF-RNN.
+
+The authors' conclusion states the main point: "Since the model must produce high-resolution output, we believe that high-resolution operation throughout the network is both feasible and desirable." In other words, the network should keep its maps large all the way through, rather than shrinking them and enlarging them again.
+
+## What it left open
+
+- **The maps are not full size.** The front end still keeps VGG-16's 1st three pooling steps, so its output, at 64 × 64, is 8 times smaller than the input in each direction. The network works at 1/8 of the image's width and height, not at its full resolution.
+- **A clean-up step still helped.** On the test set, adding a CRF on top raised the score from 73.5% to 74.7%. The network alone did not capture everything about where the boundaries between regions fall.
+- **Starting the module needed care.** Random starting weights did not work for the context module; the pass-through start did. The paper reports this as what worked, not as an explanation of why.
+
+## Where it was used afterward
+
+- **Later segmentation networks.** DeepLab's 2016 version made the operation, which its authors call "atrous convolution," central to its design, and reached 79.7% mean IoU on the PASCAL VOC 2012 test set. Its authors note that they used it first, and that "the same operation was later called dilated convolution" by this paper.
+- **Audio.** WaveNet (DeepMind, 2016) generates speech one audio sample at a time. It stacks 1D dilated convolutions with dilations 1, 2, 4, and so on up to 512, so each output depends on the previous 1,024 samples. In its words, dilated convolutions increase "the receptive field by orders of magnitude, without greatly increasing computational cost." It cites this paper.
+- **Text.** ByteNet (DeepMind, 2016) translates English to German one character at a time. It uses dilated convolutions because "dilation makes the receptive field grow exponentially in terms of the depth of the networks, as opposed to linearly." It also cites this paper.
+
+Audio and text are sequences: one value after another, in order. The two papers took the idea from this one, a wide view without shrinking, and applied it along a line of samples or characters instead of across an image.
+
+## Where this leads
+
+This paper is the last in the series' 1st chapter, on networks that see. Paper #6, Andrej Karpathy's "[The Unreasonable Effectiveness of Recurrent Neural Networks](https://30papers.com/papers/unreasonable-effectiveness-of-rnns/)," moves to a different kind of input: sequences, such as text, read one step at a time.

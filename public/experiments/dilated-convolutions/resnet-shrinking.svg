@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 360" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="740" height="360" rx="10" fill="#ffffff"/>
+<text x="370.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">How a classification network shrinks the image (ResNet)</text>
+<rect x="24" y="100.0" width="150.0" height="150.0" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="99.0" y="268" text-anchor="middle" font-size="12" fill="#334155">224 × 224</text>
+<text x="184.0" y="244" text-anchor="middle" font-size="12" fill="#64748b">→</text>
+<rect x="194.0" y="175.0" width="75.0" height="75.0" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="231.5" y="268" text-anchor="middle" font-size="12" fill="#334155">112 × 112</text>
+<text x="279.0" y="244" text-anchor="middle" font-size="12" fill="#64748b">→</text>
+<rect x="289.0" y="212.5" width="37.5" height="37.5" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="307.75" y="268" text-anchor="middle" font-size="12" fill="#334155">56 × 56</text>
+<text x="351.0" y="244" text-anchor="middle" font-size="12" fill="#64748b">→</text>
+<rect x="361.0" y="231.25" width="18.75" height="18.75" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="370.375" y="268" text-anchor="middle" font-size="12" fill="#334155">28 × 28</text>
+<text x="423.0" y="244" text-anchor="middle" font-size="12" fill="#64748b">→</text>
+<rect x="433.0" y="240.625" width="9.375" height="9.375" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="437.6875" y="268" text-anchor="middle" font-size="12" fill="#334155">14 × 14</text>
+<text x="495.0" y="244" text-anchor="middle" font-size="12" fill="#64748b">→</text>
+<rect x="505.0" y="245.3125" width="4.6875" height="4.6875" fill="#f1f5f9" stroke="#334155" stroke-width="1.2"/>
+<text x="507.34375" y="268" text-anchor="middle" font-size="12" fill="#334155">7 × 7</text>
+<rect x="560" y="100" width="150" height="150" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
+<line x1="581.4285714285714" y1="100" x2="581.4285714285714" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="121.42857142857143" x2="710" y2="121.42857142857143" stroke="#cbd5e1"/>
+<line x1="602.8571428571429" y1="100" x2="602.8571428571429" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="142.85714285714286" x2="710" y2="142.85714285714286" stroke="#cbd5e1"/>
+<line x1="624.2857142857142" y1="100" x2="624.2857142857142" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="164.28571428571428" x2="710" y2="164.28571428571428" stroke="#cbd5e1"/>
+<line x1="645.7142857142857" y1="100" x2="645.7142857142857" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="185.71428571428572" x2="710" y2="185.71428571428572" stroke="#cbd5e1"/>
+<line x1="667.1428571428571" y1="100" x2="667.1428571428571" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="207.14285714285714" x2="710" y2="207.14285714285714" stroke="#cbd5e1"/>
+<line x1="688.5714285714286" y1="100" x2="688.5714285714286" y2="250" stroke="#cbd5e1"/>
+<line x1="560" y1="228.57142857142856" x2="710" y2="228.57142857142856" stroke="#cbd5e1"/>
+<rect x="624.2857142857142" y="185.71428571428572" width="21.428571428571427" height="21.428571428571427" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+<text x="635.0" y="88" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">the 7 × 7 map laid over the image</text>
+<text x="635.0" y="270" text-anchor="middle" font-size="11.5" fill="#c2410c">1 position = a 32 × 32 block of pixels</text>
+<text x="370.0" y="324" text-anchor="middle" font-size="11" fill="#64748b">Drawn to scale. Each step halves the width and height. By 7 × 7, one position has to stand for a 32 × 32 block,</text>
+<text x="370.0" y="340" text-anchor="middle" font-size="11" fill="#64748b">so it cannot say where inside that block an edge between two objects falls.</text>
+</svg>
