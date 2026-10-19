@@ -123,7 +123,7 @@ export const papers: Paper[] = [
     year: "2016",
     blurb: "A closer look at why skip connections work as well as they do.",
     chapter: "seeing",
-    status: "next",
+    status: "done",
     slugPrefix: "paper-4-",
     sourceUrl: "https://30papers.com/papers/identity-mappings-resnets/",
   },
@@ -135,7 +135,9 @@ export const papers: Paper[] = [
     year: "2016",
     blurb: "Seeing wider context in an image without throwing away resolution.",
     chapter: "seeing",
-    status: "upcoming",
+    status: "next",
+    slugPrefix: "paper-5-",
+    sourceUrl: "https://30papers.com/papers/dilated-convolutions/",
   },
 
   // Chapter 2 - Remembering

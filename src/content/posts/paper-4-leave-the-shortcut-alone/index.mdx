@@ -13,9 +13,21 @@ tags: ["ResNet", "identity mappings", "experiments"]
 
 > **Where we are:** the [last post](/post/paper-4-a-path-straight-through/) showed that when the shortcut passes x through unchanged, the correction from backpropagation reaches early blocks multiplied by "1 + something," and the 1 cannot fade. This post covers the experiments that test it by putting something on the shortcut.
 
-## The test
+## What these experiments test
 
-The authors used ResNet-110 on [CIFAR-10](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), a network with "54 two-layer Residual Units," meaning 54 blocks. With the original identity shortcut it had 6.61% test error. For each experiment they changed only the shortcut, the same way in all 54 blocks, and trained again.
+The paper's central hypothesis is that a signal travels best through a residual network when the path between blocks leaves it alone: the shortcut passes x unchanged, and nothing comes after the addition. To test the 1st half of that, the authors changed the shortcut in several ways and checked whether training got harder.
+
+The last post's formulas say it should: if the shortcut multiplied x by something, the 1 would become a product of those numbers across every block, which could shrink toward zero or grow very large.
+
+The authors tried several changes, which were not arbitrary:
+
+- **Gates** came from [highway networks](/post/paper-3-what-resnet-won/#what-was-new-and-what-was-not), a design published around the same time as ResNet that put learned gates on its shortcuts.
+- **A 1×1 convolution** on the shortcut was ResNet's own option C, which had done slightly better than identity at 34 layers.
+- **Scaling and dropout** are the simplest ways to multiply the shortcut by something other than 1.
+
+Two of these, the shortcut-only gate and the 1×1 convolution, can do everything the identity shortcut does: they have extra weights, and they could learn to pass x through unchanged. In the paper's words, they "should have stronger representational abilities than identity shortcuts." So if they still did worse, the problem would be training, not what the network was able to represent.
+
+The test network was ResNet-110 on [CIFAR-10](/post/paper-1-part-3-the-simplest-way-to-guess-nearest-neighbor/), built from "54 two-layer Residual Units," meaning 54 blocks. With the original identity shortcut, it had 6.61% test error. Each experiment changed only the shortcut, the same way in all 54 blocks.
 
 ## Scaling the shortcut by 0.5
 
@@ -32,11 +44,11 @@ The last post's formula shows why. With the shortcut scaled, the 1 in "1 + somet
 
 That is the [photocopy problem](/post/paper-2-the-architecture-scaled-up/) again, this time on the path that was supposed to avoid it. The paper says the same about any scale other than 1: below 1, the factor "can be exponentially small and vanish, which blocks the backpropagated signal from the shortcut," and above 1 it "can be exponentially large." A scale of 2 would give 2⁵⁴, about 18 quadrillion.
 
-The scaled networks also had higher training error than the original, so the problem was training, not overfitting.
+The scaled networks also had higher error on their own training images than the original. A network that is [overfitting](/post/paper-3-deeper-networks-that-did-worse/#not-overfitting) does well on its training images and worse on new ones, so this was a different problem: training could not find good settings for the weights.
 
 ## Gates
 
-[Highway networks](/post/paper-3-what-resnet-won/), published around the same time as ResNet, put a learned <Term k="gating">gate</Term> on the shortcut: a number between 0 and 1 that sets how much of x passes through. The authors tried two versions.
+Highway networks put a learned <Term k="gating">gate</Term> on the shortcut: a number between 0 and 1 that sets how much of x passes through. The authors tried two versions.
 
 - **Exclusive gating:** the shortcut gets the gate's opposite (1 − g) and the layers get the gate (g). The best result was 8.70%.
 - **Shortcut-only gating:** only the shortcut is gated. When the gate started out at about 0.5, the error was 12.86%. When it started out almost fully open, passing about 99.75% of x, the error was 6.91%, close to the original 6.61%.
@@ -65,7 +77,7 @@ Test error on CIFAR-10 with ResNet-110, lower is better:
 
 <img src="/experiments/identity-mappings/shortcut-variants.svg" alt="A horizontal bar chart of test error on CIFAR-10 for ResNet-110 with different shortcuts, on an axis from 0% to 25%. Identity, the original, is 6.61% and highlighted. Shortcut-only gate started open is 6.91%, exclusive gate best setting 8.70%, 1x1 convolution 12.22%, both paths scaled by 0.5 12.35%. Shortcut scaled by 0.5 and dropout on the shortcut are drawn as dashed bars labeled failed, above 20%. A caption says every change was applied to all 54 blocks and none beat the unchanged shortcut." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "600px" }} />
 
-Every change to the shortcut is repeated in all 54 blocks, so even a small change multiplies up. A shortcut that does nothing is the only one whose effect stays 1 no matter how many blocks there are.
+Both the shortcut-only gate and the 1×1 convolution had higher training error than the identity shortcut, which the authors read as "caused by optimization issues, instead of representational abilities." Every change to the shortcut is repeated in all 54 blocks, so even a small change multiplies up. A shortcut that does nothing is the only one whose effect stays 1 no matter how many blocks there are.
 
 ## What's next
 

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 448" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="400" height="448" rx="10" fill="#ffffff"/>
+<text x="200.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">1. BN after the addition</text>
+<defs><marker id="a334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+<defs><marker id="a2563eb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+<defs><marker id="ac2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker></defs>
+<defs><marker id="a94a3b8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+<text x="190" y="70" text-anchor="middle" font-size="13" fill="#334155" font-style="italic">x</text>
+<line x1="190" y1="74" x2="190" y2="84" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="86" width="130" height="26" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="190" y="103.5" text-anchor="middle" font-size="12.5" fill="#334155">weight layer</text>
+<line x1="190" y1="112" x2="190" y2="124" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="126" width="130" height="26" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="190" y="143.5" text-anchor="middle" font-size="12.5" fill="#334155">BN</text>
+<line x1="190" y1="152" x2="190" y2="164" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="166" width="130" height="26" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="190" y="183.5" text-anchor="middle" font-size="12.5" fill="#334155">ReLU</text>
+<line x1="190" y1="192" x2="190" y2="204" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="206" width="130" height="26" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="190" y="223.5" text-anchor="middle" font-size="12.5" fill="#334155">weight layer</text>
+<line x1="190" y1="232" x2="190" y2="250" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<circle cx="190" cy="266" r="14" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<text x="190" y="272" text-anchor="middle" font-size="18" fill="#2563eb" font-weight="700">+</text>
+<path d="M 190 80 L 278 80 L 278 266 L 206 266" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#a2563eb)"/>
+<text x="284" y="173.0" font-size="11.5" fill="#2563eb" font-weight="600">x</text>
+<text x="284" y="188.0" font-size="10.5" fill="#2563eb">shortcut</text>
+<text x="200" y="294" font-size="11" fill="#334155">x + F(x)</text>
+<line x1="190" y1="280" x2="190" y2="296" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="298" width="130" height="26" rx="6" fill="#fff7ed" stroke="#c2410c" stroke-width="1.4"/>
+<text x="190" y="315.5" text-anchor="middle" font-size="12.5" fill="#c2410c" font-weight="600">BN</text>
+<line x1="190" y1="324" x2="190" y2="340" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<rect x="125.0" y="342" width="130" height="26" rx="6" fill="#ffffff" stroke="#c2410c" stroke-width="1.4"/>
+<text x="190" y="359.5" text-anchor="middle" font-size="12.5" fill="#c2410c">ReLU</text>
+<text x="190" y="384" text-anchor="middle" font-size="11" fill="#c2410c">both act on the sum, so both act on x</text>
+<line x1="190" y1="390" x2="190" y2="408" stroke="#334155" stroke-width="1.6" marker-end="url(#a334155)" />
+<text x="190" y="426" text-anchor="middle" font-size="12" fill="#334155">output = next block's x</text>
+<text x="116" y="306" text-anchor="end" font-size="10.5" fill="#c2410c">moved here from</text>
+<text x="116" y="319" text-anchor="end" font-size="10.5" fill="#c2410c">the layers' path</text>
+</svg>

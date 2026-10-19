@@ -27,13 +27,19 @@ The same experiment setup as the last post: ResNet-110 on CIFAR-10, original err
 
 **1. Batch normalization after the addition.** Move the last BN from inside the layers' path to after the addition. Worse: 8.17% (110 layers) and 6.50% (164). Now BN sits on the shortcut path and rescales everything that passes through it. In the paper's words, it "alters the signal that passes through the shortcut and impedes information propagation."
 
-**2. ReLU before the addition.** Move the last ReLU into the layers' path, so it runs before the addition and nothing runs after it. Also worse: 7.84% and 6.14%. The problem is that the change F(x) now comes out of a ReLU, so it can never be negative. A block can only add to x, never subtract. The paper: "intuitively a 'residual' function should take values in (−∞, +∞)." A block whose best output is 4.8 when 5.0 comes in has no way to get there.
+<img src="/experiments/identity-mappings/variant-1-bn-after.svg" alt="Rearrangement 1, BN after the addition. The layers' path runs weight layer, BN, ReLU, weight layer, then the shortcut x is added. After the addition come a highlighted BN, labeled moved here from the layers' path, and a ReLU. A note says both act on the sum, so both act on x." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "400px" }} />
 
-**3. ReLU-only pre-activation.** Put the ReLU at the start of the layers' path, before the 1st weight layer, and keep BN where it was. A ReLU still comes after the addition in this version. About the same as the original: 6.71% and 5.91%.
+**2. ReLU before the addition.** Move the last ReLU into the layers' path, so it runs before the addition and nothing runs after it. Also worse: 7.84% and 6.14%. The problem is that the change F(x) now comes out of a ReLU, so it can never be negative. A block can only add to x, never subtract. The paper: "intuitively a 'residual' function should take values in (−∞, +∞)," meaning it should be able to come out positive or negative. A block whose best output is 4.8 when 5.0 comes in has no way to get there.
+
+<img src="/experiments/identity-mappings/variant-2-relu-before.svg" alt="Rearrangement 2, ReLU before the addition. The layers' path runs weight layer, BN, ReLU, weight layer, BN, and a highlighted ReLU labeled moved here from after the addition, so F(x) can't be negative. Then the shortcut x is added, with nothing after the addition." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "400px" }} />
+
+**3. ReLU-only pre-activation.** Put the ReLU at the start of the layers' path, before the 1st weight layer, and keep BN where it was. Nothing comes after the addition. About the same as the original: 6.71% and 5.91%. The paper's guess is that this ReLU, with no BN right before it, "may not enjoy the benefits of BN."
+
+<img src="/experiments/identity-mappings/variant-3-relu-only-preact.svg" alt="Rearrangement 3, ReLU-only pre-activation. The layers' path starts with a highlighted ReLU, labeled moved here from after the addition, with no BN before it, then weight layer, BN, ReLU, weight layer, BN. Then the shortcut x is added, with nothing after the addition." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "400px" }} />
 
 **4. Full pre-activation.** Put both BN and ReLU before each weight layer, so the layers' path runs BN, ReLU, weight, BN, ReLU, weight, and nothing comes after the addition. Better than the original: 6.37% (110 layers) and 5.46% (164 layers). This is the block the paper recommends, called full pre-activation. "Activation" means the BN-and-ReLU step, and "pre" means it now comes before each weight layer instead of after.
 
-<img src="/experiments/identity-mappings/original-vs-preact.svg" alt="Two residual blocks side by side. The original block runs weight layer, BN, ReLU, weight layer, BN, then adds the shortcut x, then a final ReLU, highlighted and labeled on the path between blocks, before the output. The full pre-activation block runs BN, ReLU, weight layer, BN, ReLU, weight layer, then adds the shortcut x, with nothing after the addition. A caption says the steps are the same in a different order, and that in the original block the last ReLU acts on x plus F(x), so it sits on the shortcut's route." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "560px" }} />
+<img src="/experiments/identity-mappings/variant-4-full-preact.svg" alt="Rearrangement 4, full pre-activation. The layers' path starts with a highlighted BN and ReLU, labeled moved here from the end of the original block, then weight layer, BN, ReLU, weight layer. Then the shortcut x is added, with nothing after the addition." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "400px" }} />
 
 ## Why the order can move at all
 
@@ -56,4 +62,4 @@ The next block now receives −0.2, the value the layers asked for. Negative val
 
 ## What's next
 
-On 110 layers, pre-activation lowered error from 6.61% to 6.37%, and on 164 layers from 5.93% to 5.46%. The last post covers the 1,001-layer test, where the difference was much larger, and the paper's two explanations for why it helped.
+On 110 layers, pre-activation lowered error from 6.61% to 6.37%, and on 164 layers from 5.93% to 5.46%. The final post covers the 1,001-layer test, where the difference was much larger, and the paper's two explanations for why it helped.
