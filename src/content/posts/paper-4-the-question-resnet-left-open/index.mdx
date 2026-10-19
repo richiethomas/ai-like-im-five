@@ -13,6 +13,8 @@ tags: ["ResNet", "identity mappings", "residual connections"]
 
 > **Where we are:** Paper #3, [ResNet](/post/paper-3-deeper-networks-that-did-worse/), added shortcuts that let networks train at 152 layers. Paper #4 is "[Identity Mappings in Deep Residual Networks](https://arxiv.org/abs/1603.05027)," by the same four authors (Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun), published at the European Conference on Computer Vision (ECCV) in 2016, one year after ResNet.
 
+**Why it matters:** ResNet showed that shortcuts work. This paper showed how to arrange each block so the signal passes from block to block untouched. With that change, a 1,001-layer network trained well and reached 4.92% error on CIFAR-10, where the original design got 7.61%.
+
 ## The idea first- a metaphor
 
 Paper #3 described ResNet as a [line of artists](/post/paper-3-learning-the-change/): each artist is one block, and each one receives the drawing, makes a change on top, and hands the drawing on.

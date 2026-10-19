@@ -13,6 +13,8 @@ tags: ["ResNet", "CNNs", "depth"]
 
 > **Where we are:** [AlexNet](/post/paper-2-what-alexnet-learned/) showed that a deep network could beat hand-designed vision systems. Paper #3 is **ResNet**, the 2015 paper "[Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)" by Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun of Microsoft Research. It starts from a problem that showed up when people tried to go much deeper.
 
+**Why it matters:** before ResNet, making a plain network much deeper could make it worse; a 34-layer network did worse than an 18-layer one. ResNet's shortcuts let networks keep improving as they got deeper, up to 152 layers, and won the 2015 ImageNet contest with 3.57% top-5 error, down from 6.66% for the previous year's winner.
+
 ## Depth helped, at first
 
 AlexNet had eight layers with weights. Two years later, a network from Oxford called VGG, built in versions with 16 and 19 layers of small 3×3 filters, reached 7.32% top-5 error in the 2014 contest, about half of AlexNet's 15.3%. The [architecture post](/post/paper-2-the-architecture-scaled-up/) showed the same effect on a small scale: removing one of AlexNet's middle layers cost about two points of accuracy. Each extra layer can build on the patterns found by the one before it, [from edges to textures to object parts](/post/paper-1-part-13-pooling-and-stacking-from-edges-to-objects/), so a deeper network can describe more complicated things.
