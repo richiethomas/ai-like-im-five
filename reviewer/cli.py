@@ -16,6 +16,25 @@ from .orchestrator import run_review
 from .schemas import BUDGET_USD
 
 
+def reviewer_failure_warnings(events) -> list[str]:
+    """Lines to print when a reviewer's scan failed or its votes failed, so a
+    review that silently ran with fewer models is visible (e.g. Gemini ran out
+    of credits on 2026-10-03 and every review after that used 3 of 4)."""
+    lines: list[str] = []
+    for e in events:
+        if e.type == "scan_failed":
+            lines.append(f"WARNING: {e.data.get('model')} scan failed, so it raised "
+                         f"no findings: {str(e.data.get('error', ''))[:160]}")
+    failed_votes: dict[str, int] = {}
+    for e in events:
+        if e.type == "vote" and "call failed" in str(e.data.get("reason") or ""):
+            m = e.data.get("model", "?")
+            failed_votes[m] = failed_votes.get(m, 0) + 1
+    for m, n in failed_votes.items():
+        lines.append(f"WARNING: {m} failed to vote on {n} claim(s) (counted as abstain)")
+    return lines
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Multi-LLM roundtable review of a blog article.")
@@ -37,6 +56,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-metaphors", action="store_true",
                         help="skip the metaphor-opportunity pass that otherwise "
                              "runs automatically at the end of a review")
+    parser.add_argument("--no-figures", action="store_true",
+                        help="skip the figure check that otherwise runs "
+                             "automatically at the end of a review")
+    parser.add_argument("--figures-only", action="store_true",
+                        help="instead of a review, run only the figure check "
+                             "(image-capable models look at each rendered figure)")
     args = parser.parse_args(argv)
 
     # Keys come from repo-root .env; shell env still wins if already set.
@@ -59,6 +84,13 @@ def main(argv: list[str] | None = None) -> int:
         if args.min_score is not None:
             cli_args += ["--min-score", str(args.min_score)]
         return metaphors_main(cli_args)
+
+    if args.figures_only:
+        from .figures import main as figures_main
+        cli_args = [args.article, "--budget", str(args.budget)]
+        if args.out_dir:
+            cli_args += ["--out-dir", args.out_dir]
+        return figures_main(cli_args)
 
     result = run_review(args.article, out_dir=args.out_dir,
                         budget_usd=args.budget)
@@ -84,6 +116,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Consensus:      {len(report['consensus_claims'])} claims with 3+ model support")
     print(f"Cost:           ${report['cost']['total_usd']:.4f} "
           f"of ${report['cost']['budget_usd']:.2f}")
+    for line in reviewer_failure_warnings(engine.events):
+        print(line)
     from .metrics import build_metrics
     metrics = build_metrics(engine, ledger)
     reviewer_rows = {k: v for k, v in metrics.items() if k != "claude-sonnet-5"}
@@ -115,11 +149,28 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # noqa: BLE001 — never fail a done review
             print(f"\n(metaphor pass skipped: {exc})")
 
+    # The figure check also runs automatically, only when the article has
+    # images. Advisory like the metaphor pass: it never changes the outcome.
+    figure_summary = None
+    if not args.no_figures and "<img" in result.article.body:
+        from .figures import run_figure_check
+        try:
+            figure_summary = run_figure_check(
+                args.article, out_dir=result.out_dir, budget_usd=args.budget)
+        except Exception as exc:  # noqa: BLE001 — never fail a done review
+            print(f"\n(figure check skipped: {exc})")
+
     print(f"\nArtifacts in {result.out_dir}/:")
     artifacts = "  report.json, transcript.md, metrics.json, checkpoint.json"
     if metaphor_summary is not None:
         artifacts += ", metaphors.md, metaphors.json"
+    if figure_summary is not None:
+        artifacts += ", figures.md, figures.json, figures/"
     print(artifacts)
+
+    if figure_summary is not None:
+        from .figures import print_summary
+        print_summary(figure_summary)
 
     if metaphor_summary is not None:
         surfaced = metaphor_summary["surfaced"]

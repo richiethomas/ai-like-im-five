@@ -191,3 +191,72 @@ def test_gemini_is_truncated_handles_int_and_name():
     assert GeminiProvider._is_truncated(1) is False
     assert GeminiProvider._is_truncated("FinishReason.STOP") is False
     assert GeminiProvider._is_truncated(None) is False
+
+
+# --- image input (figure check) ----------------------------------------------
+
+from reviewer.providers import AnthropicProvider, OpenAICompatibleProvider  # noqa: E402
+
+
+class ImageFake(Provider):
+    """Records whether images reached _call."""
+
+    def __init__(self, supports_images):
+        super().__init__("gpt-4o-mini")
+        self.supports_images = supports_images
+        self.seen_images = "unset"
+
+    def _call(self, prompt, max_tokens, schema, images=None):
+        self.seen_images = images
+        return RawResponse(text='{"issues": []}', data=None,
+                           input_tokens=1, output_tokens=1, truncated=False)
+
+
+def test_text_only_call_keeps_three_argument_signature():
+    # FakeProvider._call takes no images argument; a text-only structured call
+    # must still work (no images passed through).
+    p = FakeProvider([ok('{"a": 1}')])
+    assert p.structured("x", {"type": "object"}, 100) == {"a": 1}
+
+
+def test_images_reach_call_when_supported():
+    p = ImageFake(supports_images=True)
+    p.structured("x", {"type": "object"}, 100, images=[b"png"])
+    assert p.seen_images == [b"png"]
+
+
+def test_images_rejected_when_not_supported():
+    p = ImageFake(supports_images=False)
+    with pytest.raises(ValueError, match="does not accept images"):
+        p.structured("x", {"type": "object"}, 100, images=[b"png"])
+
+
+def test_openai_content_with_image():
+    parts = OpenAICompatibleProvider.build_content("prompt", [b"\x89PNG"])
+    assert parts[0] == {"type": "text", "text": "prompt"}
+    assert parts[1]["type"] == "image_url"
+    assert parts[1]["image_url"]["url"].startswith("data:image/png;base64,")
+    assert OpenAICompatibleProvider.build_content("prompt", None) == "prompt"
+
+
+def test_anthropic_content_with_image():
+    parts = AnthropicProvider.build_content("prompt", [b"\x89PNG"])
+    assert parts[0]["type"] == "image"
+    assert parts[0]["source"]["media_type"] == "image/png"
+    assert parts[-1] == {"type": "text", "text": "prompt"}
+    assert AnthropicProvider.build_content("prompt", None) == "prompt"
+
+
+def test_gemini_contents_with_image():
+    parts = GeminiProvider.build_contents("prompt", [b"\x89PNG"])
+    assert parts[0] == "prompt"
+    assert parts[1] == {"mime_type": "image/png", "data": b"\x89PNG"}
+    assert GeminiProvider.build_contents("prompt", None) == "prompt"
+
+
+def test_vision_flags_in_registry():
+    from reviewer.providers import FIGURE_REVIEWER_NAMES, build_provider
+    for name in FIGURE_REVIEWER_NAMES:
+        assert build_provider(name).supports_images, name
+    assert not build_provider("deepseek-chat").supports_images
+    assert not build_provider("llama-3.3-70b").supports_images

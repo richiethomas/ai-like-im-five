@@ -17,10 +17,15 @@ Providers:
   AnthropicProvider — structured output via forced tool use: the model must
     call a tool whose input_schema IS the response schema, so the SDK hands
     back a parsed dict with no JSON string parsing at all.
+
+Images: `structured(..., images=[png_bytes])` attaches PNGs to the prompt for
+providers that support image input (the figure check, reviewer/figures.py).
+Text-only callers never pass images, so `_call` is invoked exactly as before.
 """
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -122,28 +127,42 @@ class RawResponse:
 
 
 class Provider(ABC):
-    """name: model id used for the cost ledger and metrics."""
+    """name: model id used for the cost ledger and metrics.
+    supports_images: whether this model accepts image input."""
+
+    supports_images: bool = False
 
     def __init__(self, name: str, ledger: CostLedger | None = None):
         self.name = name
         self.ledger = ledger
 
     @abstractmethod
-    def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
+    def _call(self, prompt: str, max_tokens: int, schema: dict | None,
+              images: list[bytes] | None = None) -> RawResponse:
         ...
+
+    def _call_maybe_images(self, prompt: str, max_tokens: int, schema: dict | None,
+                           images: list[bytes] | None) -> RawResponse:
+        # Text-only calls keep the original 3-argument signature, so subclasses
+        # and test fakes that don't know about images still work unchanged.
+        if not images:
+            return self._call(prompt, max_tokens, schema)
+        if not self.supports_images:
+            raise ValueError(f"{self.name} does not accept images")
+        return self._call(prompt, max_tokens, schema, images=images)
 
     def _record(self, raw: RawResponse, label: str) -> None:
         if self.ledger is not None:
             self.ledger.record(self.name, raw.input_tokens, raw.output_tokens, label)
 
     def structured(self, prompt: str, schema: dict, max_tokens: int,
-                   label: str = "") -> dict:
+                   label: str = "", images: list[bytes] | None = None) -> dict:
         """One structured call; on truncation retry once at 2x max_tokens,
         then salvage-parse whatever came back."""
-        raw = self._call(prompt, max_tokens, schema)
+        raw = self._call_maybe_images(prompt, max_tokens, schema, images)
         self._record(raw, label)
         if raw.truncated:
-            raw = self._call(prompt, max_tokens * 2, schema)
+            raw = self._call_maybe_images(prompt, max_tokens * 2, schema, images)
             self._record(raw, f"{label}:retry")
         if raw.data is not None:
             return raw.data
@@ -163,8 +182,10 @@ class Provider(ABC):
 
 class OpenAICompatibleProvider(Provider):
     def __init__(self, name: str, base_url: str, model: str, api_key_env: str,
-                 schema_mode: str, ledger: CostLedger | None = None):
+                 schema_mode: str, ledger: CostLedger | None = None,
+                 supports_images: bool = False):
         super().__init__(name, ledger)
+        self.supports_images = supports_images
         assert schema_mode in ("json_schema", "json_object")
         self.base_url = base_url.rstrip("/")
         self.model = model
@@ -177,14 +198,26 @@ class OpenAICompatibleProvider(Provider):
                     "json_schema": {"name": "response", "schema": schema}}
         return {"type": "json_object"}
 
-    def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
+    @staticmethod
+    def build_content(prompt: str, images: list[bytes] | None):
+        if not images:
+            return prompt
+        parts: list[dict] = [{"type": "text", "text": prompt}]
+        for img in images:
+            b64 = base64.b64encode(img).decode("ascii")
+            parts.append({"type": "image_url",
+                          "image_url": {"url": f"data:image/png;base64,{b64}"}})
+        return parts
+
+    def _call(self, prompt: str, max_tokens: int, schema: dict | None,
+              images: list[bytes] | None = None) -> RawResponse:
         api_key = os.getenv(self.api_key_env)
         if not api_key:
             raise RuntimeError(f"{self.api_key_env} is not set")
         payload: dict = {
             "model": self.model,
             "max_tokens": max_tokens,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [{"role": "user", "content": self.build_content(prompt, images)}],
         }
         if schema is not None:
             payload["response_format"] = self._response_format(schema)
@@ -213,6 +246,8 @@ class OpenAICompatibleProvider(Provider):
 # ---------------------------------------------------------------------------
 
 class GeminiProvider(Provider):
+    supports_images = True
+
     # Schema keys Gemini's validator rejects (found empirically: "Unknown field
     # for Schema: minimum").
     _UNSUPPORTED_KEYS = {"minimum", "maximum", "additionalProperties", "$schema", "strict"}
@@ -252,7 +287,7 @@ class GeminiProvider(Provider):
         return node
 
     def structured(self, prompt: str, schema: dict, max_tokens: int,
-                   label: str = "") -> dict:
+                   label: str = "", images: list[bytes] | None = None) -> dict:
         """Schema-less fallback: if a structured (response_schema) call still
         fails to parse after the base class's truncation retry, retry once in
         plain-text mode and parse leniently. The structured schema and the
@@ -260,9 +295,9 @@ class GeminiProvider(Provider):
         valid JSON. This is a safety net; the usual cause of failure
         (thinking-token truncation) is handled by _THINKING_HEADROOM below."""
         try:
-            return super().structured(prompt, schema, max_tokens, label)
+            return super().structured(prompt, schema, max_tokens, label, images=images)
         except json.JSONDecodeError:
-            raw = self._call(prompt, max_tokens, None)
+            raw = self._call_maybe_images(prompt, max_tokens, None, images)
             self._record(raw, f"{label}:schemaless")
             return parse_json_lenient(raw.text or "")
 
@@ -279,14 +314,22 @@ class GeminiProvider(Provider):
             pass
         return "MAX_TOKENS" in str(finish)
 
-    def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
+    @staticmethod
+    def build_contents(prompt: str, images: list[bytes] | None):
+        if not images:
+            return prompt
+        return [prompt] + [{"mime_type": "image/png", "data": img} for img in images]
+
+    def _call(self, prompt: str, max_tokens: int, schema: dict | None,
+              images: list[bytes] | None = None) -> RawResponse:
         model = self._get_model()
         # Reserve room for thinking on top of the requested answer length.
         config: dict = {"max_output_tokens": max_tokens + self._THINKING_HEADROOM}
         if schema is not None:
             config["response_mime_type"] = "application/json"
             config["response_schema"] = self.adapt_schema(schema)
-        response = model.generate_content(prompt, generation_config=config)
+        response = model.generate_content(self.build_contents(prompt, images),
+                                          generation_config=config)
         usage = getattr(response, "usage_metadata", None)
         finish = None
         if response.candidates:
@@ -318,6 +361,8 @@ class GeminiProvider(Provider):
 # ---------------------------------------------------------------------------
 
 class AnthropicProvider(Provider):
+    supports_images = True
+
     def __init__(self, name: str, model: str, api_key_env: str,
                  ledger: CostLedger | None = None):
         super().__init__(name, ledger)
@@ -334,12 +379,25 @@ class AnthropicProvider(Provider):
             self._client = anthropic.Anthropic(api_key=api_key)
         return self._client
 
-    def _call(self, prompt: str, max_tokens: int, schema: dict | None) -> RawResponse:
+    @staticmethod
+    def build_content(prompt: str, images: list[bytes] | None):
+        if not images:
+            return prompt
+        parts: list[dict] = []
+        for img in images:
+            parts.append({"type": "image",
+                          "source": {"type": "base64", "media_type": "image/png",
+                                     "data": base64.b64encode(img).decode("ascii")}})
+        parts.append({"type": "text", "text": prompt})
+        return parts
+
+    def _call(self, prompt: str, max_tokens: int, schema: dict | None,
+              images: list[bytes] | None = None) -> RawResponse:
         client = self._get_client()
         kwargs: dict = {
             "model": self.model,
             "max_tokens": max_tokens,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [{"role": "user", "content": self.build_content(prompt, images)}],
         }
         if schema is not None:
             # Forced tool use: the tool's input_schema IS the response schema,
@@ -379,13 +437,18 @@ class AnthropicProvider(Provider):
 
 REVIEWER_NAMES = ["gpt-4o-mini", "deepseek-chat", "gemini-3.5-flash", "llama-3.3-70b"]
 AUTHOR_NAME = "claude-sonnet-5"
+# Image-capable models used by the figure check (reviewer/figures.py).
+# gpt-4o-mini also accepts images, but in the first trial (2026-10-21) most of
+# its figure findings were wrong (e.g. "correcting" correct sums), so it is
+# left out of the figure check.
+FIGURE_REVIEWER_NAMES = ["gemini-3.5-flash", "claude-sonnet-5"]
 
 
 def build_provider(name: str, ledger: CostLedger | None = None) -> Provider:
     if name == "gpt-4o-mini":
         return OpenAICompatibleProvider(
             name, "https://api.openai.com/v1", "gpt-4o-mini",
-            "OPENAI_API_KEY", "json_schema", ledger)
+            "OPENAI_API_KEY", "json_schema", ledger, supports_images=True)
     if name == "deepseek-chat":
         return OpenAICompatibleProvider(
             name, "https://api.deepseek.com/v1", "deepseek-chat",

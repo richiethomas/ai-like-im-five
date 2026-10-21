@@ -340,3 +340,30 @@ ADJUDICATION_RESPONSE_SCHEMA = {
     },
     "required": ["same_claim"],
 }
+
+
+# Figure check (reviewer/figures.py): one image-capable model looks at one
+# rendered figure plus the text around it. An empty "issues" list means the
+# figure is fine. New schema, existing ones untouched.
+FIGURE_CATEGORIES = ["MATCHES_TEXT", "NUMBERS", "LEGIBILITY", "ONE_POINT",
+                     "DIRECTION", "ALT_TEXT"]
+
+FIGURE_RESPONSE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "issues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "category": {"type": "string", "enum": FIGURE_CATEGORIES},
+                    "issue": {"type": "string"},
+                    "severity": {"type": "integer", "minimum": 1, "maximum": 10},
+                    "suggested_fix": {"type": "string"},
+                },
+                "required": ["category", "issue", "severity"],
+            },
+        }
+    },
+    "required": ["issues"],
+}
