@@ -15,8 +15,10 @@ tags: ["dilated convolutions", "semantic segmentation", "VGG"]
 
 The paper's network has two parts:
 
-1. a **front end**, adapted from a classification network, that turns the image into a map of category scores;
+1. a **front end**, adapted from a classification network, that turns the image into a map of category scores, one score per category at each position (the categories come from the dataset's fixed list, chosen before training);
 2. a **context module**, a small stack of dilated layers placed after the front end, that improves those scores by looking at wider areas.
+
+<img src="/experiments/dilated-convolutions/front-end-and-context-module.svg" alt="A top-down illustration of the paper's two parts. A simplified street image goes into the front end, VGG-16 with its last two pooling steps removed, which shrinks it to a 64 by 64 grid with one score map per category. Three score maps are shown, for road, sidewalk, and car, shaded by how much each position looks like that category; an orange square marks a patch of road that scores more like sidewalk. The maps go into the context module, 7 dilated 3 by 3 layers with dilations 1, 1, 2, 4, 8, 16, 1 and a final 1 by 1 layer, which keeps the same size. In the refined maps the patch scores as road. At the bottom, each position is labeled with its highest-scoring category, giving a colored segmentation of sky, building, tree, sidewalk, road, and car. A caption says this is an illustration, not the paper's data, drawn 16 by 11 though the real maps are 64 by 64." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
 
 ## The front end: remove the last two shrinking steps
 

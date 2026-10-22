@@ -1,6 +1,6 @@
 ---
 title: "Paper #5: Dilated Convolutions, a Filter with Gaps"
-excerpt: "A dilated convolution spreads a filter's taps apart, so the same few weights cover a wider area. Stack a few with growing gaps, and the area each output sees grows exponentially, while the map never shrinks."
+excerpt: "A dilated convolution spaces out the positions a filter reads, so the same few weights cover a wider area. Stack a few with growing gaps, and the area each output sees grows exponentially, while the map never shrinks."
 category: "Vision"
 date: 2023-10-10T23:59:59Z
 author:
@@ -15,9 +15,13 @@ tags: ["dilated convolutions", "convolutions", "receptive field"]
 
 ## A filter on a single row
 
-Start with one row of 9 numbers and a filter with 3 weights, all set to 1, so the filter just adds up the values it lands on. A regular [convolution](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) centered on the middle value reads it and its two neighbors. A dilated convolution reads values that are a fixed distance apart instead. That distance is the dilation.
+Start with one row of 9 numbers and a filter with 3 weights, all set to 1, so the filter just adds up the values it lands on. The row is 2, 7, 1, 8, 2, 8, 1, 8, 2, and the filter is centered on the middle value, 2.
 
-The row is 2, 7, 1, 8, 2, 8, 1, 8, 2, and the filter is centered on the middle value, 2.
+A regular [convolution](/post/paper-1-part-12-convolutions-spotting-patterns-anywhere-in-a-picture/) centered on the middle value reads it and its two neighbors:
+
+<img src="/experiments/dilated-convolutions/row-filter-basic.svg" alt="A row of 9 numbers: 2, 7, 1, 8, 2, 8, 1, 8, 2. The three middle values, 8, 2, and 8, are highlighted, with arrows down to a filter of 3 boxes, each labeled times 1. Below, the sum 8 times 1 plus 2 times 1 plus 8 times 1 equals 18, labeled the output for the middle position. A caption says a regular convolution reads the middle value and its two neighbors, multiplies each by its weight, and adds them up." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
+A dilated convolution reads values that are a fixed distance apart instead. That distance is the dilation.
 
 - **Dilation 1** (a regular convolution) reads the 3 values next to each other: 8 + 2 + 8 = 18. It spans 3 positions.
 - **Dilation 2** reads every 2nd value: 1 + 2 + 1 = 4. It spans 5 positions.
@@ -41,13 +45,19 @@ On an image or a feature map, a 3 × 3 filter has 9 weights. At dilation 1 its t
 
 ## Stacking them
 
-The gain shows up when layers are stacked. Each layer reads from the layer below it, and each position in the layer below already summarizes an area of the image. The area a single output depends on is called its <Term k="receptive-field">receptive field</Term>.
+With one layer, the wider view has gaps: dilation 2 skips every other value. Stacking layers fills in the gaps and widens the view much faster. Each layer reads from the layer before it, and each position in that earlier layer already summarizes an area of the image. The area a single output depends on is called its <Term k="receptive-field">receptive field</Term>.
+
+<img src="/experiments/dilated-convolutions/stacking-fills-gaps.svg" alt="Two panels using the row 2, 7, 1, 8, 2, 8, 1, 8, 2, with filter weights all 1. Left, 1 layer with dilation 2: the output reads 1, 2, and 1, giving 4; the two 8s between them are marked orange as skipped. Right, 2 layers, dilation 1 then 2: layer 1 sums each value with its two neighbors, and layer 2 reads three of those sums spaced 2 apart, 16, 18, and 17, giving 51. Those come from the 7 input values 7, 1, 8, 2, 8, 1, 8, so the two skipped 8s now reach the output. Labeled receptive field: 7 positions, no gaps." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "820px" }} />
 
 The paper's Figure 1 stacks three 3 × 3 layers with dilations 1, 2, and 4:
 
 - **Layer 1, dilation 1:** each output depends on a 3 × 3 area.
 - **Layer 2, dilation 2:** each output reads 3 × 3 positions from layer 1, spaced 2 apart, so they span 5 × 5 positions, and each of those already covers 3 × 3. Together: 7 × 7.
 - **Layer 3, dilation 4:** by the same reasoning, 15 × 15.
+
+The figure below shows one filter in each layer. Dark blue squares are the 9 positions the filter reads; the yellow area is how much of the input its output depends on. Lines show which values are added up to make the next layer's value.
+
+<img src="/experiments/dilated-convolutions/three-layers-2d.svg" alt="Three 17 by 17 grids arranged as a descending staircase, one per layer, each showing one filter. Layer 1, dilation 1: 9 adjacent dark blue squares, the input values one filter reads, labeled covers 3 by 3, 9 input values to 1 layer-1 value. Layer 2, dilation 2: 9 dark squares spaced 2 apart, layer-1 values, on a yellow 7 by 7 area of the input, labeled covers 7 by 7. Layer 3, dilation 4: 9 dark squares spaced 4 apart on a yellow 15 by 15 area, labeled covers 15 by 15. Lines run from each panel's 9 dark squares down to the middle dark square of the next panel, and from layer 3's squares to a final layer-3 output square. A legend says dark blue is the 9 positions one filter reads and yellow is the area of the input its output depends on." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "760px" }} />
 
 Doubling the dilation at each layer roughly doubles the receptive field each time. In the paper's words, "the receptive field grows exponentially while the number of parameters grows linearly": every layer adds the same 9 weights per filter, but the area it covers keeps doubling. Three regular 3 × 3 layers, with the same number of weights, would cover only 7 × 7, against 15 × 15 for the dilated stack.
 

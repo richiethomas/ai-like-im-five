@@ -22,15 +22,13 @@ A classification network shrinks its feature maps several times on the way to th
 
 ResNet, from Paper #3, does this five times: a 224 × 224 image becomes maps of 112 × 112, then 56 × 56, 28 × 28, 14 × 14, and finally 7 × 7.
 
-The shrinking is there for a reason. Each layer's filters look at a small patch, 3 × 3 positions in most of these networks. On a full-size map, a 3 × 3 patch covers 3 × 3 pixels of the image. On a map that has been halved five times, each position stands for a 32 × 32 block of pixels, so the same 3 × 3 filter covers at least a 96 × 96 area. Shrinking is a cheap way to let later layers see large parts of the image, which they need to recognize whole objects. The paper describes classification networks as integrating "multi-scale contextual information via successive pooling and subsampling layers that reduce resolution until a global prediction is obtained."
+The shrinking is there for a reason. Each layer's filters look at a small patch, 3 × 3 positions in most of these networks. On a full-size map, a 3 × 3 patch covers 3 × 3 pixels of the image. On a map that has been halved five times, each position stands for a 2⁵ × 2⁵ = 32 × 32 block of pixels, so the same 3 × 3 filter covers at least a 96 × 96 area. Shrinking is a cheap way to let later layers see large parts of the image, which they need to recognize whole objects.
 
-## Why that is fine for one label
+## Fine for one label, not for every pixel
 
 For classification, the final answer is one word for the whole image. Where exactly the cat is does not matter, only that there is one. By the 7 × 7 stage, each position summarizes a large region, and ResNet then averages the 49 positions into one summary before the final layer. Nothing about the answer depends on the detail that was given up.
 
-## Why it is not fine for every pixel
-
-For segmentation, the answer is a label at every pixel, so the detail is the answer. A 7 × 7 map has 49 positions for a 224 × 224 image with 50,176 pixels. Each position has to stand for a 32 × 32 block. If a block contains part of a car and part of the road, that one position cannot say where the edge between them runs.
+For segmentation, the answer is a label at every pixel, so the detail isn't something we can throw away. A 7 × 7 map has 49 positions for a 224 × 224 image with 50,176 pixels. Each position has to stand for a 32 × 32 block. If a block contains part of a car and part of the road, that one position cannot say where the edge between them runs.
 
 <img src="/experiments/dilated-convolutions/resnet-shrinking.svg" alt="Squares drawn to scale for ResNet's map sizes: 224 by 224, 112 by 112, 56 by 56, 28 by 28, 14 by 14, and 7 by 7, each half the width and height of the one before. To the right, a 7 by 7 grid laid over the image, with one cell highlighted and labeled: 1 position equals a 32 by 32 block of pixels. A caption says one position cannot say where inside that block an edge between two objects falls." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "740px" }} />
 
@@ -40,9 +38,9 @@ So a segmentation network needs the wide view that shrinking provides and, at th
 
 By 2015, the best segmentation systems started from classification networks such as VGG-16 and adapted them. The paper describes two main approaches.
 
-**Shrink, then scale back up.** Keep the classification network's shrinking, then add layers at the end that enlarge the small maps back to full size. The paper describes this as "repeated up-convolutions that aim to recover lost resolution while carrying over the global perspective from downsampled layers," citing work from 2015 by Noh et al. and Fischer et al.
+**Shrink, then scale back up.** Keep the classification network's shrinking, then add layers at the end that enlarge the small maps back to full size.
 
-**Look at several sizes of the image.** Feed the network rescaled copies of the image, small and large, and combine the predictions from each. Here too, the paper notes, "it is not clear whether separate analysis of rescaled input images is truly necessary."
+**Look at several sizes of the image.** Feed the network rescaled copies of the image, small and large, and combine the predictions from each. The paper questions whether this is needed either: running the network several times on rescaled copies of the image is extra work, to make up for detail the network threw away in the first place.
 
 Both approaches keep the shrinking. Enlarging a 7 × 7 map back to 224 × 224 cannot restore detail that is no longer in it; it can only spread what is left over more pixels. Some versions also feed in the earlier, larger maps, which still have the detail, but that detail comes from those maps, not from the shrunk one.
 

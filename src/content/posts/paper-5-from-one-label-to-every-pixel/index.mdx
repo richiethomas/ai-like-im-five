@@ -40,6 +40,8 @@ A classification network looks at a street photo and outputs one answer, such as
 
 The paper calls this "dense prediction": a prediction at every position, as opposed to one prediction for the whole image.
 
+The categories are fixed in advance. Each dataset comes with its own list, such as 21 for PASCAL VOC (20 kinds of objects plus "background") or 11 for the street scenes in CamVid, and people label every pixel of the training images with one of them. The network is built with one output per category and learns what each one looks like; it doesn't decide which categories exist.
+
 Segmentation needs two things at once:
 
 - **Detail.** The boundary between the car and the road has to land on the right pixels.

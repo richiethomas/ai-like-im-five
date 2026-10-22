@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="900" height="420" rx="10" fill="#ffffff"/>
+<text x="450.0" y="34" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">One dilated layer has gaps; stacking fills them in</text>
+<defs><marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker><marker id="al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#93c5fd"/></marker></defs>
+<text x="250.0" y="66" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">1 layer, dilation 2</text>
+<text x="60" y="117" text-anchor="end" font-size="11" fill="#64748b">input</text>
+<rect x="70" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="87.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">2</text>
+<rect x="110" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="127.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">7</text>
+<rect x="150" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="167.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">1</text>
+<rect x="190" y="96" width="35" height="30" rx="4" fill="#fff7ed" stroke="#c2410c" stroke-width="1.6"/>
+<text x="207.5" y="116" text-anchor="middle" font-size="13" fill="#c2410c" font-weight="700">8</text>
+<rect x="230" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="247.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">2</text>
+<rect x="270" y="96" width="35" height="30" rx="4" fill="#fff7ed" stroke="#c2410c" stroke-width="1.6"/>
+<text x="287.5" y="116" text-anchor="middle" font-size="13" fill="#c2410c" font-weight="700">8</text>
+<rect x="310" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="327.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">1</text>
+<rect x="350" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="367.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">8</text>
+<rect x="390" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="407.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">2</text>
+<text x="60" y="269" text-anchor="end" font-size="11" fill="#64748b">output</text>
+<rect x="70" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="110" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="150" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="190" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="230" y="248" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="247.5" y="268" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">4</text>
+<rect x="270" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="310" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="350" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="390" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="167.5" y1="126" x2="247.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<line x1="247.5" y1="126" x2="247.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<line x1="327.5" y1="126" x2="247.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<text x="250.0" y="300" text-anchor="middle" font-size="12" fill="#334155">1 + 2 + 1 = 4</text>
+<text x="250.0" y="318" text-anchor="middle" font-size="11.5" fill="#c2410c">the two 8s in orange are skipped</text>
+<text x="690.0" y="66" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">2 layers: dilation 1, then 2</text>
+<text x="500" y="117" text-anchor="end" font-size="11" fill="#64748b">input</text>
+<rect x="510" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="527.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">2</text>
+<rect x="550" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="567.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">7</text>
+<rect x="590" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="607.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">1</text>
+<rect x="630" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="647.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">8</text>
+<rect x="670" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="687.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">2</text>
+<rect x="710" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="727.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">8</text>
+<rect x="750" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="767.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">1</text>
+<rect x="790" y="96" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="807.5" y="116" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">8</text>
+<rect x="830" y="96" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="847.5" y="116" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400">2</text>
+<text x="500" y="193" text-anchor="end" font-size="11" fill="#64748b">layer 1</text>
+<rect x="510" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="527.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">9</text>
+<rect x="550" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="567.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">10</text>
+<rect x="590" y="172" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="607.5" y="192" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">16</text>
+<rect x="630" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="647.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">11</text>
+<rect x="670" y="172" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="687.5" y="192" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">18</text>
+<rect x="710" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="727.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">11</text>
+<rect x="750" y="172" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="767.5" y="192" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">17</text>
+<rect x="790" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="807.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">11</text>
+<rect x="830" y="172" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" opacity="0.45"/>
+<text x="847.5" y="192" text-anchor="middle" font-size="13" fill="#64748b" font-weight="400" opacity="0.45">10</text>
+<text x="500" y="269" text-anchor="end" font-size="11" fill="#64748b">layer 2</text>
+<rect x="510" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="550" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="590" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="630" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="670" y="248" width="35" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<text x="687.5" y="268" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">51</text>
+<rect x="710" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="750" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="790" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="830" y="248" width="35" height="30" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="567.5" y1="126" x2="607.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="607.5" y1="126" x2="607.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="647.5" y1="126" x2="607.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="647.5" y1="126" x2="687.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="687.5" y1="126" x2="687.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="727.5" y1="126" x2="687.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="727.5" y1="126" x2="767.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="767.5" y1="126" x2="767.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="807.5" y1="126" x2="767.5" y2="169" stroke="#93c5fd" stroke-width="1.4" marker-end="url(#al)"/>
+<line x1="607.5" y1="202" x2="687.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<line x1="687.5" y1="202" x2="687.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<line x1="767.5" y1="202" x2="687.5" y2="245" stroke="#2563eb" stroke-width="1.4" marker-end="url(#ab)"/>
+<text x="690.0" y="300" text-anchor="middle" font-size="12" fill="#334155">layer 1: 7+1+8 = 16, 8+2+8 = 18, 8+1+8 = 17</text>
+<text x="690.0" y="318" text-anchor="middle" font-size="12" fill="#334155">layer 2: 16 + 18 + 17 = 51</text>
+<text x="690.0" y="338" text-anchor="middle" font-size="11.5" fill="#2563eb">receptive field: 7 positions, no gaps</text>
+<text x="450.0" y="388" text-anchor="middle" font-size="11" fill="#64748b">Filter weights all 1, as in the example above. On the right, the two 8s skipped on the left still reach the output,</text>
+<text x="450.0" y="404" text-anchor="middle" font-size="11" fill="#64748b">through layer 1, where each value is the sum of an input value and its two neighbors.</text>
+</svg>
