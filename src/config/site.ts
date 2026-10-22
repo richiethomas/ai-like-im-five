@@ -45,6 +45,7 @@ export const siteConfig = {
 /** Header navigation. Add or remove entries freely; the header renders them in order. */
 export const navigation = [
   { label: "Papers", href: "/papers/" },
+  { label: "Notes", href: "/notes/" },
   { label: "Archive", href: "/posts/" },
   { label: "Categories", href: "/categories/" },
   { label: "Tags", href: "/tags/" },

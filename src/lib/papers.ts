@@ -37,6 +37,9 @@ export const chaptersWithPapers = () =>
     papers: papers.filter((paper) => paper.chapter === chapter.key),
   }));
 
+/** Notes: posts that are not part of any paper series. */
+export const isNote = (post: Post) => paperForPost(post) === undefined;
+
 export const statusLabel: Record<PaperStatus, string> = {
   done: "Complete",
   next: "Up next",

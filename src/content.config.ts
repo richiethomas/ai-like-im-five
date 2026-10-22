@@ -32,6 +32,15 @@ const posts = defineCollection({
       /** Surfaces the post in the "Featured" list in the home sidebar. */
       featured: z.boolean().default(false),
       draft: z.boolean().default(false),
+      /**
+       * Publication status, used mainly for Notes (posts outside a paper series):
+       *   idea      - an outline or bullet points, not written yet
+       *   draft     - being written and wordsmithed
+       *   published - live on the site
+       * Anything not "published" is left out of the production build entirely; on
+       * the dev server it appears only on /notes/ and its own page, with a banner.
+       */
+      status: z.enum(["idea", "draft", "published"]).default("published"),
       /** Freeform topic tags for cross-cutting organization (e.g. "gradient descent", "CNNs"). */
       tags: z.array(z.string()).default([]),
     }),

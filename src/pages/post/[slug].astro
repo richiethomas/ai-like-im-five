@@ -21,13 +21,19 @@ import {
   postSlug,
   readingLabel,
   tagHref,
+  unpublishedPosts,
   visiblePosts,
   type Post,
 } from "@/lib/posts";
+import { isNote } from "@/lib/papers";
 
 export async function getStaticPaths() {
-  const allPosts = visiblePosts(await getCollection("posts"));
-  return allPosts.map((post) => ({
+  const collection = await getCollection("posts");
+  const allPosts = visiblePosts(collection);
+  // Unpublished notes get a page only on the dev server, so they can be
+  // previewed while being written. The production build never includes them.
+  const previews = import.meta.env.DEV ? unpublishedPosts(collection).filter(isNote) : [];
+  return [...allPosts, ...previews].map((post) => ({
     params: { slug: postSlug(post) },
     props: { post, allPosts },
   }));
@@ -93,6 +99,12 @@ const structuredData = {
   <main id="content" class="outer">
     <article>
       <header class="canvas pt-10 md:pt-14">
+        {data.status !== "published" && (
+          <p class="unpublished-banner">
+            {data.status === "idea" ? "Idea" : "Draft"}: not published. Only visible on your dev server; set
+            <code>status: "published"</code> in the frontmatter to publish it.
+          </p>
+        )}
         <p class="meta post-meta">
           <span class="post-meta__byline">
             By <a href={authorHref} class="link-sweep post-meta__link">{data.author.name}</a> in{" "}
@@ -384,3 +396,14 @@ const structuredData = {
     }
   </style>
 </BaseLayout>
+
+<style>
+  .unpublished-banner {
+    margin: 0 0 1.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import { getCollection } from "astro:content";
+import PostCard from "@/components/PostCard.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { isNote } from "@/lib/papers";
+import { unpublishedPosts, visiblePosts } from "@/lib/posts";
+
+const collection = await getCollection("posts");
+const allPosts = visiblePosts(collection);
+const notes = allPosts.filter(isNote);
+// Ideas and drafts are listed only on the dev server, above the published notes.
+const unpublished = import.meta.env.DEV ? unpublishedPosts(collection).filter(isNote) : [];
+
+const title = "Notes";
+const description = "Shorter posts about AI, written by hand, outside the papers series.";
+const statusLabel = { idea: "Idea", draft: "Draft", published: "Published" } as const;
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteHeader posts={allPosts} />
+  <main id="content" class="outer">
+    <div class="canvas">
+      <header class="pagehead">
+        <p class="eyebrow">Notes</p>
+        <h1 class="pagehead-title">Notes</h1>
+        <p class="pagehead-description">
+          Shorter posts about AI, outside the papers series. I write these by hand, without an AI drafting them.
+        </p>
+      </header>
+
+      {
+        unpublished.length > 0 && (
+          <section class="unpublished" aria-label="Unpublished notes">
+            <p class="unpublished-heading">
+              Not published ({unpublished.length}). Only visible on your dev server.
+            </p>
+            <div class="feed">
+              {unpublished.map((post) => (
+                <div>
+                  <p class="status">{statusLabel[post.data.status]}</p>
+                  <PostCard post={post} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        notes.length > 0 ? (
+          <div class="feed">
+            {notes.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <p class="empty">No notes published yet.</p>
+        )
+      }
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .canvas {
+    padding-bottom: var(--space-section);
+  }
+
+  .unpublished {
+    margin-bottom: 3rem;
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+  }
+
+  .status {
+    margin: 0 0 0.35rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .unpublished-heading,
+  .empty {
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+</style>

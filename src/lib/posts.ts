@@ -31,8 +31,14 @@ export const postHref = (post: Post) => `/post/${postSlug(post)}/`;
 
 export const byNewest = (a: Post, b: Post) => b.data.date.getTime() - a.data.date.getTime();
 
-export const visiblePosts = (posts: Post[]) =>
-  posts.filter((post) => !post.data.draft).sort(byNewest);
+export const isPublished = (post: Post) =>
+  !post.data.draft && post.data.status === "published";
+
+export const visiblePosts = (posts: Post[]) => posts.filter(isPublished).sort(byNewest);
+
+/** Unpublished posts (status "idea" or "draft"). Only ever rendered by the dev server. */
+export const unpublishedPosts = (posts: Post[]) =>
+  posts.filter((post) => !isPublished(post)).sort(byNewest);
 
 /**
  * Reading time from the raw Markdown body at 220 words per minute, so posts
