@@ -1,5 +1,6 @@
 ---
 import { navigation, siteConfig } from "@/config/site";
+import { isNote } from "@/lib/papers";
 import { formatDate, postHref, readingLabel, visiblePosts, type Post } from "@/lib/posts";
 
 interface Props {
@@ -18,6 +19,11 @@ const searchFallback = posts.slice(0, 12).map((post) => ({
   date: formatDate(post.data.date),
   reading: readingLabel(post),
 }));
+/* The Notes link appears in production only once this many notes are published.
+   The dev server always shows it. */
+const NOTES_NAV_MIN = 3;
+const showNotes = import.meta.env.DEV || posts.filter(isNote).length >= NOTES_NAV_MIN;
+const navItems = navigation.filter((item) => item.href !== "/notes/" || showNotes);
 const isCurrentPath = (href: string) =>
   currentPath === href || (href !== "/" && currentPath.startsWith(href));
 ---
@@ -29,7 +35,7 @@ const isCurrentPath = (href: string) =>
     <div class="flex items-center gap-5">
       <nav class="hidden items-center gap-6 md:flex" aria-label="Primary navigation">
         {
-          navigation.map((item) => (
+          navItems.map((item) => (
             <a
               href={item.href}
               class="nav-link"
@@ -163,7 +169,7 @@ const isCurrentPath = (href: string) =>
   <nav class="px-6 py-4" aria-label="Mobile navigation">
     <ul>
       {
-        navigation.map((item) => (
+        navItems.map((item) => (
           <li>
             <a
               href={item.href}
