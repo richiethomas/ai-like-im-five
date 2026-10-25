@@ -62,6 +62,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--figures-only", action="store_true",
                         help="instead of a review, run only the figure check "
                              "(image-capable models look at each rendered figure)")
+    parser.add_argument("--reviewers", default=None,
+                        help="comma-separated reviewer models for the text "
+                             "review (default: the standard panel), e.g. "
+                             "gpt-4o-mini,deepseek-chat,gemini-3.5-flash,qwen-3.7-plus")
     args = parser.parse_args(argv)
 
     # Keys come from repo-root .env; shell env still wins if already set.
@@ -92,8 +96,10 @@ def main(argv: list[str] | None = None) -> int:
             cli_args += ["--out-dir", args.out_dir]
         return figures_main(cli_args)
 
+    reviewer_names = ([n.strip() for n in args.reviewers.split(",") if n.strip()]
+                      if args.reviewers else None)
     result = run_review(args.article, out_dir=args.out_dir,
-                        budget_usd=args.budget)
+                        budget_usd=args.budget, reviewer_names=reviewer_names)
     engine, ledger = result.engine, result.ledger
 
     from .report import build_report
