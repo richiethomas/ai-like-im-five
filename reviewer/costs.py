@@ -26,8 +26,13 @@ PRICES: dict[str, Price] = {
     "gpt-4o-mini": Price(0.15, 0.60),
     "deepseek-chat": Price(0.27, 1.10),
     "gemini-3.5-flash": Price(0.30, 2.50),
-    "llama-3.3-70b": Price(0.88, 0.88),
     "claude-sonnet-5": Price(3.00, 15.00),
+    # Together AI list prices, checked via its /v1/models endpoint 2026-10-25.
+    "qwen-3.8-flash": Price(0.15, 0.47),
+    "qwen-3.7-plus": Price(0.32, 1.28),
+    "qwen-3.7-max": Price(2.50, 7.50),
+    "qwen-3.8": Price(2.00, 6.00),
+    "muse-glimmer-30b": Price(0.35, 1.50),
 }
 
 

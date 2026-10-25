@@ -183,14 +183,35 @@ class Provider(ABC):
 class OpenAICompatibleProvider(Provider):
     def __init__(self, name: str, base_url: str, model: str, api_key_env: str,
                  schema_mode: str, ledger: CostLedger | None = None,
-                 supports_images: bool = False):
+                 supports_images: bool = False, stream: bool = False,
+                 reasoning_headroom: int = 0):
         super().__init__(name, ledger)
         self.supports_images = supports_images
+        # Some Together models (the Qwen 3.6+ family, as of 2026-10-25) reject
+        # non-streaming requests with code "streaming_required". For those we
+        # stream and join the pieces back into one response.
+        self.stream = stream
+        # Extra max_tokens for reasoning models whose hidden reasoning counts
+        # toward the limit (same idea as GeminiProvider._THINKING_HEADROOM).
+        self.reasoning_headroom = reasoning_headroom
         assert schema_mode in ("json_schema", "json_object")
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key_env = api_key_env
         self.schema_mode = schema_mode
+
+    def structured(self, prompt: str, schema: dict, max_tokens: int,
+                   label: str = "", images: list[bytes] | None = None) -> dict:
+        """Streaming models occasionally return JSON cut off partway with no
+        length flag (seen once in 12 Qwen 3.7 Plus test calls, 2026-10-25,
+        and not reproducible in 8 more). Retry those once."""
+        try:
+            return super().structured(prompt, schema, max_tokens, label, images=images)
+        except json.JSONDecodeError:
+            if not self.stream:
+                raise
+            return super().structured(prompt, schema, max_tokens,
+                                      f"{label}:parse-retry", images=images)
 
     def _response_format(self, schema: dict) -> dict:
         if self.schema_mode == "json_schema":
@@ -216,19 +237,25 @@ class OpenAICompatibleProvider(Provider):
             raise RuntimeError(f"{self.api_key_env} is not set")
         payload: dict = {
             "model": self.model,
-            "max_tokens": max_tokens,
+            "max_tokens": max_tokens + self.reasoning_headroom,
             "messages": [{"role": "user", "content": self.build_content(prompt, images)}],
         }
         if schema is not None:
             payload["response_format"] = self._response_format(schema)
+        if self.stream:
+            payload["stream"] = True
+            payload["stream_options"] = {"include_usage": True}
         resp = requests.post(
             f"{self.base_url}/chat/completions",
             headers={"Authorization": f"Bearer {api_key}",
                      "Content-Type": "application/json"},
             json=payload,
-            timeout=120,
+            timeout=300 if self.stream else 120,
+            stream=self.stream,
         )
         resp.raise_for_status()
+        if self.stream:
+            return self.parse_stream(resp.iter_lines(decode_unicode=True))
         body = resp.json()
         choice = body["choices"][0]
         usage = body.get("usage", {})
@@ -238,6 +265,44 @@ class OpenAICompatibleProvider(Provider):
             input_tokens=usage.get("prompt_tokens", 0),
             output_tokens=usage.get("completion_tokens", 0),
             truncated=choice.get("finish_reason") == "length",
+        )
+
+    @staticmethod
+    def parse_stream(lines) -> RawResponse:
+        """Join a server-sent-events chat stream into one RawResponse.
+
+        Each event line is `data: {json chunk}`; the stream ends with
+        `data: [DONE]`. Text arrives in choices[0].delta.content. Reasoning
+        text (delta.reasoning or delta.reasoning_content) is not part of the
+        answer and is dropped. Usage arrives in a final chunk when
+        stream_options.include_usage is set.
+        """
+        parts: list[str] = []
+        finish = None
+        usage: dict = {}
+        for line in lines:
+            if not line or not line.startswith("data:"):
+                continue
+            data = line[len("data:"):].strip()
+            if data == "[DONE]":
+                break
+            chunk = json.loads(data)
+            if chunk.get("error"):
+                raise RuntimeError(f"stream error: {chunk['error']}")
+            if chunk.get("usage"):
+                usage = chunk["usage"]
+            for choice in chunk.get("choices") or []:
+                content = (choice.get("delta") or {}).get("content")
+                if content:
+                    parts.append(content)
+                if choice.get("finish_reason"):
+                    finish = choice["finish_reason"]
+        return RawResponse(
+            text="".join(parts),
+            data=None,
+            input_tokens=usage.get("prompt_tokens", 0),
+            output_tokens=usage.get("completion_tokens", 0),
+            truncated=finish == "length",
         )
 
 
@@ -273,7 +338,11 @@ class GeminiProvider(Provider):
             api_key = os.getenv(self.api_key_env)
             if not api_key:
                 raise RuntimeError(f"{self.api_key_env} is not set")
-            genai.configure(api_key=api_key)
+            # transport="rest": on 2026-10-25 the library's default gRPC
+            # transport hung with no error (a one-line call never returned),
+            # while REST answered in under 2 seconds. The library is also
+            # deprecated in favor of google.genai.
+            genai.configure(api_key=api_key, transport="rest")
             self._model = genai.GenerativeModel(self.model_name)
         return self._model
 
@@ -329,7 +398,8 @@ class GeminiProvider(Provider):
             config["response_mime_type"] = "application/json"
             config["response_schema"] = self.adapt_schema(schema)
         response = model.generate_content(self.build_contents(prompt, images),
-                                          generation_config=config)
+                                          generation_config=config,
+                                          request_options={"timeout": 300})
         usage = getattr(response, "usage_metadata", None)
         finish = None
         if response.candidates:
@@ -435,13 +505,28 @@ class AnthropicProvider(Provider):
 # Registry
 # ---------------------------------------------------------------------------
 
-REVIEWER_NAMES = ["gpt-4o-mini", "deepseek-chat", "gemini-3.5-flash", "llama-3.3-70b"]
+# The 4th slot was llama-3.3-70b until Together removed it from serverless on
+# 2026-10-22. qwen-3.8-flash replaced it after a comparison on Paper #6 posts
+# 3 and 4 (2026-10-25): most valid findings, the only candidate to catch
+# issues the other 3 missed, and the lowest cost. It is slow (30k+ hidden
+# reasoning tokens per scan).
+REVIEWER_NAMES = ["gpt-4o-mini", "deepseek-chat", "gemini-3.5-flash", "qwen-3.8-flash"]
 AUTHOR_NAME = "claude-sonnet-5"
 # Image-capable models used by the figure check (reviewer/figures.py).
 # gpt-4o-mini also accepts images, but in the first trial (2026-10-21) most of
 # its figure findings were wrong (e.g. "correcting" correct sums), so it is
 # left out of the figure check.
 FIGURE_REVIEWER_NAMES = ["gemini-3.5-flash", "claude-sonnet-5"]
+
+
+# Together's Qwen models, all streaming-only. qwen-3.8-flash is on the panel;
+# the others were compared for the 4th slot and kept for --reviewers.
+QWEN_MODELS = {
+    "qwen-3.8-flash": "Qwen/Qwen3.8-Flash",
+    "qwen-3.7-plus": "Qwen/Qwen3.7-Plus",
+    "qwen-3.7-max": "Qwen/Qwen3.7-Max",
+    "qwen-3.8": "Qwen/Qwen3.8-2.4T-A95B",
+}
 
 
 def build_provider(name: str, ledger: CostLedger | None = None) -> Provider:
@@ -453,11 +538,19 @@ def build_provider(name: str, ledger: CostLedger | None = None) -> Provider:
         return OpenAICompatibleProvider(
             name, "https://api.deepseek.com/v1", "deepseek-chat",
             "DEEPSEEK_API_KEY", "json_object", ledger)
-    if name == "llama-3.3-70b":
+    if name == "muse-glimmer-30b":
+        # Together's listed replacement for serverless Llama 3.3 70B. A
+        # reasoning model: hidden reasoning tokens count toward max_tokens.
         return OpenAICompatibleProvider(
-            name, "https://api.together.xyz/v1",
-            "meta-llama/Llama-3.3-70b-instruct-turbo",
-            "TOGETHER_AI_API_KEY", "json_schema", ledger)
+            name, "https://api.together.xyz/v1", "meta-models/Muse-Glimmer-30B",
+            "TOGETHER_AI_API_KEY", "json_schema", ledger,
+            # Its reasoning used all of 4,000 and then 8,000 tokens on one
+            # scan (2026-10-25) and never produced an answer.
+            reasoning_headroom=16000)
+    if name in QWEN_MODELS:
+        return OpenAICompatibleProvider(
+            name, "https://api.together.xyz/v1", QWEN_MODELS[name],
+            "TOGETHER_AI_API_KEY", "json_schema", ledger, stream=True)
     if name == "gemini-3.5-flash":
         return GeminiProvider(name, "gemini-3.5-flash", "GEMINI_API_KEY", ledger)
     if name == "claude-sonnet-5":

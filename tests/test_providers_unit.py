@@ -259,4 +259,101 @@ def test_vision_flags_in_registry():
     for name in FIGURE_REVIEWER_NAMES:
         assert build_provider(name).supports_images, name
     assert not build_provider("deepseek-chat").supports_images
-    assert not build_provider("llama-3.3-70b").supports_images
+    assert not build_provider("qwen-3.8-flash").supports_images
+
+
+# --- streaming (Together's Qwen models require it) ---------------------------
+
+def _sse(*chunks):
+    import json as _json
+    return [f"data: {_json.dumps(c)}" for c in chunks] + ["", "data: [DONE]"]
+
+
+def test_parse_stream_joins_content_and_reads_usage():
+    from reviewer.providers import OpenAICompatibleProvider
+    lines = _sse(
+        {"choices": [{"delta": {"role": "assistant"}}]},
+        {"choices": [{"delta": {"content": '{"ok": '}}]},
+        {"choices": [{"delta": {"content": "true}"}, "finish_reason": "stop"}]},
+        {"choices": [], "usage": {"prompt_tokens": 12, "completion_tokens": 5}},
+    )
+    raw = OpenAICompatibleProvider.parse_stream(lines)
+    assert raw.text == '{"ok": true}'
+    assert (raw.input_tokens, raw.output_tokens) == (12, 5)
+    assert raw.truncated is False
+
+
+def test_parse_stream_drops_reasoning_and_flags_truncation():
+    from reviewer.providers import OpenAICompatibleProvider
+    lines = _sse(
+        {"choices": [{"delta": {"reasoning": "thinking..."}}]},
+        {"choices": [{"delta": {"reasoning_content": "more"}}]},
+        {"choices": [{"delta": {"content": '{"a"'}, "finish_reason": "length"}]},
+    )
+    raw = OpenAICompatibleProvider.parse_stream(lines)
+    assert raw.text == '{"a"'
+    assert raw.truncated is True
+
+
+def test_parse_stream_raises_on_error_chunk():
+    import pytest as _pytest
+    from reviewer.providers import OpenAICompatibleProvider
+    with _pytest.raises(RuntimeError, match="stream error"):
+        OpenAICompatibleProvider.parse_stream(_sse({"error": {"message": "boom"}}))
+
+
+def test_qwen_providers_stream_and_have_prices():
+    from reviewer.costs import PRICES
+    from reviewer.providers import QWEN_MODELS, build_provider
+    for name in QWEN_MODELS:
+        p = build_provider(name)
+        assert p.stream is True
+        assert name in PRICES
+    assert build_provider("gpt-4o-mini").stream is False
+
+
+def test_streaming_provider_retries_once_on_bad_json(monkeypatch):
+    from reviewer.providers import OpenAICompatibleProvider, RawResponse
+    p = OpenAICompatibleProvider("qwen-3.7-plus", "https://x", "m", "K",
+                                 "json_schema", stream=True)
+    replies = iter(['{"ok": tr', '{"ok": true}'])
+    monkeypatch.setattr(p, "_call", lambda *a, **k: RawResponse(
+        text=next(replies), data=None, input_tokens=0, output_tokens=0,
+        truncated=False))
+    assert p.structured("q", {}, 100) == {"ok": True}
+
+
+def test_non_streaming_provider_does_not_retry_bad_json(monkeypatch):
+    import json as _json
+    import pytest as _pytest
+    from reviewer.providers import OpenAICompatibleProvider, RawResponse
+    p = OpenAICompatibleProvider("gpt-4o-mini", "https://x", "m", "K",
+                                 "json_schema")
+    calls = []
+    def fake(*a, **k):
+        calls.append(1)
+        return RawResponse(text='{"ok": tr', data=None, input_tokens=0,
+                           output_tokens=0, truncated=False)
+    monkeypatch.setattr(p, "_call", fake)
+    with _pytest.raises(_json.JSONDecodeError):
+        p.structured("q", {}, 100)
+    assert len(calls) == 1
+
+
+def test_reasoning_headroom_is_added_to_max_tokens(monkeypatch):
+    from reviewer.providers import OpenAICompatibleProvider
+    sent = {}
+    class Resp:
+        def raise_for_status(self): pass
+        def json(self):
+            return {"choices": [{"message": {"content": "{}"}, "finish_reason": "stop"}],
+                    "usage": {}}
+    def fake_post(url, headers, json, timeout, stream):
+        sent.update(json)
+        return Resp()
+    monkeypatch.setenv("K", "x")
+    monkeypatch.setattr("reviewer.providers.requests.post", fake_post)
+    p = OpenAICompatibleProvider("muse-glimmer-30b", "https://x", "m", "K",
+                                 "json_schema", reasoning_headroom=16000)
+    p._call("q", 4000, None)
+    assert sent["max_tokens"] == 20000
