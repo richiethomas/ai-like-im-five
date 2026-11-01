@@ -23,7 +23,7 @@
 <line x1="350.0" y1="186" x2="350.0" y2="212" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
 <rect x="100.0" y="220" width="500" height="58" rx="8" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
 <text x="350.0" y="244" text-anchor="middle" font-size="13" fill="#334155" font-weight="700">Front end: VGG-16 with its last two pooling steps removed</text>
-<text x="350.0" y="264" text-anchor="middle" font-size="11" fill="#64748b">shrinks the image to a 64 × 64 grid of positions, with one score map per category</text>
+<text x="350.0" y="264" text-anchor="middle" font-size="11" fill="#64748b">positions 8 pixels apart (64 × 64 for a 512-pixel image), one score map per category</text>
 <line x1="350.0" y1="284" x2="350.0" y2="310" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
 <text x="350.0" y="330" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">category score maps: how much each position looks like each category</text>
 <rect x="98.0" y="342" width="9" height="9" fill="#2563eb" fill-opacity="0.06"/>

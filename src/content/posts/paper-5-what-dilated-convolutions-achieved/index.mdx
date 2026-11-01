@@ -19,10 +19,10 @@ The full system on the PASCAL VOC 2012 test set, scored in <Term k="mean-iou">me
 
 - front end alone: 71.3%
 - front end with the large context module: 73.5%
-- adding a CRF clean-up step on top: 74.7%
+- adding a <Term k="crf">CRF</Term> clean-up step on top: 74.7%
 - adding CRF-RNN, a trainable version of that clean-up step from other researchers: 75.3%
 
-For comparison, the strongest DeepLab system the paper lists scored 73.9%, and the CRF-RNN system on its own scored 74.7%. The paper points out that the front end plus context module, at 73.5%, beat the 72.7% of a DeepLab system that used a CRF, without using one itself. Adding the context module to the CRF-RNN system raised that system from 74.7% to 75.3%.
+For comparison, the strongest DeepLab system the paper lists scored 73.9%, and the CRF-RNN system on its own scored 74.7%. The paper points out that the front end plus context module, at 73.5%, beat the 72.7% of a DeepLab system that used a CRF (a different version from the 73.9% one), without using one itself. Adding the context module to the CRF-RNN system raised that system from 74.7% to 75.3%.
 
 ## On street scenes
 
@@ -30,7 +30,7 @@ The paper also tested on three datasets of street scenes recorded from cars, the
 
 - **CamVid:** 65.3% mean IoU, against 61.6% for DeepLab and 46.4% for SegNet.
 - **KITTI:** 59.2%, against 54.2% for DeepLab.
-- **Cityscapes:** 67.1% on the test set. Cityscapes images are 2048 × 1024 pixels, so the authors added two more layers to the context module to cover the larger images.
+- **Cityscapes:** 67.1% on the test set. Cityscapes images are 2048 × 1024 pixels, so the authors added two more layers to the context module, with dilations 32 and 64, to keep its view widening across the larger maps.
 
 The per-category numbers show where the gains came from. On CamVid, for example, the score for pedestrians rose to 56.3% from DeepLab's 48.4%, and for bicyclists to 55.5% from 50.1%.
 
@@ -44,19 +44,23 @@ What this paper added:
 - **A cleaner front end.** Removing VGG-16's last two pooling steps, instead of working around them, made the starting network both simpler and more accurate.
 - **A module that fits anywhere.** Because it takes and returns the same kind of maps, it raised accuracy when added to three different setups: the front end alone, the front end with a CRF, and the front end with CRF-RNN.
 
-The authors' conclusion states the main point: "Since the model must produce high-resolution output, we believe that high-resolution operation throughout the network is both feasible and desirable." In other words, the network should keep its maps large all the way through, rather than shrinking them and enlarging them again.
+The authors conclude that because the output needs a label for every pixel, the network should keep its maps large all the way through, rather than shrinking them and enlarging them again. Their own network does this only in part, as the next section shows.
 
 ## What it left open
 
-- **The maps are not full size.** The front end still keeps VGG-16's 1st three pooling steps, so its output, at 64 × 64, is 8 times smaller than the input in each direction. The network works at 1/8 of the image's width and height, not at its full resolution.
+- **The maps are not full size.** The front end still keeps VGG-16's 1st three pooling steps, so its output is 1/8 the size of the input in each direction (64 × 64 for an image about 512 pixels on a side). The network works at 1/8 of the image's width and height, not at its full resolution.
 - **A clean-up step still helped.** On the test set, adding a CRF on top raised the score from 73.5% to 74.7%. The network alone did not capture everything about where the boundaries between regions fall.
 - **Starting the module needed care.** Random starting weights did not work for the context module; the pass-through start did. The paper reports this as what worked, not as an explanation of why.
 
 ## Where it was used afterward
 
-- **Later segmentation networks.** DeepLab's 2016 version made the operation, which its authors call "atrous convolution," central to its design, and reached 79.7% mean IoU on the PASCAL VOC 2012 test set. Its authors note that they used it first, and that "the same operation was later called dilated convolution" by this paper.
-- **Audio.** WaveNet (DeepMind, 2016) generates speech one audio sample at a time. It stacks 1D dilated convolutions with dilations 1, 2, 4, and so on up to 512, so each output depends on the previous 1,024 samples. In its words, dilated convolutions increase "the receptive field by orders of magnitude, without greatly increasing computational cost." It cites this paper.
-- **Text.** ByteNet (DeepMind, 2016) translates English to German one character at a time. It uses dilated convolutions because "dilation makes the receptive field grow exponentially in terms of the depth of the networks, as opposed to linearly." It also cites this paper.
+- **Later segmentation networks.** DeepLab's 2016 version made the operation, which its authors call "atrous convolution," after the algorithme à trous ("with holes" in French), central to its design, and reached 79.7% mean IoU on the PASCAL VOC 2012 test set. Its authors note that they used it in a segmentation network before this paper did, and that "the same operation was later called dilated convolution" by this paper.
+- **Audio.** WaveNet (DeepMind, 2016) generates speech one audio sample at a time, at 16,000 or more samples per second. Each new sample has to depend on a long stretch of the sound before it: the authors found that a version looking back about 300 milliseconds could keep track of only the last 2 or 3 speech sounds.
+
+  With regular convolutions, each layer adds 1 sample to how far back the network looks, so covering 1,024 samples would take about 1,023 layers. With dilations 1, 2, 4, and so on up to 512, WaveNet covers 1,024 samples with 10 layers, and stacks several of these groups to look back further. It cites this paper.
+- **Text.** ByteNet (DeepMind, 2016) translates English to German one character at a time, so a single sentence is a sequence of a hundred or more characters. To choose each next character, the network needs to see a long stretch of the sentence before it. Each of its filters reads 3 characters, so without dilation each layer adds 2 characters to how far back it looks, and its 30 layers would see 61 characters.
+
+  With dilations 1, 2, 4, 8, 16, repeated six times, the same 30 layers look back 373 characters. The authors' reason for wanting this: when characters far apart in a sentence are connected through few layers, the network learns how they relate more easily. It also cites this paper.
 
 Audio and text are sequences: one value after another, in order. The two papers took the idea from this one, a wide view without shrinking, and applied it along a line of samples or characters instead of across an image.
 

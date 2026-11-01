@@ -13,28 +13,32 @@ tags: ["dilated convolutions", "semantic segmentation", "VGG"]
 
 > **Where we are:** the [last post](/post/paper-5-dilated-convolutions/) showed how a dilated convolution reads from a wider area without shrinking the map, and how stacking them with growing gaps makes the area grow exponentially. This post covers the two pieces the authors built with it.
 
+The network doesn't score each pixel directly. It produces a smaller grid, and each square in that grid is called a **position**. Neighboring positions are 8 pixels apart in the original image (the next section explains why 8). Position 1 corresponds to pixels 1–8, position 2 corresponds to pixels 9–16, and so on. So an image about 512 pixels on a side becomes a 64 × 64 grid of positions.
+
 The paper's network has two parts:
 
-1. a **front end**, adapted from a classification network, that turns the image into a map of category scores, one score per category at each position (the categories come from the dataset's fixed list, chosen before training);
+1. a **front end**, adapted from a classification network, that turns the image into a map of category scores, one score per category at each position;
 2. a **context module**, a small stack of dilated layers placed after the front end, that improves those scores by looking at wider areas.
 
-<img src="/experiments/dilated-convolutions/front-end-and-context-module.svg" alt="A top-down illustration of the paper's two parts. A simplified street image goes into the front end, VGG-16 with its last two pooling steps removed, which shrinks it to a 64 by 64 grid with one score map per category. Three score maps are shown, for road, sidewalk, and car, shaded by how much each position looks like that category; an orange square marks a patch of road that scores more like sidewalk. The maps go into the context module, 7 dilated 3 by 3 layers with dilations 1, 1, 2, 4, 8, 16, 1 and a final 1 by 1 layer, which keeps the same size. In the refined maps the patch scores as road. At the bottom, each position is labeled with its highest-scoring category, giving a colored segmentation of sky, building, tree, sidewalk, road, and car. A caption says this is an illustration, not the paper's data, drawn 16 by 11 though the real maps are 64 by 64." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
+The categories come from the dataset's fixed list, chosen before training: 21 for Pascal VOC (20 kinds of object, plus background).
+
+<img src="/experiments/dilated-convolutions/front-end-and-context-module.svg" alt="A top-down illustration of the paper's two parts. A simplified street image goes into the front end, VGG-16 with its last two pooling steps removed, which shrinks it to a grid of positions 8 pixels apart, 64 by 64 for a 512-pixel image, with one score map per category. Three score maps are shown, for road, sidewalk, and car, shaded by how much each position looks like that category; an orange square marks a patch of road that scores more like sidewalk. The maps go into the context module, 7 dilated 3 by 3 layers with dilations 1, 1, 2, 4, 8, 16, 1 and a final 1 by 1 layer, which keeps the same size. In the refined maps the patch scores as road. At the bottom, each position is labeled with its highest-scoring category, giving a colored segmentation of sky, building, tree, sidewalk, road, and car. A caption says this is an illustration, not the paper's data, drawn 16 by 11 though the real maps are 64 by 64." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "620px" }} />
 
 ## The front end: remove the last two shrinking steps
 
 The front end starts from [VGG-16](/post/paper-3-deeper-networks-that-did-worse/#depth-helped-at-first), the 16-layer classification network from Oxford. VGG-16 halves its maps five times with pooling. The authors removed the last two of those pooling steps entirely.
 
-Removing them would normally change what the later layers see: without the shrinking, each 3 × 3 filter after that point would cover a smaller part of the image than it did during VGG's original training. To make up for it, the authors increased the dilation of those later convolutions by a factor of 2 for each pooling step they removed, so the layers after both removed steps use dilation 4. Each filter then reads from the same area of the image as before, which means the layers can start from VGG-16's already-trained weights. The output is 64 × 64 instead of the much smaller map a fully shrinking network would produce.
+Removing them would normally change what the later layers see: without the shrinking, each 3 × 3 filter after that point would cover a smaller part of the image than it did during VGG's original training. To make up for it, the authors increased the dilation of those later convolutions by a factor of 2 for each pooling step they removed: the layers after the first removed step use dilation 2, and the layers after both use dilation 4.
 
-They also removed some other pieces left over from classification, such as padding between layers, and describe the result as removing "vestiges of the classification network that are counterproductive for dense prediction."
+Each filter then reads from the same area of the image as before, which means the layers can start from VGG-16's already-trained weights. Three halving steps remain, so neighboring positions are 2 × 2 × 2 = 8 pixels apart. For an image about 512 pixels on a side, the output is 64 × 64 instead of the much smaller map a fully shrinking network would produce.
+
+They also removed the padding between layers, which VGG-16 used for classification but which the paper says isn't needed when labeling every pixel.
 
 **Result.** The simplified front end was more accurate than the earlier segmentation networks built from VGG-16, on the PASCAL VOC 2012 test set:
 
 - FCN-8s (Long et al.): 62.2% <Term k="mean-iou">mean IoU</Term>
 - DeepLab (Chen et al.): 62.1%
 - the paper's front end: 67.6%
-
-That is more than 5 points better, from a network that is simpler than the ones it beat. In the authors' words: "We found that simplifying the network by removing the pooling layers made it more accurate."
 
 ## The context module
 
@@ -43,9 +47,11 @@ The context module is a separate stack that takes the front end's category maps 
 - layers 1 to 7: 3 × 3 convolutions with dilations 1, 1, 2, 4, 8, 16, and 1;
 - layer 8: a 1 × 1 convolution that produces the final scores.
 
-After layer 6, each output depends on a 65 × 65 area of the front end's 64 × 64 map, so the module stops widening there; a wider view would cover more than the whole map. Every layer keeps the map at 64 × 64.
+After layer 6, each output depends on a 65 × 65 area, already wider than the front end's 64 × 64 map, so the module stops widening there. Every layer keeps the map at 64 × 64.
 
-Its input and output have the same form, one map per category, so the module can be "plugged into existing dense prediction architectures." It is also small: about 64 weights for each pair of maps (9 in each of the seven 3 × 3 layers, plus 1 in the last), "≈ 64C² parameters in total."
+Its input and output have the same form, one map per category, so it can be added to other networks that label every pixel.
+
+It is also small. Each output map reads from every input map with its own filter, so each pair of maps gets 9 weights in each of the seven 3 × 3 layers, plus 1 in the last: 64 for each pair. For Pascal VOC's 21 categories, that comes to 64 × 21 × 21 = 28,224 weights, compared with about 138 million in VGG-16.
 
 ## Starting the module as a pass-through
 
@@ -61,9 +67,9 @@ On the PASCAL VOC 2012 validation images, with a front end trained on more data 
 
 - front end alone: 69.8% mean IoU
 - with the basic context module: 71.3%
-- with a larger context module, which uses more maps in its middle layers, up to 32 times as many: 72.1%
+- with a larger context module, which uses more maps in its middle layers, up to 32 times as many as the basic version: 72.1%
 
-The module also helped when added to systems that already used a separate clean-up step (a CRF) on top of the network, which adjusts the labels so that neighboring pixels with similar colors tend to share one, raising them from 71.6% to 73.3% and from 72.5% to 73.9%.
+The large module also helped systems that already used a separate clean-up step after the network: it raised one that used a <Term k="crf">CRF</Term> from 71.6% to 73.3%, and one that used CRF-RNN, a trainable version of the same step, from 72.5% to 73.9%.
 
 ## What's next
 
