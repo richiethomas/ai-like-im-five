@@ -150,6 +150,8 @@ export const papers: Paper[] = [
     blurb: "Networks that read and write sequences one step at a time.",
     chapter: "remembering",
     status: "upcoming",
+    slugPrefix: "paper-6-",
+    sourceUrl: "https://30papers.com/papers/unreasonable-effectiveness-of-rnns/",
   },
   {
     number: 7,

@@ -840,6 +840,24 @@
     color: var(--muted-foreground);
   }
 
+  /* Tables whose cells hold a lot (a figure plus a list): on narrow screens,
+     stack each row's cells instead of squeezing them into columns. */
+  @media (max-width: 40rem) {
+    .prose table.stack-on-narrow thead {
+      display: none;
+    }
+    .prose table.stack-on-narrow tr {
+      display: block;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .prose table.stack-on-narrow td {
+      display: block;
+      border-bottom: 0;
+      padding: 0.35rem 0;
+    }
+  }
+
   /* ---------------------------------------------------------------- code --- */
 
   .astro-code {

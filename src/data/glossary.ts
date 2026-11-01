@@ -104,4 +104,14 @@ export const glossary: Record<string, string> = {
   "frequency-weighted-iou": "IoU for each category, weighted by how many pixels the category covers, so large categories like road and sky count more. The FCN paper reports it alongside mean IoU.",
   "task-specific-weights": "scores with weights chosen to match a particular system's costs, such as counting a missed pedestrian much more heavily than a mislabeled tree. There is no single standard for this, and published benchmarks rarely use it.",
   "mean-iou":"a segmentation score: for each category, the overlap between the predicted and true regions divided by their combined area, averaged over the categories.",
+  // Recurrent networks (Paper #6)
+  rnn: "recurrent neural network: a network that reads a sequence one piece at a time, carrying a memory of what it has read so far.",
+  "hidden-state": "the list of numbers an RNN carries from one step to the next; its memory of the sequence so far.",
+  "one-hot": "a way to turn a choice into numbers: a list with one slot per option, all 0 except a 1 in the chosen option's slot.",
+  "language-model": "a model that gives the probability of each possible next piece of text, given the text so far.",
+  tanh: "an S-shaped function that squeezes any number into the range −1 to 1.",
+  lstm: "long short-term memory: a kind of RNN with a more complex update rule that keeps information over longer stretches; Paper #7 covers it.",
+  temperature: "a setting used when generating text: below 1 makes the model pick its top choices more often, above 1 makes its picks more varied.",
+
+  crf: "conditional random field: a clean-up step after the network that adjusts labels so nearby pixels with similar colors tend to share one, and region boundaries follow edges in the image.",
 };

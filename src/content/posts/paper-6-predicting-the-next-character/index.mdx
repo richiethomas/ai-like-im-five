@@ -1,0 +1,78 @@
+---
+title: "Paper #6: Predicting the Next Character"
+excerpt: "Karpathy trains RNNs on one task: given the characters so far, score each possible next character. One word, \"hello,\" holds 4 training examples, and its 2 l's show why the network needs a memory."
+category: "NLP"
+date: 2023-10-15T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["RNNs", "language models", "softmax"]
+---
+
+> **Where we are:** the [last post](/post/paper-6-how-an-rnn-remembers/) covered an RNN's memory and the step that updates it. This post covers the task Karpathy trains it on, and how a trained network writes new text.
+
+## The task
+
+Karpathy trains every network in his post on the same task: read a text one character at a time, and after each character, give a score to every possible next character. A model that does this is a character-level <Term k="language-model">language model</Term>.
+
+Once the scores are turned into probabilities, a model trained on English text is saying things like "after 'th', the next character is 'e' with probability 0.6, 'a' with 0.1, and so on." That's the only thing it's trained to do. Everything it writes later comes from repeating this one prediction.
+
+## One word, 4 training examples
+
+Karpathy's example uses a vocabulary of just 4 letters, h, e, l, and o, and trains on the word "hello." That one word holds 4 training examples:
+
+1. after "h", the next letter should be "e";
+2. after "he", it should be "l";
+3. after "hel", it should be "l";
+4. after "hell", it should be "o".
+
+## Characters as numbers
+
+A network works on numbers, so each character becomes a list of 4 numbers, one for each letter in the vocabulary. The list is all 0s except for a 1 in that letter's slot: "h" is 1, 0, 0, 0, and "e" is 0, 1, 0, 0. This is called <Term k="one-hot">one-hot</Term> encoding.
+
+The characters go in one per step. At each step, the network updates its memory and gives 4 scores, one for each letter that could come next:
+
+<img src="/experiments/rnn/hello-steps.svg" alt="A top-down diagram of 4 steps with numbers from Karpathy's example. Row 1, the character read: h, e, l, l. Row 2, each character as 4 numbers, all 0 except a 1 in that letter's slot. Row 3, the memory, 3 numbers per step: 0.3, −0.1, 0.9; then 1.0, 0.3, 0.1; then 0.1, −0.5, −0.3; then −0.3, 0.9, 0.7, with green arrows passing memory from step to step. Row 4, a score for each next letter h, e, l, o: step 1: 1.0, 2.2, −3.0, 4.1; step 2: 0.5, 0.3, −1.0, 1.2; step 3: 0.1, 0.5, 1.9, −1.1; step 4: 0.2, −1.5, −0.1, 2.2. The score for the correct next letter is green: e in step 1, l in steps 2 and 3, o in step 4. Under each step, the letter with the top score: o, o, l, o, red in steps 1 and 2 where it is wrong, green in steps 3 and 4 where it is right. Notes say training raises the green scores and lowers the others, and that steps 3 and 4 both read l but need different answers, so the memory has to tell them apart." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
+
+These numbers come from a network that is still being trained. In steps 1 and 2, the top score goes to the wrong letter. After "h", the network rates "o" (4.1) above the correct "e" (2.2).
+
+## Why the network needs its memory
+
+Steps 3 and 4 both read the same input: "l". But the right answer after the 1st "l" is another "l", and the right answer after the 2nd is "o". A network that only looked at the current character would have to give the same answer both times, and would get one of them wrong.
+
+The only difference between the 2 steps is what came before, which is held in the memory. To get both right, the network has to keep track of how far into the word it is.
+
+## Training
+
+At each step, the scores go through <Term k="softmax">softmax</Term>, which turns them into probabilities that add up to 1. The loss is the same [softmax loss](/post/paper-1-part-6-how-does-the-computer-know-it-s-wrong-loss-functions/#softmax-loss) used for image classification in Paper #1, applied at every step: it's low when the correct letter gets a high probability.
+
+Backpropagation then works out which way to nudge each weight so that the correct letters' scores rise and the others fall. After one small update, Karpathy notes, the score for "e" in step 1 might go from 2.2 to 2.3. Repeating this many times over a long text gradually pushes the network toward predictions that match the text.
+
+## Writing new text
+
+Once trained, the network can write. The process repeats one prediction:
+
+1. Give the network a starting character. It updates its memory and gives a score for each possible next character.
+2. Turn its scores into probabilities with softmax, after dividing them by the [temperature](#temperature).
+3. Pick the next character at random, using those probabilities. A character with probability 0.6 gets picked about 60% of the time.
+4. Feed the picked character back in as the next input. The network updates its memory and gives a new set of scores. Go back to step 2.
+
+Each pick becomes part of the input for the next one. Running the loop for 10,000 steps gives 10,000 characters of new text.
+
+The pick in step 3 is random on purpose. Always taking the top-scoring character means the network makes the same choice whenever its memory is in the same state, so once its output repeats a phrase, it can keep repeating it.
+
+## Temperature
+
+<Term k="temperature">Temperature</Term> is a setting that controls how random the picks are. Before softmax, every score is divided by the temperature:
+
+- **At 1,** the scores are left as they are.
+- **Below 1,** the gaps between scores grow, so the top choices get picked even more often. In a simple case with only 2 possible characters, scored 2 and 1, the higher one's probability rises from 73% at temperature 1 to 88% at temperature 0.5.
+- **Above 1,** the gaps shrink, so the picks spread out more. At temperature 2, the same probability drops to 62%.
+
+Karpathy describes the tradeoff: lower temperatures make the text more confident but more conservative, and higher ones make it more varied but with more mistakes, such as misspellings. At a temperature near 0, the network nearly always takes its top choice. A network trained on Paul Graham's essays, sampled this way, produced the same phrase over and over: "is that they were all the same thing that was a startup is that they were all the same thing that was a startup…"
+
+## What's next
+
+The [next post](/post/paper-6-what-it-learned-to-write/) shows what this simple task produced on 6 different datasets, from Shakespeare to the Linux source code.

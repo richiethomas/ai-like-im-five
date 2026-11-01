@@ -1,0 +1,62 @@
+---
+title: "Paper #6: From Fixed Inputs to Sequences"
+excerpt: "Every network in Chapter 1 takes in a whole image at once and answers in one pass. Paper #6 is about recurrent networks, which read a sequence one piece at a time and carry a memory of what they've read."
+category: "NLP"
+date: 2023-10-13T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["RNNs", "sequences", "language models"]
+---
+
+> **Where we are:** Paper #5, [Dilated Convolutions](/post/paper-5-from-one-label-to-every-pixel/), finished Chapter 1, on networks that see. Chapter 2 is about networks that handle sequences: text, audio, and anything else that arrives one piece after another.
+
+**What the papers so far have done.** Every network in Chapter 1 takes in a whole image at once and answers in one pass, through the same fixed number of layers: one score per category, or one label per pixel. The classifiers also need the image at a fixed size, such as 224 × 224. Paper #5's network accepts images of different sizes, but it still reads the whole image in one pass.
+
+**What Paper #6 is for.** "The Unreasonable Effectiveness of Recurrent Neural Networks" (Andrej Karpathy, 2015) is a blog post, not a formal paper, but it's on the 30 papers list, so this series counts it as Paper #6. Karpathy was then a PhD student at Stanford and one of the instructors of [CS231n](/post/paper-1-part-1-what-does-it-mean-for-a-computer-to-see-a-picture/), the course behind Paper #1. The post explains <Term k="rnn">recurrent neural networks</Term> (RNNs): networks that read a sequence one piece at a time, such as one character of text at a time, and carry a memory of what they've read so far. Karpathy trains one to predict the next character of a text, then shows what it writes after training on Shakespeare, Wikipedia, a math textbook, and the Linux source code.
+
+**Why it matters.** Predicting the next piece of text, then adding that guess to the text so far and predicting the one after it, is how today's large language models write. They predict word pieces instead of single characters, and they use transformers (Chapter 3) instead of RNNs, but the task is the same. This post shows that task working in 2015, with networks of a few million <Term k="weights">weights</Term>, trained on a single graphics card.
+
+## What a fixed-size network can't do
+
+A sentence can be 3 words long or 30. A recording can last 2 seconds or 2 minutes. A network built for one fixed input size, the way the classifiers expect exactly 224 × 224 pixels, has no natural way to take in either one: the input has to be cut or padded to that size first.
+
+The output has the same limit. A classifier's output is a fixed list of scores, one per category. It can't answer with a sentence, because a sentence can be any number of words long.
+
+An RNN gets around both limits by working in steps. At each step it can read one piece of the input, updates its memory, and can produce one piece of output. The step is the same every time, so it can repeat as many times as the sequence needs.
+
+## Five shapes of input and output
+
+Karpathy draws five ways a network can map inputs to outputs. Each red box is an input, each blue box is an output, and each green box is the network's hidden layer, which in an RNN is its memory. A green arrow pointing right means the memory is passed on to the next step.
+
+<table className="stack-on-narrow">
+<thead><tr><th>Shape</th><th>Diagram</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td style={{ verticalAlign: "top", minWidth: "10rem" }}><strong>One input, one output</strong></td><td style={{ verticalAlign: "top" }}><img src="/experiments/rnn/shape-1.svg" alt="One input box, one hidden box, one output box in a single column, with no arrows passing to the right." style={{ display: "block", width: "150px", maxWidth: "none" }} /></td><td style={{ verticalAlign: "top" }}><ul style={{ margin: 0, paddingLeft: "1.1rem" }}><li>a photo in, "cat" out</li><li>a chest X-ray in, "pneumonia" or "no pneumonia" out</li><li>an email in, "spam" or "not spam" out</li></ul></td></tr>
+<tr><td style={{ verticalAlign: "top", minWidth: "10rem" }}><strong>One input, a sequence out</strong></td><td style={{ verticalAlign: "top" }}><img src="/experiments/rnn/shape-2.svg" alt="One input box feeds the 1st of 3 hidden boxes, which pass memory to the right; each hidden box produces an output." style={{ display: "block", width: "150px", maxWidth: "none" }} /></td><td style={{ verticalAlign: "top" }}><ul style={{ margin: 0, paddingLeft: "1.1rem" }}><li>an image in, a caption out</li><li>an image in, a spoken description out, one sound at a time (screen readers)</li><li>a photo of handwritten or printed text in, the typed text out, one character at a time</li></ul></td></tr>
+<tr><td style={{ verticalAlign: "top", minWidth: "10rem" }}><strong>A sequence in, one output</strong></td><td style={{ verticalAlign: "top" }}><img src="/experiments/rnn/shape-3.svg" alt="3 input boxes feed 3 hidden boxes that pass memory to the right; only the last hidden box produces an output." style={{ display: "block", width: "150px", maxWidth: "none" }} /></td><td style={{ verticalAlign: "top" }}><ul style={{ margin: 0, paddingLeft: "1.1rem" }}><li>a sentence in, positive or negative out</li><li>a product review in, a star rating out</li><li>a stream of heart-monitor readings in, "irregular rhythm" or "normal" out</li><li>a few seconds of audio in, "the wake word was said" or "it wasn't" out, as with "Hey Siri"</li></ul></td></tr>
+<tr><td style={{ verticalAlign: "top", minWidth: "10rem" }}><strong>A sequence in, then a sequence out</strong></td><td style={{ verticalAlign: "top" }}><img src="/experiments/rnn/shape-4.svg" alt="3 input boxes feed the 1st 3 of 5 hidden boxes, which pass memory to the right; only the last 2 hidden boxes produce outputs." style={{ display: "block", width: "150px", maxWidth: "none" }} /></td><td style={{ verticalAlign: "top" }}><ul style={{ margin: 0, paddingLeft: "1.1rem" }}><li>an English sentence in, the French sentence out</li><li>a long article in, a short summary out</li><li>a question in, an answer out</li><li>a spoken sentence in, the written text out</li></ul></td></tr>
+<tr><td style={{ verticalAlign: "top", minWidth: "10rem" }}><strong>A sequence in, an output at every step</strong></td><td style={{ verticalAlign: "top" }}><img src="/experiments/rnn/shape-5.svg" alt="3 input boxes feed 3 hidden boxes that pass memory to the right; every hidden box produces an output." style={{ display: "block", width: "150px", maxWidth: "none" }} /></td><td style={{ verticalAlign: "top" }}><ul style={{ margin: 0, paddingLeft: "1.1rem" }}><li>video frames in, a label for each frame out</li><li>a sentence in, each word's part of speech (noun, verb, …) out, word by word</li><li>characters of text in, a guess for the next character out after each one: the model in this paper</li></ul></td></tr>
+</tbody>
+</table>
+
+In shapes 2 to 5, nothing fixes the length of the sequences. The diagrams draw 3 or 5 steps, but any number works. The same step runs once per piece, for however many pieces there are.
+
+## Steps for data that isn't a sequence
+
+Karpathy also points out that an RNN can work in steps even on data that isn't a sequence, by going through it in a chosen order. He shows two examples from DeepMind. In one, a network reads the digits of a house number from a photo, moving its focus from left to right. In the other, a network draws an image of a digit by adding to the canvas a little at a time.
+
+So the step-by-step approach isn't limited to text and audio. Tasks that aren't about sequences can still be done in steps, as long as each step can use what the earlier steps did.
+
+## The rest of Paper #6
+
+1. **How an RNN remembers:** the memory, the update at each step, and why the same weights are reused every time.
+2. **Predicting the next character:** Karpathy's "hello" example, how the network is trained, and how it writes new text.
+3. **What it learned to write:** samples from each dataset, from spelling to code, and what the network loses track of over long stretches.
+4. **Looking inside:** single memory values that track things like "inside a quote," and the limits Karpathy names.
+
+## What's next
+
+The [next post](/post/paper-6-how-an-rnn-remembers/) covers what an RNN's memory is and how it changes at each step.

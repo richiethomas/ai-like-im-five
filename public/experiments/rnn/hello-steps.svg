@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="700" height="640" rx="10" fill="#ffffff"/>
+<defs><marker id="ad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#15803d"/></marker></defs>
+<text x="350.0" y="32" text-anchor="middle" font-size="15" fill="#334155" font-weight="600">Training on “hello”: the 4 steps</text>
+<text x="120" y="78" text-anchor="end" font-size="12" fill="#334155" font-weight="600">character in</text>
+<text x="120" y="142" text-anchor="end" font-size="12" fill="#b91c1c" font-weight="600">as numbers</text>
+<text x="120" y="264" text-anchor="end" font-size="12" fill="#15803d" font-weight="600">memory</text>
+<text x="120" y="402" text-anchor="end" font-size="12" fill="#1d4ed8" font-weight="600">score for each</text>
+<text x="120" y="418" text-anchor="end" font-size="12" fill="#1d4ed8" font-weight="600">next letter</text>
+<text x="120" y="486" text-anchor="end" font-size="12" fill="#334155" font-weight="600">correct next</text>
+<text x="227.0" y="78" text-anchor="middle" font-size="16" fill="#334155" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“h”</text>
+<rect x="190" y="92" width="74" height="92" rx="3" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+<text x="212" y="114" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="240" y="114" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">1</text>
+<text x="212" y="134" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="240" y="134" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="212" y="154" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="240" y="154" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="212" y="174" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="240" y="174" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<line x1="227.0" y1="184" x2="227.0" y2="220" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="190" y="222" width="74" height="74" rx="3" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+<text x="227.0" y="244" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.3</text>
+<text x="227.0" y="264" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">-0.1</text>
+<text x="227.0" y="284" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.9</text>
+<line x1="264" y1="259" x2="318" y2="259" stroke="#15803d" stroke-width="1.6" marker-end="url(#am)"/>
+<line x1="227.0" y1="296" x2="227.0" y2="338" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="190" y="340" width="74" height="104" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+<text x="212" y="364" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="242" y="364" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">1.0</text>
+<text x="212" y="386" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="242" y="386" text-anchor="middle" font-size="13" fill="#15803d" font-weight="700">2.2</text>
+<text x="212" y="408" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="242" y="408" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">-3.0</text>
+<text x="212" y="430" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="242" y="430" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">4.1</text>
+<text x="227.0" y="486" text-anchor="middle" font-size="16" fill="#15803d" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“e”</text>
+<text x="223.0" y="508" text-anchor="end" font-size="11.5" fill="#b91c1c" font-weight="400">top score:</text>
+<text x="243.0" y="508" text-anchor="middle" font-size="12.5" fill="#b91c1c" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“o”</text>
+<text x="357.0" y="78" text-anchor="middle" font-size="16" fill="#334155" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“e”</text>
+<rect x="320" y="92" width="74" height="92" rx="3" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+<text x="342" y="114" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="370" y="114" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="342" y="134" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="370" y="134" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">1</text>
+<text x="342" y="154" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="370" y="154" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="342" y="174" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="370" y="174" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<line x1="357.0" y1="184" x2="357.0" y2="220" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="320" y="222" width="74" height="74" rx="3" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+<text x="357.0" y="244" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">1.0</text>
+<text x="357.0" y="264" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.3</text>
+<text x="357.0" y="284" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.1</text>
+<line x1="394" y1="259" x2="448" y2="259" stroke="#15803d" stroke-width="1.6" marker-end="url(#am)"/>
+<line x1="357.0" y1="296" x2="357.0" y2="338" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="320" y="340" width="74" height="104" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+<text x="342" y="364" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="372" y="364" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">0.5</text>
+<text x="342" y="386" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="372" y="386" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">0.3</text>
+<text x="342" y="408" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="372" y="408" text-anchor="middle" font-size="13" fill="#15803d" font-weight="700">-1.0</text>
+<text x="342" y="430" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="372" y="430" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">1.2</text>
+<text x="357.0" y="486" text-anchor="middle" font-size="16" fill="#15803d" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“l”</text>
+<text x="353.0" y="508" text-anchor="end" font-size="11.5" fill="#b91c1c" font-weight="400">top score:</text>
+<text x="373.0" y="508" text-anchor="middle" font-size="12.5" fill="#b91c1c" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“o”</text>
+<text x="487.0" y="78" text-anchor="middle" font-size="16" fill="#334155" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“l”</text>
+<rect x="450" y="92" width="74" height="92" rx="3" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+<text x="472" y="114" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="500" y="114" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="472" y="134" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="500" y="134" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="472" y="154" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="500" y="154" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">1</text>
+<text x="472" y="174" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="500" y="174" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<line x1="487.0" y1="184" x2="487.0" y2="220" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="450" y="222" width="74" height="74" rx="3" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+<text x="487.0" y="244" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.1</text>
+<text x="487.0" y="264" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">-0.5</text>
+<text x="487.0" y="284" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">-0.3</text>
+<line x1="524" y1="259" x2="578" y2="259" stroke="#15803d" stroke-width="1.6" marker-end="url(#am)"/>
+<line x1="487.0" y1="296" x2="487.0" y2="338" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="450" y="340" width="74" height="104" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+<text x="472" y="364" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="502" y="364" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">0.1</text>
+<text x="472" y="386" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="502" y="386" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">0.5</text>
+<text x="472" y="408" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="502" y="408" text-anchor="middle" font-size="13" fill="#15803d" font-weight="700">1.9</text>
+<text x="472" y="430" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="502" y="430" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">-1.1</text>
+<text x="487.0" y="486" text-anchor="middle" font-size="16" fill="#15803d" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“l”</text>
+<text x="483.0" y="508" text-anchor="end" font-size="11.5" fill="#15803d" font-weight="400">top score:</text>
+<text x="503.0" y="508" text-anchor="middle" font-size="12.5" fill="#15803d" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“l”</text>
+<text x="617.0" y="78" text-anchor="middle" font-size="16" fill="#334155" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“l”</text>
+<rect x="580" y="92" width="74" height="92" rx="3" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+<text x="602" y="114" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="630" y="114" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="602" y="134" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="630" y="134" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<text x="602" y="154" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="630" y="154" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">1</text>
+<text x="602" y="174" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="630" y="174" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0</text>
+<line x1="617.0" y1="184" x2="617.0" y2="220" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="580" y="222" width="74" height="74" rx="3" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+<text x="617.0" y="244" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">-0.3</text>
+<text x="617.0" y="264" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.9</text>
+<text x="617.0" y="284" text-anchor="middle" font-size="13" fill="#334155" font-weight="400">0.7</text>
+<line x1="617.0" y1="296" x2="617.0" y2="338" stroke="#64748b" stroke-width="1.6" marker-end="url(#ad)"/>
+<rect x="580" y="340" width="74" height="104" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+<text x="602" y="364" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">h</text>
+<text x="632" y="364" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">0.2</text>
+<text x="602" y="386" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">e</text>
+<text x="632" y="386" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">-1.5</text>
+<text x="602" y="408" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">l</text>
+<text x="632" y="408" text-anchor="middle" font-size="13" fill="#475569" font-weight="400">-0.1</text>
+<text x="602" y="430" text-anchor="middle" font-size="12" fill="#64748b" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">o</text>
+<text x="632" y="430" text-anchor="middle" font-size="13" fill="#15803d" font-weight="700">2.2</text>
+<text x="617.0" y="486" text-anchor="middle" font-size="16" fill="#15803d" font-weight="600" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“o”</text>
+<text x="613.0" y="508" text-anchor="end" font-size="11.5" fill="#15803d" font-weight="400">top score:</text>
+<text x="633.0" y="508" text-anchor="middle" font-size="12.5" fill="#15803d" font-weight="400" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace">“o”</text>
+<text x="350.0" y="548" text-anchor="middle" font-size="12" fill="#334155" font-weight="400">Green: the score for the correct next letter. Training raises it and lowers the others.</text>
+<text x="350.0" y="568" text-anchor="middle" font-size="12" fill="#334155">Steps 3 and 4 both read <tspan font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">l</tspan>, but need different answers, so the memory has to tell them apart.</text>
+<text x="350.0" y="604" text-anchor="middle" font-size="11" fill="#64748b" font-weight="400">Numbers from Karpathy's example diagram: 4 possible letters, 3 memory values.</text>
+</svg>

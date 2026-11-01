@@ -1,0 +1,88 @@
+---
+title: "Paper #6: What It Learned to Write"
+excerpt: "Karpathy trained the same kind of network on 6 texts, from Paul Graham's essays to the Linux source code. It learned spelling, play formatting, nested markup, and balanced brackets, and it lost track of things that span long stretches."
+category: "NLP"
+date: 2023-10-16T23:59:59Z
+author:
+  name: "Richie Thomas"
+  role: "Engineer"
+featured: false
+draft: false
+tags: ["RNNs", "language models", "text generation"]
+---
+
+> **Where we are:** the [last post](/post/paper-6-predicting-the-next-character/) covered how an RNN is trained to predict the next character and how it then writes new text. This post covers what it wrote.
+
+Karpathy trained the same kind of network, an <Term k="lstm">LSTM</Term> with 2 or 3 layers, on 6 different texts. Each one starts from random weights and knows nothing about language. All it ever sees is a single file of characters, and all it learns to do is predict the next one. The samples quoted below are excerpts Karpathy chose from longer runs, shown as the networks wrote them.
+
+## Paul Graham's essays: learning English from scratch
+
+About 1 million characters of essays, which Karpathy calls a very small dataset. The network has 2 layers with 512 memory values each, about 3.5 million weights in all, and uses [dropout](/post/paper-1-part-11-memorizing-vs-learning-overfitting-and-regularization/) to limit overfitting. A sample:
+
+> "The surprised in investors weren't going to raise money. I'm not the company with the time there are all interesting quickly, don't have to get off the same programmers."
+
+The sentences don't make sense, but nearly every word is spelled correctly, and the commas, apostrophes, and spaces are in places English puts them. The network learned all of that from the essays alone.
+
+## Shakespeare: learning a format
+
+All of Shakespeare's works, 4.4 MB, with a 3-layer network trained for a few hours:
+
+> PANDARUS:<br/>
+> Alas, I think he shall be come approached and the day<br/>
+> When little srain would be attain'd into being never fed,<br/>
+> And who is but a chain and subjects of his death,<br/>
+> I should not sleep.
+
+The network writes in the layout of a play: a speaker's name in capitals with a colon, then lines of verse. It invents both the names and the lines, since, as Karpathy notes, all it knows are characters.
+
+## Wikipedia: learning nested markup
+
+100 MB of raw Wikipedia text, including the markup that formats articles: `[[double brackets]]` for links, `==` around headings, and XML tags. In the samples Karpathy shows, the network opens and closes brackets and parentheses correctly, makes headings and lists, and closes XML tags in the right nested order. It also invents details, such as a yahoo.com web address that doesn't exist.
+
+## A math textbook: almost compiling
+
+The LaTeX source of a book on algebraic geometry, 16 MB. LaTeX is a language for typesetting math, and a file has to follow its rules to compile into a document. After Karpathy and his labmate Justin Johnson fixed a few errors by hand, the sampled LaTeX compiled into pages of plausible-looking math.
+
+The errors show what it can't keep track of. In one sample, the network starts a proof with `\begin{proof}` and ends it with `\end{lemma}`. Karpathy's explanation: by the time it finished the proof, it had forgotten whether it was writing a proof or a lemma, because the 2 tags were too far apart for its memory. These mistakes became less common with larger networks, but didn't go away.
+
+## The Linux source code: learning code
+
+474 MB of C code from the Linux project, with 3-layer networks of about 10 million weights trained for a few days. A short piece of the output:
+
+```c
+static int indicate_policy(void)
+{
+  int error;
+  if (fd == MARN_EPT) {
+    /*
+     * The kernel blank will coeld it to userspace.
+     */
+    if (ss->segment < mem_total)
+      unblock_graph_and_set_blocked();
+    else
+      ret = 1;
+    goto bail;
+  }
+```
+
+It doesn't compile, but it has the shape of real C code. In Karpathy's samples, the network opens and closes brackets correctly, indents nested blocks, and adds comments. (The excerpt above stops before the function's closing bracket.) A common error, Karpathy notes, is losing track of variable names. In the sample above, `error` is declared and never used, and `ret` is used without being declared.
+
+## Baby names: making up new ones
+
+A list of 8,000 names, one per line. About 90% of the names the network generated aren't in the list, such as Rudi, Levette, Anneda, and Zeanna.
+
+## What it learned 1st, and what it learned last
+
+To see the order things are learned in, Karpathy trained one more network, on Tolstoy's War and Peace, and sampled from it every 100 training steps:
+
+- **Step 100:** random letters, but grouped into word-length clumps with spaces between them.
+- **Step 300:** quotation marks, and periods at the ends of sentences.
+- **Step 500:** short, common words spelled correctly: "we," "He," "His," "Which," "and."
+- **Steps 700–1,200:** more English-like text, then quotations, question marks, exclamation marks, and longer words.
+- **Step 2,000:** mostly correct spelling, quotations, and character names, such as Natasha, Pierre, and Princess Mary.
+
+Karpathy's summary: the network first finds the pattern of words separated by spaces, then learns the words themselves, short ones before long ones. Topics and themes that span many words, and anything else that depends on text far back, come much later in training. That fits the proof and lemma mistake: across these examples, what the network handles worst is anything that has to be remembered over a long stretch.
+
+## What's next
+
+The [next post](/post/paper-6-looking-inside-and-what-it-left-open/) looks inside a trained network for memory values that track things like "inside a quote," and covers the limits Karpathy names.
