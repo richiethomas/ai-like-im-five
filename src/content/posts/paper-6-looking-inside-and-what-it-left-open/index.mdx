@@ -15,7 +15,7 @@ tags: ["RNNs", "interpretability", "attention"]
 
 ## Watching single memory values
 
-The network's memory is a list of 512 numbers, and the network updates every one of them after each character it reads. Karpathy took one of those numbers, the same one throughout, and watched how it changed as the network read a passage of text. He colored each character by that number's value right after the network read it: one color when the number was high, another when it was low. Then he did the same for other numbers in the list, one at a time (the figure below shows one).
+The network's memory is a list of 512 numbers, and the network updates every one of them after each character it reads. Karpathy took one of those numbers, the same one throughout, and watched how it changed as the network read a passage of text. He colored each character by that number's value right after the network read it: one color when the number was high, another when it was low. Then he did the same for other numbers in the list, one at a time (the figure below shows the one that tracks quotes).
 
 For most of the numbers, the colors showed no pattern a person could name. For about 5%, they did. The examples below come from his networks trained on Wikipedia, War and Peace, and the Linux code:
 
@@ -30,7 +30,7 @@ For most of the numbers, the colors showed no pattern a person could name. For a
 
 Nobody told the network that quotes or brackets exist, or that tracking them would help. It was only trained to predict the next character. Keeping track of "am I inside a quote?" helps with that prediction, since a closing quote mark is likely only when one is open. So one memory value gradually came to do it during training.
 
-Karpathy is careful about how much to read into this. He calls some of his own explanations "hand-wavy," meaning informal and not proven, since the memory is 512 numbers per layer working together, and most single values don't mean anything on their own.
+Karpathy is careful about how much to read into this. He calls some of his own explanations "hand-wavy," meaning informal and not proven, since the memory is 512 numbers working together, and most single values don't mean anything on their own.
 
 This is the same kind of inspection Paper #1 did for image networks, where [visualizing what a layer responds to](/post/paper-1-part-14-peeking-inside-the-black-box-what-is-a-cnn-looking-at/) showed edge and texture detectors that nobody had designed either.
 
@@ -40,15 +40,26 @@ Karpathy's post ends with the problems he saw in RNNs in 2015.
 
 - **Long-range memory.** The [proof and lemma mix-up](/post/paper-6-what-it-learned-to-write/#a-math-textbook-almost-compiling) and the late arrival of topics in the War and Peace samples both come from information that has to be held across a long stretch. <Term k="lstm">LSTMs</Term> help, but don't remove the problem.
 - **Memorizing more than generalizing.** RNNs, he writes, "memorize sequences extremely well," but don't always show convincing signs of generalizing the right way.
-- **Memory size is tied to cost.** Every step multiplies the memory by a square grid of weights: 512 by 512 for a memory of 512 values. Doubling the memory to 1,024 values makes that grid 1,024 by 1,024, which is 4 times as many weights and 4 times the work for that part of every step. Karpathy's wish is a memory that could hold a lot at once, such as all of Wikipedia, without the work at each step growing. With this kind of memory, that isn't possible.
+- **Memory size is tied to cost.** At every step, a table of weights connects each of the 512 old memory values to each of the 512 new ones: 512 × 512 weights. Doubling the memory to 1,024 values makes that 1,024 × 1,024, which is 4 times as many weights and 4 times the work for that part of every step. Karpathy's wish is a memory that could hold a lot at once, such as all of Wikipedia, without the work at each step growing. With a memory that works this way, every added value adds work at every step, so that isn't possible.
 
-In 2015, models that predicted one whole word at a time worked better than models that predicted one character at a time, like the ones in this post. Karpathy predicted that this was "surely a temporary thing." Today's language models split text into word pieces, called <Term k="token">tokens</Term>: common words usually get one token each, and rare words are split into several. Word pieces fall between the two models he compared: bigger than single characters, smaller than whole words.
+In 2015, models that predicted one whole word at a time seemed to work better than models that predicted one character at a time, like the ones in this post. Karpathy predicted that this gap was "surely a temporary thing." Today's language models split text into word pieces, called <Term k="token">tokens</Term>: common words usually get one token each, and rare words are split into several. Word pieces fall between the two models he compared: bigger than single characters, smaller than whole words.
+
+Incidentally, these are the same tokens that companies charge for when they sell access to a language model. They count 2 kinds separately:
+
+- **Input tokens:** everything the model reads. That includes the new message, plus the earlier conversation and any attached documents, since the model rereads all of that on every turn.
+- **Output tokens:** everything the model writes. These usually cost several times more each, because the model produces them one at a time.
+
+In English, a token averages about 4 characters, or about ¾ of a word. Each company splits text a little differently, so the same text can come to a different number of tokens with different models.
 
 ## Attention
 
-As one direction for fixing these problems, Karpathy points to models that keep a large store of information, separate from the step-by-step memory, and choose which parts of it to read at each step. The network gives a weight to every part of that store and reads a weighted mix of them. He calls this soft attention: "soft" because it reads a blend of every part instead of picking just one. The translation paper he cites (Bahdanau et al.) works the same way: at each step, it gives a weight to the memory values the network computed for each word of the input sentence, and reads a blend of them. In 2015 he called attention "the most interesting recent architectural innovation in neural networks."
+As one direction for fixing the long-range memory problem, Karpathy points to attention. A plain RNN has to carry everything it has read through its step-by-step memory, and older information fades. With attention, the network keeps the memory values from every earlier step and, at each new step, looks back at all of them directly. It gives each one a weight for how relevant it is right now, and reads a blend weighted that way.
 
-That's his opinion from 2015. Attention is also where this reading list heads after the LSTM paper. Chapter 3 starts with that 2014 translation paper, which is Paper #10, and leads to the transformer, which drops the step-by-step memory entirely and uses attention in its place.
+Karpathy calls this soft attention: "soft" because it reads a blend of every part instead of picking just one. It has a cost of its own: reading a blend of every stored step means doing work for every one of them, at every step, so the work at each step grows as the text gets longer.
+
+The translation paper he cites (Bahdanau et al.) shows what this looks like. When the network is about to write the French word for "cat," it gives most of its weight to the memory values from the English word "cat," even if that word came 10 words earlier. Nothing has to survive a long chain of steps to be used.
+
+In 2015, Karpathy called attention "the most interesting recent architectural innovation in neural networks." It turned out to be more than that: attention is the central part of the transformer, the design today's language models are built on. Attention is also where this reading list goes in Chapter 3, which starts with that 2014 translation paper, Paper #10, and leads to the transformer, which drops the step-by-step memory entirely and uses attention in its place.
 
 ## What's next
 
