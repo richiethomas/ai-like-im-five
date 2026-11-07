@@ -42,7 +42,7 @@ Karpathy's post ends with the problems he saw in RNNs in 2015.
 - **Memorizing more than generalizing.** RNNs, he writes, "memorize sequences extremely well," but don't always show convincing signs of generalizing the right way.
 - **Memory size is tied to cost.** Every step multiplies the memory by a square grid of weights: 512 by 512 for a memory of 512 values. Doubling the memory to 1,024 values makes that grid 1,024 by 1,024, which is 4 times as many weights and 4 times the work for that part of every step. Karpathy's wish is a memory that could hold a lot at once, such as all of Wikipedia, without the work at each step growing. With this kind of memory, that isn't possible.
 
-He also predicted that word-level models' lead over character-level ones was "surely a temporary thing." Today's language models split text into word pieces: common words usually get one piece each, and rare words are split into several. Word pieces fall between the two models he compared: bigger than single characters, smaller than whole words.
+In 2015, models that predicted one whole word at a time worked better than models that predicted one character at a time, like the ones in this post. Karpathy predicted that this was "surely a temporary thing." Today's language models split text into word pieces, called <Term k="token">tokens</Term>: common words usually get one token each, and rare words are split into several. Word pieces fall between the two models he compared: bigger than single characters, smaller than whole words.
 
 ## Attention
 

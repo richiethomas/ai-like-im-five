@@ -111,6 +111,7 @@ export const glossary: Record<string, string> = {
   "language-model": "a model that gives the probability of each possible next piece of text, given the text so far.",
   tanh: "an S-shaped function that squeezes any number into the range −1 to 1.",
   lstm: "long short-term memory: a kind of RNN with a more complex update rule that keeps information over longer stretches; Paper #7 covers it.",
+  token: "a word piece, the unit a language model reads and predicts. Common words are usually one token, and rarer words are split into several. Chatbot pricing and length limits are counted in tokens.",
   temperature: "a setting used when generating text: below 1 makes the model pick its top choices more often, above 1 makes its picks more varied.",
 
   crf: "conditional random field: a clean-up step after the network that adjusts labels so nearby pixels with similar colors tend to share one, and region boundaries follow edges in the image.",
