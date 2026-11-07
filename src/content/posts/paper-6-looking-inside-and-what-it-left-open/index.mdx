@@ -13,13 +13,11 @@ tags: ["RNNs", "interpretability", "attention"]
 
 > **Where we are:** the [last post](/post/paper-6-what-it-learned-to-write/) showed what RNNs wrote after training on 6 different texts. This post looks inside the trained networks, and covers what Karpathy says RNNs don't do well.
 
-## Watching the predictions
-
-Karpathy fed a network trained on Wikipedia some text it hadn't seen, and showed its top 5 guesses for the next character at each position. Some stretches are easy for it. Once it has read "http://www.", it is very confident about each next character, since that sequence almost always continues the same way.
-
 ## Watching single memory values
 
-He then picked single values from the network's memory and colored each character of the text by how high that value was while the network read it. Most values showed no pattern a person could name. About 5% did:
+The network's memory is a list of 512 numbers, and the network updates every one of them after each character it reads. Karpathy took one of those numbers, the same one throughout, and watched how it changed as the network read a passage of text. He colored each character by that number's value right after the network read it: one color when the number was high, another when it was low. Then he did the same for other numbers in the list, one at a time (the figure below shows one).
+
+For most of the numbers, the colors showed no pattern a person could name. For about 5%, they did. The examples below come from his networks trained on Wikipedia, War and Peace, and the Linux code:
 
 - **Inside a quote.** One value turns on at an opening quote mark and stays on until the quote ends.
 - **Inside a link.** One turns on inside Wikipedia's `[[double bracket]]` links and off outside them. It can't turn on at the 1st "[", only at the 2nd, so, Karpathy suggests, another part of the memory is likely counting the brackets.
@@ -30,9 +28,9 @@ He then picked single values from the network's memory and colored each characte
 
 <img src="/experiments/rnn/quote-cell.svg" alt="A line of text from War and Peace, one character per box: Kutuzov, shrugging his shoulders, replied with his subtle penetrating smile: and then the quote, I meant merely to say what I said. The boxes are pink, meaning off, for the narration, and blue, meaning on, from the opening quote mark to the end of the quote. Notes say the value stays off through the narration and turns on at the opening quote mark, and that nobody programmed this; it came from training on raw text. A caption says it is redrawn from Karpathy's example, and that his colors are graded while this shows on and off only." style={{ display: "block", margin: "1.5rem auto", width: "100%", maxWidth: "640px" }} />
 
-Nobody told the network that quotes or brackets exist, or that tracking them would help. It was only trained to predict the next character. Keeping track of "am I inside a quote?" helps with that prediction, since a closing quote mark is likely only when one is open, so one memory value gradually came to do it during training.
+Nobody told the network that quotes or brackets exist, or that tracking them would help. It was only trained to predict the next character. Keeping track of "am I inside a quote?" helps with that prediction, since a closing quote mark is likely only when one is open. So one memory value gradually came to do it during training.
 
-Karpathy is careful about how much to read into this. He calls some of his own explanations "hand-wavy," since the memory is 512 numbers per layer working together, and most single values don't mean anything on their own.
+Karpathy is careful about how much to read into this. He calls some of his own explanations "hand-wavy," meaning informal and not proven, since the memory is 512 numbers per layer working together, and most single values don't mean anything on their own.
 
 This is the same kind of inspection Paper #1 did for image networks, where [visualizing what a layer responds to](/post/paper-1-part-14-peeking-inside-the-black-box-what-is-a-cnn-looking-at/) showed edge and texture detectors that nobody had designed either.
 
@@ -42,13 +40,13 @@ Karpathy's post ends with the problems he saw in RNNs in 2015.
 
 - **Long-range memory.** The [proof and lemma mix-up](/post/paper-6-what-it-learned-to-write/#a-math-textbook-almost-compiling) and the late arrival of topics in the War and Peace samples both come from information that has to be held across a long stretch. <Term k="lstm">LSTMs</Term> help, but don't remove the problem.
 - **Memorizing more than generalizing.** RNNs, he writes, "memorize sequences extremely well," but don't always show convincing signs of generalizing the right way.
-- **Memory size is tied to cost.** Every step multiplies the memory by a square grid of weights: 512 by 512 for a memory of 512 values. Doubling the memory to 1,024 values makes that grid 1,024 by 1,024, which is 4 times as many weights and 4 times the work for that part of every step. A model that should hold a lot, such as everything in Wikipedia, can't just be given a much bigger memory.
+- **Memory size is tied to cost.** Every step multiplies the memory by a square grid of weights: 512 by 512 for a memory of 512 values. Doubling the memory to 1,024 values makes that grid 1,024 by 1,024, which is 4 times as many weights and 4 times the work for that part of every step. Karpathy's wish is a memory that could hold a lot at once, such as all of Wikipedia, without the work at each step growing. With this kind of memory, that isn't possible.
 
-He also predicted that word-level models' lead over character-level ones was "surely a temporary thing." Today's language models split text into word pieces: common words usually get one piece each, and rare words are split into several. That falls between the character-level and word-level models he compared.
+He also predicted that word-level models' lead over character-level ones was "surely a temporary thing." Today's language models split text into word pieces: common words usually get one piece each, and rare words are split into several. Word pieces fall between the two models he compared: bigger than single characters, smaller than whole words.
 
 ## Attention
 
-As one direction for fixing these problems, Karpathy points to models that keep a large memory outside the network and choose which parts of it to read at each step. The network gives a weight to every part of the memory and reads a weighted mix of them. He calls this soft attention. The translation paper he cites (Bahdanau et al.) does the same kind of weighted reading, over the network's own memory values from every word of the input sentence. In 2015 he called attention "the most interesting recent architectural innovation in neural networks."
+As one direction for fixing these problems, Karpathy points to models that keep a large store of information, separate from the step-by-step memory, and choose which parts of it to read at each step. The network gives a weight to every part of that store and reads a weighted mix of them. He calls this soft attention: "soft" because it reads a blend of every part instead of picking just one. The translation paper he cites (Bahdanau et al.) works the same way: at each step, it gives a weight to the memory values the network computed for each word of the input sentence, and reads a blend of them. In 2015 he called attention "the most interesting recent architectural innovation in neural networks."
 
 That's his opinion from 2015. Attention is also where this reading list heads after the LSTM paper. Chapter 3 starts with that 2014 translation paper, which is Paper #10, and leads to the transformer, which drops the step-by-step memory entirely and uses attention in its place.
 
